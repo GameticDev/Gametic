@@ -8,10 +8,13 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="bg-white flex">
-        <SideNav/>
-        <Navbar/>
-      <main className="overflow-auto">{children}</main>
+    <div className="flex min-h-screen bg-white">
+      <SideNav />
+
+      <div className="flex flex-col flex-1">
+        <Navbar />
+        <main className="overflow-auto flex-1 p-4">{children}</main>
+      </div>
     </div>
   );
 };
