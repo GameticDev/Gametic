@@ -23,13 +23,13 @@ export default function HeroImageSlider() {
   };
 
   return (
-    <div className="absolute rounded-xl object-cover top-0 left-0 z-10 overflow-hidden">
+    <div className="absolute object-cover top-0 left-0 z-10 overflow-hidden">
       <div 
         className="flex transition-transform duration-500 ease-in-out h-full " 
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {images.map((src, index) => (
-          <div key={index} className="min-w-full h-full flex-shrink-0 rounded-xl">
+          <div key={index} className="min-w-full h-full flex-shrink-0 ">
             <img 
               src={src} 
               alt={`Hero slide ${index + 1}`} 
