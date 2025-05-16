@@ -1,6 +1,19 @@
+"use client";
 import UserList from "@/components/admin/userList";
+import { fetchAllUser } from "@/redux/actions/admin/userActions";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useEffect } from "react";
 
 const page = () => {
+  const dispatch = useAppDispatch();
+  const { totalUsers, totalActiveUser, totalBannedUsers } = useAppSelector(
+    (state) => state.adminUsers
+  );
+  console.log(totalUsers)
+  useEffect(() => {
+    dispatch(fetchAllUser({ page: 1, limit: 5 }));
+  }, [dispatch]);
+
   return (
     <div className="py-2 px-10 w-full h-auto">
       <div className="flex flex-col gap-3 mb-10">
@@ -16,33 +29,33 @@ const page = () => {
           <button className="text-[14px] font-medium py-2.5 cursor-pointer">
             All{" "}
             <span className="px-1.5 py-[2px] rounded-md bg-black text-white ml-2">
-              20
+              {totalUsers}
             </span>
           </button>
           <button className="text-[14px] font-medium py-2.5  cursor-pointer">
             Active{" "}
             <span className="px-1.5 py-[2px] rounded-md bg-[#DBF6E5] text-[#118D57] ml-2">
-              2
+              {totalActiveUser}
             </span>
           </button>
-          <button className="text-[14px] font-medium py-2.5 cursor-pointer">
+          {/* <button className="text-[14px] font-medium py-2.5 cursor-pointer">
             Pending{" "}
             <span className="px-1.5 py-[2px] rounded-md bg-[#FFF1D6] text-[#B76E00] ml-2">
               10
             </span>
-          </button>
+          </button> */}
           <button className="text-[14px] font-medium py-2.5 cursor-pointer">
             Banned{" "}
             <span className="px-1.5 py-[2px] rounded-md bg-[#FFE4DE] text-[#B91D18] ml-2">
-              6
+              {totalBannedUsers}
             </span>
           </button>
-          <button className="text-[14px] font-medium py-2.5 cursor-pointer">
+          {/* <button className="text-[14px] font-medium py-2.5 cursor-pointer">
             Rejected{" "}
             <span className="px-1.5 py-[2px] rounded-md bg-[#EDEFF1] text-[#637381] ml-2">
               2
             </span>
-          </button>
+          </button> */}
         </div>
         <div className="w-full">
           <UserList />
