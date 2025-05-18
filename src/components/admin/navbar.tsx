@@ -4,7 +4,7 @@ export default function Navbar() {
   const notificationCount = 4;
 
   return (
-    <div className="w-full bg-white py-5 px-4">
+    <div className="w-full bg-transparent py-5 px-4">
       <div className="flex items-center justify-between ">
         <div className="hidden md:block"></div>
 
