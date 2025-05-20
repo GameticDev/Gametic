@@ -10,28 +10,31 @@ export const fetchAllUser = createAsyncThunk<
     totalBannedUsers: number;
     totalActiveUser: number;
   },
-  { page: number; limit: number },
+  { page: number; limit: number; search: string; role: string },
   { rejectValue: string }
->("users/fetchAllUser", async ({ page, limit }, { rejectWithValue }) => {
-  try {
-    const response = await axiosInstance.get(
-      `/admin/users?page=${page}&limit=${limit}`
-    );
-    console.log(response.data);
-    return {
-      allUsers: response.data.users,
-      totalUsers: response.data.totalusers,
-      totalBannedUsers: response.data.totalBannedUsers,
-      totalActiveUser: response.data.totalActiveUser,
-    };
-  } catch (error) {
-    return rejectWithValue(axiosErrorManager(error));
+>(
+  "users/fetchAllUser",
+  async ({ page, limit, search, role }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/admin/users?page=${page}&limit=${limit}&search=${search}&role=${role}`
+      );
+      console.log(response.data);
+      return {
+        allUsers: response.data.users,
+        totalUsers: response.data.totalUsers,
+        totalBannedUsers: response.data.totalBannedUsers,
+        totalActiveUser: response.data.totalActiveUser,
+      };
+    } catch (error) {
+      return rejectWithValue(axiosErrorManager(error));
+    }
   }
-});
+);
 
 export const blockUser = createAsyncThunk<
-  { user: User }, 
-  { id: string }, 
+  { user: User },
+  { id: string },
   { rejectValue: string }
 >("users/blockUser", async ({ id }, { rejectWithValue }) => {
   try {
