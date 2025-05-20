@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono,Outfit } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ReduxProvider from "@/redux/provider";
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-const outfit = Outfit({
-  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
@@ -30,14 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={outfit.className} data-theme="light">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ReduxProvider>
-          {children}
-          <ToastContainer position="top-right" autoClose={3000} />
-        </ReduxProvider>
+        {children}
       </body>
     </html>
   );
