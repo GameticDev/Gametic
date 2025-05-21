@@ -1,19 +1,17 @@
 "use client";
 import { blockUser, fetchAllUser } from "@/redux/actions/admin/userActions";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { User } from "@/redux/slices/admin/userSlice";
 import {
   ArrowUp,
   Ban,
   ChevronLeft,
   ChevronRight,
   EllipsisVertical,
-  Pen,
   Search,
   Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import ListSkelton from "./skelton/listSkelton";
+import ListSkeleton from "./skelton/tableSkelton";
 
 interface UserListProps {
   search: string;
@@ -22,124 +20,238 @@ interface UserListProps {
 
 const UserList: React.FC<UserListProps> = ({ search, role }) => {
   const dispatch = useAppDispatch();
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const { users, totalUsers, loading } = useAppSelector(
     (state) => state.adminUsers
   );
 
   useEffect(() => {
     dispatch(fetchAllUser({ page: currentPage, limit: 5, search, role }));
-  }, [dispatch, currentPage, search]);
+  }, [dispatch, currentPage, search, role]);
 
-  const blockUserById = async (id: string): Promise<User | undefined> => {
+  const itemsPerPage = 5;
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(startItem + itemsPerPage - 1, totalUsers || 0);
+  const totalPages = Math.ceil((totalUsers || 0) / itemsPerPage);
+
+  const blockUserById = async (id: string) => {
     try {
-      const response = await dispatch(blockUser({ id })).unwrap();
+      await dispatch(blockUser({ id })).unwrap();
       dispatch(fetchAllUser({ page: currentPage, limit: 5, search, role }));
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Failed to block user:", error);
-      return undefined;
     }
   };
 
   return (
-    <div className="w-full">
-      <table className="w-full">
-        <thead>
-          <tr className="font-medium text-[#637381] bg-[#f4f5f6]">
-            <td className="text-black p-4 flex items-center">
-              Name{" "}
-              <span>
-                <ArrowUp className="text-[#637381] ml-1" size={20} />
-              </span>
-            </td>
-            <td className="p-4">Email</td>
-            <td className="p-4">Phone number</td>
-            <td className="p-4">Role</td>
-            <td className="p-4">Status</td>
-            <td className="p-4"></td>
-          </tr>
-        </thead>
-        {loading ? (
-          <ListSkelton />
+    <div className="w-full bg-white rounded-lg">
+      {/* Table */}
+      <div className="overflow-x-auto w-full">
+        {users?.length === 0 ? (
+          <div className="w-full p-12 flex justify-center">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                <Search size={24} className="text-gray-400" />
+              </div>
+              <p className="mt-4 text-gray-600 font-medium">No users found</p>
+              <p className="text-gray-500 mt-1">
+                Try adjusting your search or filters
+              </p>
+            </div>
+          </div>
         ) : (
-          <tbody>
-            {users.map((item) => (
-              <tr className="hover:bg-[#f4f5f6]" key={item._id}>
-                <td className="text-black p-4 flex items-center">
-                  <span className="mr-2">
-                    <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">
-                        {item.username.slice(0, 2).toUpperCase()}
-                      </span>
-                    </div>
-                  </span>
-                  {item.username}
-                </td>
-                <td className="p-4">{item.email}</td>
-                <td className="p-4">+91 0000000000</td>
-                <td className="p-4">{item.role}</td>
-                <td className="p-4">
-                  <span
-                    className={`${
-                      item.isBlocked
-                        ? "text-[#B91D18] bg-[#FFE4DE]"
-                        : "text-[#118D57] bg-[#DBF6E5]"
-                    } py-1 px-2 rounded-lg`}
-                  >
-                    {item.isBlocked ? "Banned" : "Active"}
-                  </span>
-                </td>
-                <td className="p-4 flex text-[#637381] justify-evenly">
-                  <Pen size={22} />
-                  <div className="dropdown dropdown-left">
-                    <div tabIndex={0} role="button">
-                      <EllipsisVertical size={25} />
-                    </div>
-                    <ul
-                      tabIndex={0}
-                      className="dropdown-content menu bg-gray-50 w-[100px] rounded-2xl p-1"
-                    >
-                      <li
-                        className="p-1 w-full flex hover:bg-[#f4f5f6] rounded-xl"
-                        onClick={() => blockUserById(item._id)}
-                      >
-                        <h1 className="flex justify-between">
-                          <span>Ban</span>
-                          <Ban size={20} className="text-[#B91D18]" />
-                        </h1>
-                      </li>
-                      <li className="p-1 w-full flex hover:bg-[#f4f5f6] rounded-xl">
-                        <h1 className="flex justify-between">
-                          <span>Delete</span>
-                          <Trash2 size={20} className="text-[#B91D18]" />
-                        </h1>
-                      </li>
-                    </ul>
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-gray-500 bg-gray-50 border-b border-gray-100">
+                <th className="p-4 font-medium">
+                  <div className="flex items-center cursor-pointer hover:text-gray-700">
+                    User Name
                   </div>
-                </td>
+                </th>
+                <th className="p-4 font-medium">
+                  <div className="flex items-center cursor-pointer hover:text-gray-700">
+                    Email
+                  </div>
+                </th>
+                <th className="p-4 font-medium">
+                  <div className="flex items-center cursor-pointer hover:text-gray-700">
+                    Phone Number
+                  </div>
+                </th>
+                <th className="p-4 font-medium">
+                  <div className="flex items-center cursor-pointer hover:text-gray-700">
+                    Role
+                  </div>
+                </th>
+                <th className="p-4 font-medium">
+                  <div className="flex items-center cursor-pointer hover:text-gray-700">
+                    Status
+                  </div>
+                </th>
+                <th className="p-4 font-medium text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
+            </thead>
+
+            {loading ? (
+              <ListSkeleton />
+            ) : (
+              <tbody>
+                {users.map((item) => (
+                  <tr
+                    key={item._id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="p-4">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white font-medium relative">
+                          {/* {item?.image (
+                          <Image
+                            src={item.image[0]}
+                            fill
+                            alt={item.name}
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                            <span className="text-xs">No Img</span>
+                          </div>
+                        )} */}
+                          {item.username.slice(0, 2).toUpperCase()}
+                        </div>
+                        <div className="ml-3">
+                          <div className="font-medium text-gray-800">
+                            {item?.username}
+                          </div>
+                          {/* <div className="text-xs text-gray-500">
+                          {item?.address}
+                        </div> */}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-4 text-sm text-gray-600">{item?.email}</td>
+                    <td className="p-4">
+                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        {"+91 0000000000"}
+                      </span>
+                    </td>
+                    <td className="p-4 text-sm text-gray-600">{item?.role}</td>
+                    <td className="p-4">
+                      {item.isBlocked ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-600 mr-1.5"></span>
+                          Banned
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span>
+                          Active
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <div className="dropdown dropdown-left">
+                          <button
+                            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                            title="More options"
+                          >
+                            <EllipsisVertical
+                              size={18}
+                              className="text-gray-500"
+                            />
+                          </button>
+                          <ul
+                            tabIndex={0}
+                            className="dropdown-content menu shadow-lg bg-white rounded-lg p-2 w-48 border border-gray-100"
+                          >
+                            <li>
+                              <button
+                                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
+                                onClick={() => blockUserById(item._id)}
+                              >
+                                <Ban size={16} />
+                                <span>
+                                  {item.isBlocked ? "Un Block" : "Block"}
+                                </span>
+                              </button>
+                            </li>
+                            <li>
+                              <button className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md">
+                                <Trash2 size={16} />
+                                <span>Delete Venue</span>
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
+          </table>
         )}
-      </table>
-      <div className="w-full flex justify-end px-2">
-        <div className="p-4 text-[15px]">1 - 5 of {totalUsers}</div>
-        <button
-          disabled={currentPage <= 1}
-          className={`p-4 ${
-            currentPage <= 1 ? "text-[#637381]" : "cursor-pointer"
-          }`}
-          onClick={() => setCurrentPage(currentPage - 1)}
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <button
-          className="p-4 cursor-pointer"
-          onClick={() => setCurrentPage(currentPage + 1)}
-        >
-          <ChevronRight size={20} />
-        </button>
       </div>
+
+      {/* Pagination */}
+      {users && users.length > 0 && (
+        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+          <div className="flex-1 text-sm text-gray-500">
+            Showing <span className="font-medium">{startItem}</span> to{" "}
+            <span className="font-medium">{endItem}</span> of{" "}
+            <span className="font-medium">{totalUsers}</span> venues
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage <= 1}
+              className={`p-2 rounded-md ${
+                currentPage <= 1
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <span className="sr-only">First page</span>
+            </button>
+            <button
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage <= 1}
+              className={`p-2 rounded-md ${
+                currentPage <= 1
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <span className="sr-only">Previous page</span>
+              <ChevronLeft size={16} />
+            </button>
+
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage >= totalPages}
+              className={`p-2 rounded-md ${
+                currentPage >= totalPages
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <span className="sr-only">Next page</span>
+              <ChevronRight size={16} />
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage >= totalPages}
+              className={`p-2 rounded-md ${
+                currentPage >= totalPages
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <span className="sr-only">Last page</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

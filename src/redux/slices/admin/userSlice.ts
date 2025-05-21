@@ -16,6 +16,7 @@ export interface User {
 interface UsersState {
   users: User[];
   loading: boolean;
+  banLoading:boolean;
   error: string | null;
   totalUsers: number;
   totalActiveUser: number;
@@ -27,6 +28,7 @@ const INITIAL_STATE: UsersState = {
   totalActiveUser: 0,
   totalBannedUsers: 0,
   loading: false,
+  banLoading:false,
   error: null,
 };
 
@@ -52,13 +54,13 @@ const userSlice = createSlice({
         state.error = action.payload || "Something wrong";
       })
       .addCase(blockUser.pending, (state) => {
-        state.loading = true;
+        state.banLoading = true;
       })
       .addCase(blockUser.fulfilled, (state) => {
-        state.loading = false;
+        state.banLoading = false;
       })
       .addCase(blockUser.rejected, (state, action) => {
-        state.loading = false;
+        state.banLoading = false;
         state.error = action.payload || "Someting wrong";
       });
   },

@@ -4,7 +4,6 @@ import { useState } from "react";
 import FormFields from "./(feildform)/page";
 import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
-import axios from "axios";
 import axiosInstance from "@/utils/axiosInstance";
 
 interface SportsRegistrationModalProps {
