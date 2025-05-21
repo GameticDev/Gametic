@@ -24,9 +24,14 @@ const Page = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleSubmit = async(e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    dispatch(loginUser(data)); 
+    try {
+      await dispatch(loginUser(data));
+      alert("ok")
+    } catch (error) {
+      console.log(error)
+    } 
   };
 
   return (

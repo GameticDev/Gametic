@@ -18,6 +18,7 @@ export default function RegistrationForm() {
     email: "",
     password: "",
   });
+  console.log(data)
 
   const dispatch = useAppDispatch();
 
