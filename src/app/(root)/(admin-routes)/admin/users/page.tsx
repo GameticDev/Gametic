@@ -1,51 +1,69 @@
-const page = () => {
+"use client";
+import SearchUser from "@/components/admin/searchUser";
+import UserList from "@/components/admin/userList";
+import { fetchAllUser } from "@/redux/actions/admin/userActions";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useEffect, useState } from "react";
+
+const Page = () => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [role, setRole] = useState<string>("");
+  const dispatch = useAppDispatch();
+  const { totalUsers, totalActiveUser, totalBannedUsers } = useAppSelector(
+    (state) => state.adminUsers
+  );
+
+  useEffect(() => {
+    dispatch(fetchAllUser({ page: 1, limit: 5, search: searchTerm, role }));
+  }, [dispatch, searchTerm, role]);
+
+  const getSearchInput = (search: string) => {
+    setSearchTerm(search);
+  };
+  const getRole = (role: string) => {
+    setRole(role);
+  };
+
   return (
-    <div className="py-2 px-10 w-full h-auto">
-      <div className="flex flex-col gap-3">
+    <div className="py-2 px-10 w-auto h-auto ml-[284px] mt-[72px]">
+      <div className="flex flex-col gap-3 mb-10">
         <h1 className="text-[28px] font-semibold">List</h1>
         <div className="flex gap-5 items-center text-[14px] text-[#1c252e]">
-          <h4>Dashbord</h4>
+          <h4>Dashboard</h4>
           <div className="w-1 h-1 bg-[#919EAB] mt-[1px] rounded-full"></div>
           <h4>Users</h4>
         </div>
       </div>
-      <div className="w-full shadow-[rgba(0,0,0,0.02)_0px_1px_3px_0px,rgba(27,31,35,0.15)_0px_0px_0px_1px]
-} border border-white/5 ">
-        <div className="border-b-2 w-full flex gap-10">
-          <button className="text-[14px] font-medium py-2.5">
+      <div className="w-full shadow-[rgba(0,0,0,0.02)_0px_1px_3px_0px,rgba(27,31,35,0.15)_0px_0px_0px_1px]">
+        <div className="border-b-2 border-white/50 w-full flex gap-10 px-5 py-2">
+          <button className="text-[14px] font-medium py-2.5 cursor-pointer">
             All{" "}
             <span className="px-1.5 py-[2px] rounded-md bg-black text-white ml-2">
-              20
+              {totalUsers}
             </span>
           </button>
-          <button className="text-[14px] font-medium py-2.5 ">
+          <button className="text-[14px] font-medium py-2.5 cursor-pointer">
             Active{" "}
             <span className="px-1.5 py-[2px] rounded-md bg-[#DBF6E5] text-[#118D57] ml-2">
-              2
+              {totalActiveUser}
             </span>
           </button>
-          <button className="text-[14px] font-medium py-2.5">
-            Pending{" "}
-            <span className="px-1.5 py-[2px] rounded-md bg-[#FFF1D6] text-[#B76E00] ml-2">
-              10
-            </span>
-          </button>
-          <button className="text-[14px] font-medium py-2.5">
+          <button className="text-[14px] font-medium py-2.5 cursor-pointer">
             Banned{" "}
             <span className="px-1.5 py-[2px] rounded-md bg-[#FFE4DE] text-[#B91D18] ml-2">
-              6
+              {totalBannedUsers}
             </span>
           </button>
-          <button className="text-[14px] font-medium py-2.5">
-            Rejected{" "}
-            <span className="px-1.5 py-[2px] rounded-md bg-[#EDEFF1] text-[#637381] ml-2">
-              2
-            </span>
-          </button>
+        </div>
+        <div className="w-full">
+          <SearchUser onSearch={getSearchInput} getRole={getRole} />
+        </div>
+        <div className="w-full">
+          <UserList search={searchTerm} role={role}/>
         </div>
       </div>
     </div>
   );
 };
 
-export default page;
+export default Page;

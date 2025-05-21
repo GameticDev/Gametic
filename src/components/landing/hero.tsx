@@ -13,7 +13,7 @@ const lovedKing = Loved_by_the_King({
 
 const Hero = () => {
   return (
-    <div className="h-full w-full rounded-xl relative flex px-20">
+    <div className="h-full w-full relative flex px-20">
       {/* <Image
         src="https://res.cloudinary.com/dup1lh7xk/image/upload/v1747132558/hero_ehgykt.jpg"
         fill
@@ -21,7 +21,7 @@ const Hero = () => {
         className="absolute rounded-xl object-cover top-0 left-0 z-10"
       /> */}
       <HeroImageSlider/>
-      <div className="w-full h-full absolute top-0 left-0 z-20 bg-black/50 rounded-xl"/>
+      <div className="w-full h-full absolute top-0 left-0 z-20 bg-black/50"/>
       <div className=" w-full z-50 absolute top-0 left-0">
         <Navbar />
       </div>
