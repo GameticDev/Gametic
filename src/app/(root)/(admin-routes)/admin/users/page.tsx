@@ -16,6 +16,7 @@ const Page = () => {
     (state) => state.adminUsers
   );
 
+
   useEffect(() => {
     dispatch(fetchAllUser({ page: 1, limit: 5, search: searchTerm, role }));
   }, [dispatch, searchTerm, role]);

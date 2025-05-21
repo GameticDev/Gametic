@@ -7,6 +7,9 @@ import {
   Ban,
   ChevronLeft,
   ChevronRight,
+  EllipsisVertical,
+  Pen,
+  Search,
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
