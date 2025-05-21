@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import LoginFrom from "./(feildform)/page"
 
 interface LoginModalProps {
   onClose?: () => void;
@@ -50,34 +51,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
             <div className="px-4 text-sm text-gray-500">LOGIN WITH</div>
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
-
-          {/* Email Input */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#004235]"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          {/* Password Input */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#004235]"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {/* Login Button */}
-          <button
-            className="w-full bg-[#004235] text-white py-2 rounded-md font-medium hover:bg-[#003226]"
-          >
-            LOGIN
-          </button>
-
+<LoginFrom></LoginFrom>
           {/* Register Link */}
           <div className="text-center mt-4 text-sm">
             Don’t have an account?{" "}
