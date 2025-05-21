@@ -46,6 +46,7 @@ const venueSlice = createSlice({
     builder
       .addCase(fetchAllVenues.pending, (state) => {
         state.loading = true;
+        console.log(state.loading)
       })
       .addCase(fetchAllVenues.fulfilled, (state, action) => {
         state.loading = false;

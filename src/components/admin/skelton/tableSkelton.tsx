@@ -5,7 +5,7 @@ const ListSkeleton = () => {
         <tr key={index} className="border-b border-gray-100">
           <td className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+              <div className="w-8 h-8 bg-gray-200 rounded-sm"></div>
               <div className="h-4 bg-gray-200 rounded w-24"></div>
             </div>
           </td>

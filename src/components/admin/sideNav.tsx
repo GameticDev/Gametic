@@ -276,8 +276,6 @@ const navSections: NavSectionType[] = [
         hasSubmenu: true,
         subItems: [
           { label: "All Users", path: "/admin/users" },
-          { label: "Add New", path: "/admin/users/new" },
-          { label: "Groups", path: "/admin/users/groups" },
         ],
       },
       {
@@ -287,8 +285,6 @@ const navSections: NavSectionType[] = [
         hasSubmenu: true,
         subItems: [
           { label: "All Venues", path: "/admin/venues" },
-          { label: "Add Venue", path: "/admin/venues/new" },
-          { label: "Categories", path: "/admin/venues/categories" },
         ],
       },
       {
