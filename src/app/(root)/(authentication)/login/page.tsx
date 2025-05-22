@@ -30,6 +30,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         />
 
         {/* Right Side - Login Form */}
+        
         <div className="w-full md:w-3/5 p-8 bg-white relative">
           {/* Close button */}
           <button
