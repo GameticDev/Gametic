@@ -8,9 +8,7 @@ export const registerUser = createAsyncThunk<AuthResponse, RegisterData>(
   async (data, { rejectWithValue }) => {
     
     try {
-      console.log(data , "hoobaa");
       const response = await axiosInstance.post<AuthResponse>('api/register', data);
-      console.log(response.data , "bnm,");
       return response.data ;
     } catch (error) {
       console.log(error , "log");

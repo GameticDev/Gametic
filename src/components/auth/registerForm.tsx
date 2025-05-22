@@ -1,8 +1,11 @@
 'use client';
 
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAppDispatch } from '@/redux/hooks';
+import { registerUser } from "@/redux/actions/authantication/authanticationAction";
+import {  toast } from 'sonner';
+import {LoginModalProps} from './authModal'
 // Assuming you have a registration action
 // import { registerUser } from '@/redux/actions/authantication/authanticationAction';
 
@@ -14,7 +17,7 @@ interface RegisterData {
   accountType: 'user' | 'owner';
 }
 
-const RegisterForm = () => {
+const RegisterForm = ({onClose} : LoginModalProps ) => {
   const dispatch = useAppDispatch();
   
   const [data, setData] = useState<RegisterData>({
@@ -41,11 +44,11 @@ const RegisterForm = () => {
   const handleSubmit = async(e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      // Replace with your registration action
-      // await dispatch(registerUser(data));
-      console.log("Registration data:", data);
-      alert("Registration successful");
+      toast.success("Registration successful")
+      await dispatch(registerUser(data));
+      onClose()
     } catch (error) {
+      toast.error("User already exist")
       console.log(error);
     } 
   };

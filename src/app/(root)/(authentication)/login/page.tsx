@@ -30,7 +30,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         />
 
         {/* Right Side - Login Form */}
-        
+
         <div className="w-full md:w-3/5 p-8 bg-white relative">
           {/* Close button */}
           <button
@@ -55,7 +55,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
 <LoginFrom></LoginFrom>
           {/* Register Link */}
           <div className="text-center mt-4 text-sm">
-            Don’t have an account?{" "}
+            Don`t have an account?{" "}
             <a href="#" className="text-[#698B66] font-medium hover:text-[#989160]" onClick={() => router.push('registration')}>
               Register
             </a>
