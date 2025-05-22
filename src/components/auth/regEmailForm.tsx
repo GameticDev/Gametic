@@ -10,11 +10,13 @@ interface EmailData {
 
 interface EmailFormProps {
   onEmailSubmit: (data: EmailData) => void;
+
   openOtp: () => void;
 }
 
 const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
   const dispatch = useAppDispatch();
+
   const [data, setData] = useState<EmailData>({
     email: "",
     accountType: "user",
@@ -34,6 +36,7 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
     });
   };
 
+
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     onEmailSubmit(data);
@@ -43,6 +46,7 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
     } catch (error) {
       console.log(error);
     }
+
   };
 
   return (
@@ -123,4 +127,6 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
   );
 };
 
+
 export default EmailForm;
+

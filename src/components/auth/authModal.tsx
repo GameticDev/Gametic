@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import OTPForm from "./otpForm";
 import EmailForm from "./regEmailForm";
 import CredentialsForm from "./credentialForm";
+
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { useAppDispatch } from "@/redux/hooks";
 import { googleLogin } from "@/redux/actions/authantication/authanticationAction";
 import { useRouter } from "next/navigation";
+
 interface LoginModalProps {
   open: boolean;
   toggle: string;
@@ -90,6 +92,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
             {otpOpen ? (
               <OTPForm credentialOpen={credentialOpen} />
             ) : openCredential ? (
+
               <CredentialsForm
                 email={data.email}
                 accountType={data.accountType}
@@ -118,6 +121,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 </button>
 
                 <div className={`text-center mb-8`}>
+
                   <div className="w-16 h-16 bg-[#98916D]/10 flex items-center justify-center rounded-full mx-auto mb-4">
                     <svg
                       className="w-8 h-8 text-[#00423D]"
@@ -144,6 +148,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   </p>
                 </div>
 
+
                 <div className={`mb-6`}>
                   <GoogleLogin
                     onSuccess={handleGoogleLogin}
@@ -154,6 +159,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 </div>
 
                 <div className={`flex items-center my-6`}>
+
                   <div className="flex-1 border-t border-gray-300"></div>
                   <div className="px-4 text-sm text-gray-500">
                     or continue with email
@@ -167,7 +173,9 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 ) : (
                   <EmailForm openOtp={openOtp} onEmailSubmit={onEmailSubmit} />
                 )}
+
                 <div className={`text-center text-sm mt-6`}>
+
                   {toggleAuth === "login"
                     ? "Don't have an account?"
                     : "Already have an account?"}
