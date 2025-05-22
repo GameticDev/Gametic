@@ -1,142 +1,3 @@
-// "use client";
-
-// import React from "react";
-// import { ChevronRight } from "lucide-react";
-// import localFont from "next/font/local";
-// import {
-//   AnalyticsIcon,
-//   AppIcon,
-//   BookingIcon,
-//   InvoiceIcon,
-//   OrderIcon,
-//   ProductIcon,
-//   UserIcon,
-// } from "./ui/icons";
-// import Link from "next/link";
-// import { usePathname } from "next/navigation";
-
-// const racesport = localFont({
-//   src: "../../fonts/RaceSport.ttf",
-//   variable: "--font-RaceSport",
-// });
-
-// interface NavItemType {
-//   label: string;
-//   icon: React.ReactNode;
-//   path: string;
-//   hasSubmenu?: boolean;
-// }
-
-// interface NavSectionType {
-//   title: string;
-//   items: NavItemType[];
-// }
-
-// const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
-//   <div className="px-4 py-2 mt-4 mb-1">
-//     <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-//       {title}
-//     </span>
-//   </div>
-// );
-
-// const NavItem: React.FC<{
-//   icon: React.ReactNode;
-//   label: string;
-//   hasSubmenu?: boolean;
-//   isActive?: boolean;
-// }> = ({ icon, label, hasSubmenu = false, isActive = false }) => (
-//   <div
-//     className={`flex items-center px-4 py-3 rounded-lg cursor-pointer ${
-//       isActive ? "bg-blue-50" : "hover:bg-gray-100"
-//     }`}
-//   >
-//     <div className="mr-3">{icon}</div>
-//     <span
-//       className={`flex-grow font-semibold ${
-//         isActive ? "text-blue-600 font-medium" : "text-gray-600"
-//       }`}
-//     >
-//       {label}
-//     </span>
-//     {hasSubmenu && <ChevronRight size={16} className="text-gray-400" />}
-//   </div>
-// );
-
-// const navSections: NavSectionType[] = [
-//   {
-//     title: "OVERVIEW",
-//     items: [
-//       { label: "App", icon: <AppIcon />, path: "/admin/app" },
-//       { label: "Analytics", icon: <AnalyticsIcon />, path: "/admin/analytics" },
-//       { label: "Booking", icon: <BookingIcon />, path: "/admin/booking" },
-//     ],
-//   },
-//   {
-//     title: "MANAGEMENT",
-//     items: [
-//       {
-//         label: "Users",
-//         icon: <UserIcon />,
-//         path: "/admin/users",
-//         hasSubmenu: true,
-//       },
-//       {
-//         label: "Venues",
-//         icon: <ProductIcon />,
-//         path: "/admin/venues",
-//         hasSubmenu: true,
-//       },
-//       {
-//         label: "Bookings",
-//         icon: <OrderIcon />,
-//         path: "/admin/bookings",
-//         hasSubmenu: true,
-//       },
-//       {
-//         label: "Invoice",
-//         icon: <InvoiceIcon />,
-//         path: "/admin/invoice",
-//         hasSubmenu: true,
-//       },
-//     ],
-//   },
-// ];
-
-// const SideNav: React.FC = () => {
-//   const pathname = usePathname();
-
-//   return (
-//     <div className="w-[250px] h-screen bg-white border-r border-gray-200 flex flex-col overflow-y-auto">
-//       <div
-//         className={`${racesport.className} px-4 py-10 flex items-center text-gray-600 text-xl`}
-//       >
-//         GAMETIC!
-//       </div>
-
-//       {navSections.map((section) => (
-//         <div key={section.title}>
-//           <SectionHeader title={section.title} />
-//           <div className="px-2 space-y-1">
-//             {section.items.map(({ label, icon, path, hasSubmenu }) => (
-//               <Link key={label} href={path}>
-//                 <NavItem
-//                   icon={icon}
-//                   label={label}
-//                   hasSubmenu={hasSubmenu}
-//                   isActive={pathname.startsWith(path)}
-//                 />
-//               </Link>
-//             ))}
-//           </div>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default SideNav;
-
 "use client";
 
 import React, { useState } from "react";
@@ -175,8 +36,8 @@ interface NavSectionType {
 // Enhanced SectionHeader with gradient accent
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
   <div className="px-4 py-3 mt-4 mb-1 relative">
-    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-5 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-r"></div>
-    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider pl-2">
+    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-5 bg-gradient-to-b from-[#415C41] to-[#00423D] rounded-r"></div>
+    <span className="text-xs font-semibold text-[#998869] uppercase tracking-wider pl-2">
       {title}
     </span>
   </div>
@@ -202,21 +63,21 @@ const NavItem: React.FC<{
     className={`flex items-center px-4 py-3 my-1 rounded-lg cursor-pointer transition-all duration-200 
       ${
         isActive
-          ? "bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500"
-          : "hover:bg-gray-50 hover:translate-x-1"
+          ? "bg-gradient-to-r from-[#415C41]/10 to-[#00423D]/10 border-l-4 border-[#415C41]"
+          : "hover:bg-[#998869]/5 hover:translate-x-1"
       }`}
     onClick={onClick}
   >
     <div
       className={`mr-3 transition-colors duration-200 ${
-        isActive ? "text-blue-600" : "text-gray-500"
+        isActive ? "text-[#415C41]" : "text-[#998869]"
       }`}
     >
       {icon}
     </div>
     <span
       className={`flex-grow font-medium transition-colors duration-200 ${
-        isActive ? "text-blue-600" : "text-gray-700"
+        isActive ? "text-[#415C41]" : "text-[#00423D]"
       }`}
     >
       {label}
@@ -226,14 +87,14 @@ const NavItem: React.FC<{
         <ChevronDown
           size={16}
           className={`transform transition-transform duration-200 ${
-            isActive ? "text-blue-500" : "text-gray-400"
+            isActive ? "text-[#415C41]" : "text-[#998869]"
           }`}
         />
       ) : (
         <ChevronRight
           size={16}
           className={`transform transition-transform duration-200 ${
-            isActive ? "text-blue-500" : "text-gray-400"
+            isActive ? "text-[#415C41]" : "text-[#998869]"
           }`}
         />
       ))}
@@ -249,8 +110,8 @@ const SubMenuItem: React.FC<{ label: string; isActive: boolean }> = ({
     className={`flex items-center px-4 py-2 pl-12 rounded-lg cursor-pointer transition-all duration-200 text-sm
     ${
       isActive
-        ? "bg-blue-50 text-blue-600 font-medium"
-        : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+        ? "bg-[#415C41]/10 text-[#415C41] font-medium"
+        : "text-[#998869] hover:bg-[#998869]/5 hover:text-[#00423D]"
     }`}
   >
     {label}
@@ -329,12 +190,12 @@ const SideNav: React.FC = () => {
 
   return (
     <div
-      className={`h-screen bg-white border-r border-gray-200 flex flex-col overflow-y-auto shadow-sm transition-all duration-300 ${
+      className={`h-screen bg-white border-r border-[#998869]/20 flex flex-col overflow-y-auto shadow-sm transition-all duration-300 ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
       {/* Header with toggle button */}
-      <div className="sticky top-0 bg-white z-10 border-b border-gray-100">
+      <div className="sticky top-0 bg-white z-10 border-b border-[#998869]/10">
         <div
           className={`px-4 py-5 flex items-center justify-between ${
             collapsed ? "justify-center" : ""
@@ -342,16 +203,16 @@ const SideNav: React.FC = () => {
         >
           {!collapsed && (
             <div
-              className={`${racesport.className} text-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text font-bold`}
+              className={`${racesport.className} text-xl bg-gradient-to-r from-[#415C41] to-[#00423D] text-transparent bg-clip-text font-bold`}
             >
               GAMETIC!
             </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            className="p-1.5 rounded-lg hover:bg-[#998869]/10 transition-colors duration-200"
           >
-            <Menu size={20} className="text-gray-600" />
+            <Menu size={20} className="text-[#998869]" />
           </button>
         </div>
       </div>
@@ -361,7 +222,7 @@ const SideNav: React.FC = () => {
         {navSections.map((section) => (
           <div key={section.title} className={collapsed ? "px-2" : ""}>
             {!collapsed && <SectionHeader title={section.title} />}
-            {collapsed && <div className="h-px bg-gray-200 mx-2 my-4"></div>}
+            {collapsed && <div className="h-px bg-[#998869]/20 mx-2 my-4"></div>}
             <div className={`${collapsed ? "px-0" : "px-2"} space-y-1`}>
               {section.items.map(
                 ({ label, icon, path, hasSubmenu, subItems }) => {
@@ -376,11 +237,11 @@ const SideNav: React.FC = () => {
                             onClick={() => !collapsed && toggleSubmenu(path)}
                           >
                             {collapsed ? (
-                              <div className="flex justify-center py-3 hover:bg-gray-50 rounded-lg cursor-pointer relative group">
-                                <div className="text-gray-500 group-hover:text-blue-500 transition-colors">
+                              <div className="flex justify-center py-3 hover:bg-[#998869]/5 rounded-lg cursor-pointer relative group">
+                                <div className="text-[#998869] group-hover:text-[#415C41] transition-colors">
                                   {icon}
                                 </div>
-                                <div className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded hidden group-hover:block whitespace-nowrap z-50">
+                                <div className="absolute left-full ml-3 px-2 py-1 bg-[#00423D] text-white text-xs rounded hidden group-hover:block whitespace-nowrap z-50">
                                   {label}
                                 </div>
                               </div>
@@ -395,7 +256,7 @@ const SideNav: React.FC = () => {
                             )}
                           </div>
                           {!collapsed && isExpanded && subItems && (
-                            <div className="ml-2 pl-2 border-l border-gray-200 mt-1 mb-2 space-y-1 animate-fadeIn">
+                            <div className="ml-2 pl-2 border-l border-[#998869]/20 mt-1 mb-2 space-y-1 animate-fadeIn">
                               {subItems.map((subItem) => (
                                 <Link key={subItem.path} href={subItem.path}>
                                   <SubMenuItem
@@ -410,15 +271,15 @@ const SideNav: React.FC = () => {
                       ) : (
                         <Link key={path} href={path}>
                           {collapsed ? (
-                            <div className="flex justify-center py-3 hover:bg-gray-50 rounded-lg cursor-pointer relative group">
+                            <div className="flex justify-center py-3 hover:bg-[#998869]/5 rounded-lg cursor-pointer relative group">
                               <div
                                 className={`${
-                                  isActive ? "text-blue-500" : "text-gray-500"
-                                } group-hover:text-blue-500 transition-colors`}
+                                  isActive ? "text-[#415C41]" : "text-[#998869]"
+                                } group-hover:text-[#415C41] transition-colors`}
                               >
                                 {icon}
                               </div>
-                              <div className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded hidden group-hover:block whitespace-nowrap z-50">
+                              <div className="absolute left-full ml-3 px-2 py-1 bg-[#00423D] text-white text-xs rounded hidden group-hover:block whitespace-nowrap z-50">
                                 {label}
                               </div>
                             </div>
@@ -442,25 +303,25 @@ const SideNav: React.FC = () => {
 
       {/* User profile section at bottom */}
       <div
-        className={`mt-auto border-t border-gray-200 p-4 ${
+        className={`mt-auto border-t border-[#998869]/20 p-4 ${
           collapsed ? "py-4 px-2" : ""
         }`}
       >
         {!collapsed ? (
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#415C41] to-[#00423D] flex items-center justify-center text-white font-medium">
               AG
             </div>
             <div className="flex-grow">
-              <div className="text-sm font-medium text-gray-700">
+              <div className="text-sm font-medium text-[#00423D]">
                 Admin User
               </div>
-              <div className="text-xs text-gray-500">admin@gametic.com</div>
+              <div className="text-xs text-[#998869]">admin@gametic.com</div>
             </div>
           </div>
         ) : (
           <div className="flex justify-center">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium cursor-pointer">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#415C41] to-[#00423D] flex items-center justify-center text-white font-medium cursor-pointer">
               AG
             </div>
           </div>

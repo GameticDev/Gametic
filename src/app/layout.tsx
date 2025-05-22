@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import ReduxProvider from "@/redux/provider";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 // import { GoogleOAuthProvider } from '@react-oauth/google';
-import { GoogleOAuthProvider } from '@react-oauth/google'
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,11 +32,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={outfit.className} data-theme="light">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={outfit.className}
+      data-theme="light"
+    >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <  GoogleOAuthProvider clientId="661322633438-f5u3rrdu14r396lkegqii6vkuo31gokt.apps.googleusercontent.com">
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+        >
           <ReduxProvider>
             {children}
             <ToastContainer position="top-right" autoClose={3000} />

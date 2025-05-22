@@ -1,4 +1,6 @@
 "use client";
+import { genrateOTP } from "@/redux/actions/authantication/authanticationAction";
+import { useAppDispatch } from "@/redux/hooks";
 import { useState } from "react";
 
 interface EmailData {
@@ -8,12 +10,11 @@ interface EmailData {
 
 interface EmailFormProps {
   onEmailSubmit: (data: EmailData) => void;
-    openOtp: () => void;
-
-
+  openOtp: () => void;
 }
 
-const EmailForm = ({ openOtp,onEmailSubmit }: EmailFormProps) => {
+const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
+  const dispatch = useAppDispatch();
   const [data, setData] = useState<EmailData>({
     email: "",
     accountType: "user",
@@ -33,10 +34,15 @@ const EmailForm = ({ openOtp,onEmailSubmit }: EmailFormProps) => {
     });
   };
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     onEmailSubmit(data);
-    openOtp()
+    try {
+      const res = await dispatch(genrateOTP(data.email));
+      openOtp();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
