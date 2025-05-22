@@ -29,6 +29,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
     accountType: "user",
   });
 
+
   useEffect(() => {
     setToggleAuth(toggle);
   }, [toggle]);
@@ -51,6 +52,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
   };
 
   if (!open) return null;
+
 
   return (
     <>
@@ -158,6 +160,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   </div>
                   <div className="flex-1 border-t border-gray-300"></div>
                 </div>
+
 
                 {toggleAuth === "login" ? (
                   <LoginForm />
