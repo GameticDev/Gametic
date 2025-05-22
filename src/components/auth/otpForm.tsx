@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-
-const OTPForm = () => {
+interface OTPFormProps {
+  credentialOpen: () => void;
+}
+const OTPForm = ({credentialOpen}:OTPFormProps) => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const [canResend, setCanResend] = useState(false);
@@ -69,6 +71,7 @@ const OTPForm = () => {
     }
 
     console.log("OTP entered:", otpString);
+    credentialOpen();
     // Handle OTP verification here
   };
 

@@ -1,30 +1,45 @@
 "use client";
 import LoginForm from "./loginForm";
 import { useEffect, useState } from "react";
-import RegisterForm from "./registerForm";
 import OTPForm from "./otpForm";
+import EmailForm from "./regEmailForm";
+import CredentialsForm from "./credentialForm";
 
 interface LoginModalProps {
   open: boolean;
   toggle: string;
   onClose: () => void;
 }
+interface EmailData {
+  email: string;
+  accountType: "user" | "owner";
+}
 
 export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
   const [toggleAuth, setToggleAuth] = useState<string>(toggle);
   const [otpOpen, setOtpOpen] = useState<boolean>(false);
+  const [openCredential, setOpenCredential] = useState<boolean>(false);
+  const [data, setData] = useState<EmailData>({
+    email: "",
+    accountType: "user",
+  });
 
   useEffect(() => {
     setToggleAuth(toggle);
   }, [toggle]);
-  console.log(toggleAuth);
-  const openOtp = () =>{
-    setOtpOpen(true)
-  }
-  
-  
-  if (!open) return null;
+  const openOtp = () => {
+    setOtpOpen(true);
+  };
+  const credentialOpen = () => {
+    setOtpOpen(false);
+    setOpenCredential(true);
+  };
 
+  const onEmailSubmit = (emailData: EmailData) => {
+    setData(emailData)
+  };
+
+  if (!open) return null;
 
   return (
     <>
@@ -60,7 +75,9 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
             }`}
           >
             {otpOpen ? (
-              <OTPForm />
+              <OTPForm credentialOpen={credentialOpen} />
+            ) : openCredential ? (
+              <CredentialsForm email={data.email} accountType={data.accountType} />
             ) : (
               <>
                 <button
@@ -157,7 +174,11 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   <div className="flex-1 border-t border-gray-300"></div>
                 </div>
 
-                {toggleAuth === "login" ? <LoginForm /> : <RegisterForm openOtp={openOtp}/>}
+                {toggleAuth === "login" ? (
+                  <LoginForm />
+                ) : (
+                  <EmailForm openOtp={openOtp} onEmailSubmit={onEmailSubmit} />
+                )}
                 <div
                   className={`text-center text-sm ${
                     toggleAuth === "register" ? "mt-2" : "mt-6"
