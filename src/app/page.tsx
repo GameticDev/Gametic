@@ -1,3 +1,4 @@
+import AuthModal from "@/components/auth/authModal";
 import HeroSection from "@/components/landing/HeroSection";
 import HomePage from "@/components/landing/homePage";
 import ProvideBanner from "@/components/landing/ProvideBanner";
@@ -10,10 +11,10 @@ export default function Home() {
     <div className="bg-[#F0EFEB]">
       <div className="h-full relative">
         {/* <HomePage /> */}
-        <TopNavbar/>
-        <HeroSection/>
-        <Why/>
-        <ProvideBanner/>
+        <TopNavbar />
+        <HeroSection />
+        <Why />
+        <ProvideBanner />
       </div>
     </div>
   );
