@@ -72,6 +72,7 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
 
     console.log("OTP entered:", otpString);
     credentialOpen();
+
     // Handle OTP verification here
   };
 

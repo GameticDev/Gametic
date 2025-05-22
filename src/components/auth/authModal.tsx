@@ -5,6 +5,7 @@ import OTPForm from "./otpForm";
 import EmailForm from "./regEmailForm";
 import CredentialsForm from "./credentialForm";
 
+
 interface LoginModalProps {
   open: boolean;
   toggle: string;
@@ -24,6 +25,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
     accountType: "user",
   });
 
+
   useEffect(() => {
     setToggleAuth(toggle);
   }, [toggle]);
@@ -40,6 +42,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
   };
 
   if (!open) return null;
+
 
   return (
     <>
@@ -169,6 +172,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   </div>
                   <div className="flex-1 border-t border-gray-300"></div>
                 </div>
+
 
                 {toggleAuth === "login" ? (
                   <LoginForm />
