@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAppDispatch } from "@/redux/hooks";
 
+
 interface RegisterData {
   username: string;
   email: string;
@@ -21,6 +22,7 @@ const RegisterForm = ({ openOtp }:RegisterFormProps) => {
     email: "",
     password: "",
     accountType: "user",
+
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +32,7 @@ const RegisterForm = ({ openOtp }:RegisterFormProps) => {
     });
   };
 
+
   const handleToggleChange = (accountType: "user" | "owner") => {
     setData({
       ...data,
@@ -37,7 +40,9 @@ const RegisterForm = ({ openOtp }:RegisterFormProps) => {
     });
   };
 
+
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+
     e.preventDefault();
     try {
       // Replace with your registration action
@@ -151,6 +156,7 @@ const RegisterForm = ({ openOtp }:RegisterFormProps) => {
 
       {/* Password Input */}
       <div className="">
+
         <label className="block text-sm font-medium text-gray-700 my-1">
           Password
         </label>
@@ -181,6 +187,7 @@ const RegisterForm = ({ openOtp }:RegisterFormProps) => {
             required
           />
         </div>
+
         <div className="my-2 text-xs text-gray-500">
           Password must be at least 8 characters long and include uppercase,
           lowercase, and a number
@@ -198,4 +205,6 @@ const RegisterForm = ({ openOtp }:RegisterFormProps) => {
   );
 };
 
+
 export default RegisterForm;
+

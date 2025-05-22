@@ -185,6 +185,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
           </div>
         </div>
       </div>
+
     </>
   );
 }
