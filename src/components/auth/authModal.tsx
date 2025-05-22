@@ -102,9 +102,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 </button>
 
                 <div
-                  className={`text-center ${
-                    toggleAuth === "register" ? "mb-4" : " mb-8"
-                  }`}
+                  className={`text-center mb-8`}
                 >
                   <div className="w-16 h-16 bg-[#98916D]/10 flex items-center justify-center rounded-full mx-auto mb-4">
                     <svg
@@ -133,7 +131,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 </div>
 
                 <div
-                  className={`${toggleAuth === "register" ? "mb-3" : "mb-6"}`}
+                  className={`mb-6`}
                 >
                   <button className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg p-3 hover:bg-gray-50 transition duration-200">
                     <svg
@@ -163,9 +161,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 </div>
 
                 <div
-                  className={`flex items-center ${
-                    toggleAuth === "register" ? "my-3" : "my-6"
-                  }`}
+                  className={`flex items-center my-6`}
                 >
                   <div className="flex-1 border-t border-gray-300"></div>
                   <div className="px-4 text-sm text-gray-500">
@@ -180,9 +176,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   <EmailForm openOtp={openOtp} onEmailSubmit={onEmailSubmit} />
                 )}
                 <div
-                  className={`text-center text-sm ${
-                    toggleAuth === "register" ? "mt-2" : "mt-6"
-                  }`}
+                  className={`text-center text-sm mt-6`}
                 >
                   {toggleAuth === "login"
                     ? "Don't have an account?"
