@@ -8,6 +8,7 @@ import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { useAppDispatch } from "@/redux/hooks";
 import { googleLogin } from "@/redux/actions/authantication/authanticationAction";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 interface LoginModalProps {
   open: boolean;
   toggle: string;
@@ -15,7 +16,7 @@ interface LoginModalProps {
 }
 interface EmailData {
   email: string;
-  accountType: "user" | "owner";
+  role: "user" | "owner";
 }
 
 export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
@@ -26,7 +27,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
   const [openCredential, setOpenCredential] = useState<boolean>(false);
   const [data, setData] = useState<EmailData>({
     email: "",
-    accountType: "user",
+    role: "user",
   });
 
 
@@ -48,6 +49,8 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
   const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
     dispatch(googleLogin(credentialResponse.credential!));
     router.push('/user')
+    toast.success("login sucessfully")
+    toast.error("error")
 
   };
 
@@ -92,7 +95,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
             ) : openCredential ? (
               <CredentialsForm
                 email={data.email}
-                accountType={data.accountType}
+                accountType={data.role}
               />
             ) : (
               <>

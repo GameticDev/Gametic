@@ -4,8 +4,8 @@ import "./globals.css";
 import ReduxProvider from "@/redux/provider";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-// import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +46,7 @@ export default function RootLayout({
         >
           <ReduxProvider>
             {children}
+            <Toaster />
             <ToastContainer position="top-right" autoClose={3000} />
           </ReduxProvider>
         </GoogleOAuthProvider>

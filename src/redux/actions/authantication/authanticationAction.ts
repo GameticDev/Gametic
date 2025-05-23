@@ -55,30 +55,34 @@ export const googleLogin = createAsyncThunk(
     }
   }
 );
-export const genrateOTP = createAsyncThunk(
-  "auth/genrateOTP",
-  async (email:string, { rejectWithValue }) => {
+export const emailCheck = createAsyncThunk<AuthResponse, RegisterData>(
+  'auth/emailcheck',
+  async (data, { rejectWithValue }) => {
+    
     try {
-      const response = await axiosInstance.post(
-        "/genaraetotp",
-        {email}
-      );
-      return response.data;
+      console.log(data ,"fghjjhg");
+      
+      const response = await axiosInstance.post<AuthResponse>('/emailverification', data);
+      
+      return response.data ;
     } catch (error) {
+      console.log(error , "log");
       return rejectWithValue(axiosErrorManager(error));
+      
     }
   }
 );
-export const verifyOTP = createAsyncThunk(
-  "auth/genrateOTP",
-  async (email:string, { rejectWithValue }) => {
+
+
+export const emailverification = createAsyncThunk<AuthResponse, {email: string; otp: string}>(
+  'auth/emailverification',
+  async (data, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(
-        "/genaraetotp",
-        {email}
-      );
+      const response = await axiosInstance.post<AuthResponse>('/verifyotp', data);
       return response.data;
     } catch (error) {
+      console.log(error);
+      
       return rejectWithValue(axiosErrorManager(error));
     }
   }
