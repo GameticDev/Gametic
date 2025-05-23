@@ -1,11 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-  loginUser,
-  emailverification,
   emailCheck,
+  emailverification,
+  googleLogin,
+  loginUser,
   registerUser,
 } from "../../actions/authantication/authanticationAction";
-import { initialState, AuthResponse } from "../../../types/authantication";
+import { AuthResponse, User } from "../../../types/authantication";
+
+interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  isVerified: boolean;
+}
+
+const initialState: AuthState = {
+  user: null,
+  loading: false,
+  error: null,
+  isVerified: false,
+};
 
 const authSlice = createSlice({
   name: "auth",
@@ -49,11 +64,43 @@ const authSlice = createSlice({
           state.user = action.payload.user;
         }
       )
-      .addCase(registerUser.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload || "Registration failed";
-      })
+      .addCase(
+        registerUser.rejected,
+        (state, action: PayloadAction<unknown>) => {
+          state.loading = false;
+          state.error = action.payload as string;
+        }
+      )
 
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        loginUser.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.loading = false;
+          state.user = action.payload.user;
+          console.log(action.payload.user);
+        }
+      )
+      .addCase(loginUser.rejected, (state, action: PayloadAction<unknown>) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(googleLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        console.log(action.payload.user);
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
       .addCase(emailverification.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -74,18 +121,18 @@ const authSlice = createSlice({
           state.isVerified = false;
         }
       )
-      .addCase(loginUser.pending, (state) => {
+      .addCase(emailCheck.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        loginUser.fulfilled,
+        emailCheck.fulfilled,
         (state, action: PayloadAction<AuthResponse>) => {
           state.loading = false;
           state.user = action.payload.user;
         }
       )
-      .addCase(loginUser.rejected, (state, action: PayloadAction<unknown>) => {
+      .addCase(emailCheck.rejected, (state, action: PayloadAction<unknown>) => {
         state.loading = false;
         state.error = action.payload as string;
       });

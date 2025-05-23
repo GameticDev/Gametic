@@ -1,17 +1,17 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
-
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "http://localhost:5000/api",
+  withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,20 +24,18 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry
-    ) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshToken = Cookies.get('refreshToken');
-        const response = await axios.post(
-          '/api/auth/refresh-token',
-          { refreshToken }
-        );
+        const refreshToken = Cookies.get("refreshToken");
+        const response = await axios.post("/api/auth/refresh-token", {
+          refreshToken,
+        });
         const newAccessToken = response.data.accessToken;
-        Cookies.set('accessToken', newAccessToken);
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+        Cookies.set("accessToken", newAccessToken);
+        axiosInstance.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (err) {
         // Handle token refresh failure (e.g., redirect to login)
