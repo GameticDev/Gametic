@@ -13,7 +13,7 @@ export const registerUser = createAsyncThunk<AuthResponse, RegisterData>(
     try {
       console.log(data, "hoobaa");
       const response = await axiosInstance.post<AuthResponse>(
-        "api/register",
+        "/register",
         data
       );
       console.log(response.data, "bnm,");
