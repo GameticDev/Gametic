@@ -73,3 +73,4 @@ export const initialState: AuthState = {
   error: null,
   isVerified: false,
 };
+

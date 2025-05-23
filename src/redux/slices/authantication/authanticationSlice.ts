@@ -10,6 +10,7 @@ import {
 import { AuthResponse, User } from "../../../types/authantication";
 import { persistReducer } from "redux-persist";
 
+
 interface AuthState {
   user: User | null;
   loading: boolean;
@@ -17,6 +18,7 @@ interface AuthState {
   isVerified: boolean;
   isAuth: boolean;
   role: "user" | "admin" | "owner";
+
 }
 
 const initialState: AuthState = {
@@ -26,6 +28,7 @@ const initialState: AuthState = {
   isVerified: false,
   isAuth: false,
   role: "user",
+
 };
 
 const authSlice = createSlice({
