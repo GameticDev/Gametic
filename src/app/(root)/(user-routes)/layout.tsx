@@ -13,6 +13,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main className="overflow-auto flex-1 p-4">{children}</main>
     </div>
   );
-};
+}; 
 
 export default Layout;
