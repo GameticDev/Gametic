@@ -2,6 +2,7 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  role:"user" | "admin" | "owner"
 }
 
 export interface AuthState {
@@ -18,9 +19,10 @@ export interface AuthState {
 
 export interface RegisterData {
   email: string;
-  role : string
-  picture ?: "",
-  password ?: "",
+  role: string;
+  username?: string;
+  picture?: string;
+  password?: string;
 }
 
 export interface LoginData {
@@ -30,7 +32,6 @@ export interface LoginData {
 
 export interface AuthResponse {
   user: User;
-  token: string;
 }
 
 export interface OtpVerifyPayload {

@@ -1,5 +1,9 @@
 "use client";
+import { registerUser } from "@/redux/actions/authantication/authanticationAction";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import axiosErrorManager from "@/utils/axiosErrorManager";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface CredentialsData {
   username: string;
@@ -12,6 +16,9 @@ interface CredentialsFormProps {
 }
 
 const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
+  const route = useRouter();
+  const dispatch = useAppDispatch();
+  const currentRole = useAppSelector(state=>state.auth.role)
   const [data, setData] = useState<CredentialsData>({
     username: "",
     password: "",
@@ -26,6 +33,25 @@ const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const credential = {
+      username:data.username,
+      password:data.password,
+      email,
+      role
+    }
+    dispatch(registerUser(credential))
+      .unwrap()
+      .then(() => {
+         alert("completed")
+        if(role==="user"){
+          route.push('/user')
+        }else {
+          route.push('/owner')
+        }
+      })
+      .catch((err) => {
+       axiosErrorManager(err)
+      });
     console.log({
         email,
         role,
