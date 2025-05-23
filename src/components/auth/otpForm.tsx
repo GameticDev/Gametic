@@ -1,19 +1,33 @@
 "use client";
 
+import { useAppDispatch } from "@/redux/hooks";
 import { useState, useRef, useEffect } from "react";
+import {  emailverification } from "../../redux/actions/authantication/authanticationAction";
+import axiosErrorManager from "@/utils/axiosErrorManager";
+
 interface OTPFormProps {
   credentialOpen: () => void;
 }
-const OTPForm = ({credentialOpen}:OTPFormProps) => {
+
+const OTPForm = ({ credentialOpen }: OTPFormProps) => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const [canResend, setCanResend] = useState(false);
+  const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const dispatch = useAppDispatch();
+
+  const email = localStorage.getItem("email") || "";
+
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
 
   // Timer countdown
   useEffect(() => {
     if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
       return () => clearTimeout(timer);
     } else {
       setCanResend(true);
@@ -21,21 +35,19 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
   }, [timeLeft]);
 
   const handleChange = (element: HTMLInputElement, index: number) => {
-    if (isNaN(Number(element.value))) return false;
+    if (!/^\d$/.test(element.value)) return;
 
-    setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+    const newOtp = [...otp];
+    newOtp[index] = element.value;
+    setOtp(newOtp);
+    setError("");
 
-    // Focus next input
     if (element.value !== "" && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    // Handle backspace
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -44,9 +56,7 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const pasteData = e.clipboardData.getData("text").slice(0, 6);
-    const pasteArray = pasteData
-      .split("")
-      .filter((char) => !isNaN(Number(char)));
+    const pasteArray = pasteData.split("").filter((char) => /^\d$/.test(char));
 
     if (pasteArray.length > 0) {
       const newOtp = [...otp];
@@ -55,7 +65,6 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
       });
       setOtp(newOtp);
 
-      // Focus the next empty input or the last input
       const nextIndex = Math.min(pasteArray.length, 5);
       inputRefs.current[nextIndex]?.focus();
     }
@@ -63,25 +72,36 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
     const otpString = otp.join("");
 
-    if (otpString.length !== 6) {
-      alert("Please enter complete OTP");
+    if (!email) {
+      alert("Email not found. Please login again.");
       return;
     }
 
-    console.log("OTP entered:", otpString);
-    credentialOpen();
+    if (otpString.length !== 6) {
+      setError("Please enter a complete 6-digit OTP.");
+      return;
+    }
 
-    // Handle OTP verification here
+    dispatch(emailverification({ email, otp: otpString }))
+      .unwrap()
+      .then(() => {
+        credentialOpen(); 
+      })
+      .catch((err) => {
+       axiosErrorManager(err)
+      });
   };
 
   const handleResendOTP = () => {
     setTimeLeft(120);
     setCanResend(false);
     setOtp(new Array(6).fill(""));
+    setError("");
     console.log("Resending OTP...");
-    // Handle resend OTP here
+    // Trigger resend logic here if needed
   };
 
   const formatTime = (seconds: number) => {
@@ -111,12 +131,9 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
             </svg>
           </div>
         </div>
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          Verify Your Email
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">Verify Your Email</h2>
         <p className="text-sm text-gray-600">
-          We've sent a 6-digit verification code to your email address. Please
-          enter it below.
+          We’ve sent a 6-digit verification code to your email address. Please enter it below.
         </p>
       </div>
 
@@ -129,7 +146,9 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
           {otp.map((data, index) => (
             <input
               key={index}
-              type="text"
+              type="tel"
+              pattern="\d*"
+              inputMode="numeric"
               name="otp"
               maxLength={1}
               value={data}
@@ -144,6 +163,7 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
             />
           ))}
         </div>
+        {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
       </div>
 
       {/* Timer and Resend */}
@@ -151,16 +171,14 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
         {!canResend ? (
           <p className="text-sm text-gray-600">
             Resend code in{" "}
-            <span className="font-medium text-[#00423D]">
-              {formatTime(timeLeft)}
-            </span>
+            <span className="font-medium text-[#00423D]">{formatTime(timeLeft)}</span>
           </p>
         ) : (
           <button
             onClick={handleResendOTP}
             className="text-sm text-[#00423D] hover:text-[#415C41] font-medium transition duration-200"
           >
-            Didn't receive the code? Resend
+            Didn’t receive the code? Resend
           </button>
         )}
       </div>
@@ -177,7 +195,7 @@ const OTPForm = ({credentialOpen}:OTPFormProps) => {
       {/* Help Text */}
       <div className="mt-4 text-center">
         <p className="text-xs text-gray-500">
-          Check your spam folder if you don't see the email in your inbox
+          Check your spam folder if you don’t see the email in your inbox.
         </p>
       </div>
     </div>

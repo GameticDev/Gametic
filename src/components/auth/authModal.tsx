@@ -17,7 +17,7 @@ interface LoginModalProps {
 }
 interface EmailData {
   email: string;
-  accountType: "user" | "owner";
+  role: "user" | "owner";
 }
 
 export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
@@ -28,7 +28,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
   const [openCredential, setOpenCredential] = useState<boolean>(false);
   const [data, setData] = useState<EmailData>({
     email: "",
-    accountType: "user",
+    role: "user",
   });
 
 
@@ -95,7 +95,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
 
               <CredentialsForm
                 email={data.email}
-                accountType={data.accountType}
+                role={data.role}
               />
             ) : (
               <>
