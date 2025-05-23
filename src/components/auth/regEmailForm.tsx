@@ -50,6 +50,7 @@ const EmailForm = ({ openOtp,onEmailSubmit }: EmailFormProps) => {
       console.error("Failed to send OTP:", error);
       // Optionally show error to user here
     }
+
   };
   return (
     <div className="w-full">
