@@ -147,7 +147,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-[#415C41]">
               <Link
                 href="/join"
-                className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] block px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
+                className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <User className="h-5 w-5" />
                 <span>Join</span>
@@ -155,7 +155,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
               <Link
                 href="/venues"
-                className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] block px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
+                className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <MapPin className="h-5 w-5" />
                 <span>Venues</span>
@@ -163,7 +163,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
               <Link
                 href="/tournaments"
-                className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] block px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
+                className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <Calendar className="h-5 w-5" />
                 <span>Tournaments</span>
