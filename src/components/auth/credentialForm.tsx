@@ -44,7 +44,7 @@ const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
       .then(() => {
          alert("completed")
         if(role==="user"){
-          route.push('/user')
+          route.push('/home')
         }else {
           route.push('/owner')
         }
