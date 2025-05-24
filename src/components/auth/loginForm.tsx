@@ -1,4 +1,5 @@
 "use client";
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -6,10 +7,10 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { loginUser } from "@/redux/actions/authantication/authanticationAction";
 import axiosErrorManager from "@/utils/axiosErrorManager";
 
+
 const LoginForm = () => {
-  const route = useRouter();
+  const route = useRouter();;
   const dispatch = useAppDispatch();
-  const { role } = useAppSelector((state) => state.auth);
 
   interface LoginData {
     email: string;
@@ -39,7 +40,7 @@ const LoginForm = () => {
       .then((res) => {
         const role = res.user.role;
         if (role === "user") {
-          route.push("/user");
+          route.push("/home");
         } else {
           route.push("/owner");
         }

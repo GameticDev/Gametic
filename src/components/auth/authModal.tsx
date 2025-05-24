@@ -49,7 +49,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
 
   const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
     dispatch(googleLogin(credentialResponse.credential!));
-    router.push('/user')
+    router.push('/home')
 
   };
 

@@ -17,6 +17,7 @@ interface CredentialsFormProps {
 
 const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
 
+
   const route = useRouter();
   const dispatch = useAppDispatch();
   const currentRole = useAppSelector(state=>state.auth.role)
@@ -45,7 +46,7 @@ const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
       .then(() => {
          alert("completed")
         if(role==="user"){
-          route.push('/user')
+          route.push('/home')
         }else {
           route.push('/owner')
         }
