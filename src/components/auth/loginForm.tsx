@@ -1,4 +1,5 @@
 "use client";
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -6,8 +7,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { loginUser } from "@/redux/actions/authantication/authanticationAction";
 import axiosErrorManager from "@/utils/axiosErrorManager";
 
+
 const LoginForm = () => {
-  const route = useRouter();
+  const route = useRouter();;
   const dispatch = useAppDispatch();
 
   interface LoginData {
