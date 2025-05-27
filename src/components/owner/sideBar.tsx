@@ -96,7 +96,8 @@ const SideBar: React.FC = () => {
   const pathname = usePathname();
 
   return (
-    <div className="w-[300px] h-screen bg-white border-r border-gray-200 flex flex-col overflow-y-auto">
+     <div className="fixed left-0 top-0 w-[300px] h-screen bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-10">
+     {/* <div className="w-[300px] h-screen bg-white border-r border-gray-200 flex flex-col overflow-y-auto"> */}
       <div
         className={`${racesport.className} px-4 py-10 flex items-center text-gray-600 text-2xl`}
       >
