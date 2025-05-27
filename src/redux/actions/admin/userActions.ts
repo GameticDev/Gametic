@@ -3,14 +3,13 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { User } from "@/redux/slices/admin/userSlice";
 import axiosErrorManager from "@/utils/axiosErrorManager";
 
-interface FetchAllUserResponse {
-  allUsers: User[];
-  totalUsers: number;
-  totalBannedUsers: number;
-  totalActiveUser: number;
-}
 export const fetchAllUser = createAsyncThunk<
- FetchAllUserResponse,
+  {
+    allUsers: User[];
+    totalUsers: number;
+    totalBannedUsers: number;
+    totalActiveUser: number;
+  },
   { page: number; limit: number; search: string; role: string },
   { rejectValue: string }
 >(
@@ -32,12 +31,9 @@ export const fetchAllUser = createAsyncThunk<
     }
   }
 );
-interface BlockUserResponse {
-  user: User;
-}
 
 export const blockUser = createAsyncThunk<
-  BlockUserResponse,
+  { user: User },
   { id: string },
   { rejectValue: string }
 >("users/blockUser", async ({ id }, { rejectWithValue }) => {

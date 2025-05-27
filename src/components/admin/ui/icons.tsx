@@ -1,7 +1,7 @@
 import React from "react";
 
 export const AppIcon: React.FC = () => (
-  <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 rounded-full bg-[#998869]/20 flex items-center justify-center text-[#415C41]">
     <svg
       width="14"
       height="14"
@@ -20,7 +20,7 @@ export const AppIcon: React.FC = () => (
 );
 
 export const EcommerceIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -47,7 +47,7 @@ export const EcommerceIcon: React.FC = () => (
 );
 
 export const AnalyticsIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -67,7 +67,7 @@ export const AnalyticsIcon: React.FC = () => (
 );
 
 export const BankingIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -87,7 +87,7 @@ export const BankingIcon: React.FC = () => (
 );
 
 export const BookingIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -114,7 +114,7 @@ export const BookingIcon: React.FC = () => (
 );
 
 export const FileIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -162,7 +162,7 @@ export const FileIcon: React.FC = () => (
 );
 
 export const CourseIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -189,7 +189,7 @@ export const CourseIcon: React.FC = () => (
 );
 
 export const UserIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -216,7 +216,7 @@ export const UserIcon: React.FC = () => (
 );
 
 export const ProductIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -243,7 +243,7 @@ export const ProductIcon: React.FC = () => (
 );
 
 export const OrderIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"
@@ -277,7 +277,7 @@ export const OrderIcon: React.FC = () => (
 );
 
 export const InvoiceIcon: React.FC = () => (
-  <div className="w-6 h-6 flex items-center justify-center text-blue-500">
+  <div className="w-6 h-6 flex items-center justify-center text-[#415C41]">
     <svg
       width="16"
       height="16"

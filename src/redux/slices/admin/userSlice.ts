@@ -1,6 +1,6 @@
 import { blockUser, fetchAllUser } from "@/redux/actions/admin/userActions";
 import { createSlice } from "@reduxjs/toolkit";
-// import { User } from "lucide-react";
+import { User } from "lucide-react";
 
 export interface User {
   _id: string;
@@ -16,6 +16,7 @@ export interface User {
 interface UsersState {
   users: User[];
   loading: boolean;
+  banLoading:boolean;
   error: string | null;
   totalUsers: number;
   totalActiveUser: number;
@@ -27,6 +28,7 @@ const INITIAL_STATE: UsersState = {
   totalActiveUser: 0,
   totalBannedUsers: 0,
   loading: false,
+  banLoading:false,
   error: null,
 };
 
@@ -38,7 +40,6 @@ const userSlice = createSlice({
     builder
       .addCase(fetchAllUser.pending, (state) => {
         state.loading = true;
-         state.error = null;
       })
       .addCase(fetchAllUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -53,19 +54,19 @@ const userSlice = createSlice({
         state.error = action.payload as string || "Something went wrong";
       })
       .addCase(blockUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.banLoading = true;
+         state.error = null;
       })
-      .addCase(blockUser.fulfilled, (state, action) => {
-        state.loading = false;
+      .addCase(blockUser.fulfilled, (state) => {
+        state.banLoading = false;
         const updatedUser = action.payload.user;
         state.users = state.users.map(user => 
           user._id === updatedUser._id ? updatedUser : user
         );
       })
       .addCase(blockUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string || "Something went wrong";
+        state.banLoading = false;
+       state.error = action.payload as string || "Something went wrong";
       });
   },
 });

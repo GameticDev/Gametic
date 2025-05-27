@@ -1,19 +1,21 @@
+
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono,Outfit } from "next/font/google";
+import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import ReduxProvider from "@/redux/provider";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-// import "react-day-picker/dist/style.css";
-
-
-
-
+// import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 const outfit = Outfit({
@@ -37,10 +39,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={outfit.className}
+      data-theme="light"
+    >
     <html lang="en" suppressHydrationWarning className={outfit.className} data-theme="light">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+        >
+          <ReduxProvider>
+            {children}
+            <ToastContainer position="top-right" autoClose={3000} />
+          </ReduxProvider>
+        </GoogleOAuthProvider>
         <ReduxProvider>
           {children}
           <ToastContainer position="top-right" autoClose={3000} />
