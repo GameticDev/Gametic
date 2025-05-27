@@ -1,6 +1,6 @@
 const Page = () => {
     return (
-        <div mt-20>
+        <div className="bg-[#F0EFEB]">
             Enter
         </div>
     );

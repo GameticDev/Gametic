@@ -10,9 +10,9 @@ const HeroSection = () => {
               Blaze to <br /> the victory
             </h1>
             <p className="text-[17px] pl-3 w-[850px] mb-5">
-              This isn’t just a platform — it’s where passion meets purpose. A
+              This isn`t just a platform — it`s where passion meets purpose. A
               space built for players who live for the thrill of the game, the
-              spirit of teamwork, and the rush of competition - it's a movement,
+              spirit of teamwork, and the rush of competition - it`s a movement,
               a community, and your home for all things sport.
             </p>
             <div className="pl-3">

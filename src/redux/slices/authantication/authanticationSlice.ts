@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import storage from "redux-persist/lib/storage"
 import {
   emailCheck,
   emailverification,
@@ -7,12 +8,17 @@ import {
   registerUser,
 } from "../../actions/authantication/authanticationAction";
 import { AuthResponse, User } from "../../../types/authantication";
+import { persistReducer } from "redux-persist";
+
 
 interface AuthState {
   user: User | null;
   loading: boolean;
   error: string | null;
   isVerified: boolean;
+  isAuth: boolean;
+  role: "user" | "admin" | "owner";
+
 }
 
 const initialState: AuthState = {
@@ -20,6 +26,9 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   isVerified: false,
+  isAuth: false,
+  role: "user",
+
 };
 
 const authSlice = createSlice({
@@ -61,6 +70,8 @@ const authSlice = createSlice({
         (state, action: PayloadAction<AuthResponse>) => {
           state.loading = false;
           state.user = action.payload.user;
+          state.isAuth = true;
+          state.role = action.payload.user.role;
         }
       )
       .addCase(
@@ -80,6 +91,8 @@ const authSlice = createSlice({
           state.loading = false;
           state.user = action.payload.user;
           console.log(action.payload.user);
+          state.isAuth = true;
+          state.role = action.payload.user.role;
         }
       )
       .addCase(loginUser.rejected, (state, action: PayloadAction<unknown>) => {
@@ -94,6 +107,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         console.log(action.payload.user);
+        state.isAuth = true;
+          state.role = "user";
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
@@ -120,5 +135,11 @@ const authSlice = createSlice({
   },
 });
 
+const persistConfig = {
+  key: "auth",
+  storage,
+  whitelist: ["user", "isAuth","role"],
+};
+
 export const { logoutUser, clearError } = authSlice.actions;
-export default authSlice.reducer;
+export default persistReducer(persistConfig, authSlice.reducer);
