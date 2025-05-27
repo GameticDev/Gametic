@@ -1,4 +1,5 @@
 "use client"
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 export default function HeroImageSlider() {
@@ -29,11 +30,12 @@ export default function HeroImageSlider() {
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {images.map((src, index) => (
-          <div key={index} className="min-w-full h-full flex-shrink-0 ">
-            <img 
+          <div key={index} className="relative min-w-full h-full flex-shrink-0 ">
+            <Image 
               src={src} 
               alt={`Hero slide ${index + 1}`} 
-              className="w-full h-full object-cover"
+              className="object-cover"
+              fill
             />
           </div>
         ))}

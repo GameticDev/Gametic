@@ -2,7 +2,6 @@ import Category from "@/components/landing/Category";
 import Footer from "@/components/landing/Footer";
 import GetinTounch from "@/components/landing/GetinTounch";
 import HeroSection from "@/components/landing/HeroSection";
-import LandingPage from "@/components/landing/landingPage";
 import ProvideBanner from "@/components/landing/ProvideBanner";
 import TopNavbar from "@/components/landing/TopNavbar";
 import { AnimatedTestimonials } from "@/components/landing/ui/animated-testimonials";
@@ -50,13 +49,19 @@ const testimonials: Testimonial[] = [
     src: "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?q=80&w=1966&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 ];
-
-export default function Home() {
+const LandingPage = () => {
   return (
-    <div className="bg-[#F0EFEB]">
-      <div className="h-full relative">
-        <LandingPage />
-      </div>
-    </div>
+    <>
+      <TopNavbar />
+      <HeroSection />
+      <Why />
+      <ProvideBanner />
+      <Category />
+      <GetinTounch />
+      <AnimatedTestimonials testimonials={testimonials} autoplay={true} />
+      <Footer />
+    </>
   );
-}
+};
+
+export default LandingPage;
