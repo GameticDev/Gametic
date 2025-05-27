@@ -9,7 +9,7 @@ import { Toaster } from "sonner";
 
 export default function Home() {
   return (
-    <div className="bg-[#F0EFEB]">
+    <div className="bg-[#F0EFEB] w-[100vw]">
       <div className="h-full relative">
         {/* <HomePage /> */}
         <Toaster position="top-right" richColors />
