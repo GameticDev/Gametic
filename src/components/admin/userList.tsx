@@ -1,8 +1,11 @@
 "use client";
-import { blockUser, fetchAllUser } from "@/redux/actions/admin/userActions";
+import {
+  blockUser,
+  deleteUser,
+  fetchAllUser,
+} from "@/redux/actions/admin/userActions";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
-  ArrowUp,
   Ban,
   ChevronLeft,
   ChevronRight,
@@ -12,6 +15,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ListSkeleton from "./skelton/tableSkelton";
+import axiosErrorManager from "@/utils/axiosErrorManager";
+import SpringModal from "./ui/springModal";
 
 interface UserListProps {
   search: string;
@@ -20,7 +25,10 @@ interface UserListProps {
 
 const UserList: React.FC<UserListProps> = ({ search, role }) => {
   const dispatch = useAppDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [alertText, setAlertText] = useState<string>("");
+  const [selectedUser,setSelectedUser] = useState<string>("")
   const { users, totalUsers, loading } = useAppSelector(
     (state) => state.adminUsers
   );
@@ -41,6 +49,17 @@ const UserList: React.FC<UserListProps> = ({ search, role }) => {
     } catch (error) {
       console.error("Failed to block user:", error);
     }
+  };
+
+  const deleteAUser = async (id: string) => {
+    dispatch(deleteUser({ id }))
+      .unwrap()
+      .then(() =>
+        dispatch(fetchAllUser({ page: currentPage, limit: 5, search, role }))
+      )
+      .catch((err) => {
+        axiosErrorManager(err);
+      });
   };
 
   return (
@@ -162,12 +181,18 @@ const UserList: React.FC<UserListProps> = ({ search, role }) => {
                           </button>
                           <ul
                             tabIndex={0}
-                            className="dropdown-content menu shadow-lg bg-white rounded-lg p-2 w-48 border border-gray-100"
+                            className={`dropdown-content menu shadow-lg bg-white rounded-lg p-2 w-48 border border-gray-100 ${
+                              isOpen ? "hidden" : "block"
+                            }`}
                           >
                             <li>
                               <button
                                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
-                                onClick={() => blockUserById(item._id)}
+                                onClick={() => {
+                                  setSelectedUser(item._id)
+                                  setIsOpen(true);
+                                  setAlertText("Are you sure you want to block this user?")
+                                }}
                               >
                                 <Ban size={16} />
                                 <span>
@@ -176,7 +201,10 @@ const UserList: React.FC<UserListProps> = ({ search, role }) => {
                               </button>
                             </li>
                             <li>
-                              <button className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md">
+                              <button
+                                className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md"
+                                onClick={() => deleteAUser(item._id)}
+                              >
                                 <Trash2 size={16} />
                                 <span>Delete Venue</span>
                               </button>
@@ -252,6 +280,7 @@ const UserList: React.FC<UserListProps> = ({ search, role }) => {
           </div>
         </div>
       )}
+      <SpringModal isOpen={isOpen} setIsOpen={setIsOpen} text={alertText} block={blockUserById} id={selectedUser}/>
     </div>
   );
 };

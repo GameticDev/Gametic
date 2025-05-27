@@ -46,3 +46,17 @@ export const blockUser = createAsyncThunk<
     return rejectWithValue(axiosErrorManager(error));
   }
 });
+export const deleteUser = createAsyncThunk<
+  { user: User },
+  { id: string },
+  { rejectValue: string }
+>("users/deleteUser", async ({ id }, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.delete(`/admin/delete-user/${id}`);
+    return {
+      user: response.data.user,
+    };
+  } catch (error) {
+    return rejectWithValue(axiosErrorManager(error));
+  }
+});
