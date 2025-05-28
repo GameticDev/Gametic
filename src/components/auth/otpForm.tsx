@@ -2,27 +2,48 @@
 
 import { useAppDispatch } from "@/redux/hooks";
 import { useState, useRef, useEffect } from "react";
-import {  emailverification } from "../../redux/actions/authantication/authanticationAction";
+import { emailverification } from "../../redux/actions/authantication/authanticationAction";
 import axiosErrorManager from "@/utils/axiosErrorManager";
 
 interface OTPFormProps {
   credentialOpen: () => void;
 }
 
+interface ValidationErrors {
+  otp?: string;
+  email?: string;
+  network?: string;
+}
+
 const OTPForm = ({ credentialOpen }: OTPFormProps) => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const [canResend, setCanResend] = useState(false);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendAttempts, setResendAttempts] = useState(0);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const dispatch = useAppDispatch();
 
   const email = localStorage.getItem("email") || "";
 
+  // Constants for validation
+  const MAX_RESEND_ATTEMPTS = 3;
+  const RESEND_TIMEOUT = 120; // 2 minutes
+
   useEffect(() => {
     inputRefs.current[0]?.focus();
-  }, []);
+    
+    // Validate email on component mount
+    if (!email) {
+      setErrors(prev => ({
+        ...prev,
+        email: "Email not found. Please log in again."
+      }));
+    }
+  }, [email]);
 
   // Timer countdown
   useEffect(() => {
@@ -34,80 +55,224 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
     }
   }, [timeLeft]);
 
+  // Validation functions
+  const validateOTP = (otpArray: string[]): string | null => {
+    const otpString = otpArray.join("");
+    
+    if (otpString.length === 0) {
+      return "Please enter the verification code.";
+    }
+    
+    if (otpString.length < 6) {
+      return "Please enter a complete 6-digit verification code.";
+    }
+    
+    if (!/^\d{6}$/.test(otpString)) {
+      return "Verification code must contain only numbers.";
+    }
+    
+    return null;
+  };
+
+  const validateEmail = (): string | null => {
+    if (!email) {
+      return "Email not found. Please log in again.";
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Invalid email format.";
+    }
+    
+    return null;
+  };
+
+  const clearErrors = () => {
+    setErrors({});
+  };
+
+  const setError = (type: keyof ValidationErrors, message: string) => {
+    setErrors(prev => ({
+      ...prev,
+      [type]: message
+    }));
+  };
+
   const handleChange = (element: HTMLInputElement, index: number) => {
-    if (!/^\d$/.test(element.value)) return;
+    const value = element.value;
+    
+    // Only allow single digits
+    if (value && !/^\d$/.test(value)) {
+      return;
+    }
 
     const newOtp = [...otp];
-    newOtp[index] = element.value;
+    newOtp[index] = value;
     setOtp(newOtp);
-    setError("");
+    
+    // Clear errors when user starts typing
+    if (errors.otp) {
+      setErrors(prev => ({ ...prev, otp: undefined }));
+    }
 
-    if (element.value !== "" && index < 5) {
+    // Auto-focus next input
+    if (value !== "" && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
+    // Handle backspace navigation
+    if (e.key === "Backspace") {
+      if (!otp[index] && index > 0) {
+        inputRefs.current[index - 1]?.focus();
+      } else if (otp[index]) {
+        // Clear current field and stay on it
+        const newOtp = [...otp];
+        newOtp[index] = "";
+        setOtp(newOtp);
+      }
+    }
+    
+    // Handle arrow key navigation
+    if (e.key === "ArrowLeft" && index > 0) {
       inputRefs.current[index - 1]?.focus();
+    }
+    
+    if (e.key === "ArrowRight" && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+
+    // Handle Enter key to submit
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit(e as any);
     }
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const pasteData = e.clipboardData.getData("text").slice(0, 6);
-    const pasteArray = pasteData.split("").filter((char) => /^\d$/.test(char));
-
-    if (pasteArray.length > 0) {
-      const newOtp = [...otp];
-      pasteArray.forEach((digit, index) => {
-        if (index < 6) newOtp[index] = digit;
-      });
-      setOtp(newOtp);
-
-      const nextIndex = Math.min(pasteArray.length, 5);
-      inputRefs.current[nextIndex]?.focus();
+    const pasteData = e.clipboardData.getData("text").trim();
+    
+    // Validate pasted data
+    if (!/^\d+$/.test(pasteData)) {
+      setError("otp", "Pasted content must contain only numbers.");
+      return;
     }
+    
+    const pasteArray = pasteData.slice(0, 6).split("");
+    
+    if (pasteArray.length < 6) {
+      setError("otp", "Pasted code must be 6 digits long.");
+      return;
+    }
+
+    const newOtp = new Array(6).fill("");
+    pasteArray.forEach((digit, index) => {
+      if (index < 6) newOtp[index] = digit;
+    });
+    
+    setOtp(newOtp);
+    clearErrors();
+
+    // Focus the last input or next empty input
+    const nextIndex = Math.min(pasteArray.length - 1, 5);
+    inputRefs.current[nextIndex]?.focus();
   };
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent) => {
     e.preventDefault();
+    
+    if (isSubmitting) return;
+
+    clearErrors();
+    
+    // Validate email
+    const emailError = validateEmail();
+    if (emailError) {
+      setError("email", emailError);
+      return;
+    }
+
+    // Validate OTP
+    const otpError = validateOTP(otp);
+    if (otpError) {
+      setError("otp", otpError);
+      return;
+    }
 
     const otpString = otp.join("");
+    setIsSubmitting(true);
 
-    if (!email) {
-      alert("Email not found. Please login again.");
-      return;
+    try {
+      await dispatch(emailverification({ email, otp: otpString })).unwrap();
+      credentialOpen();
+    } catch (err: any) {
+      console.error("OTP verification failed:", err);
+      
+      if (err) {
+        setError("otp", "Invalid verification code. Please try again.");
+      } 
+      
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (otpString.length !== 6) {
-      setError("Please enter a complete 6-digit OTP.");
-      return;
-    }
-
-    dispatch(emailverification({ email, otp: otpString }))
-      .unwrap()
-      .then(() => {
-        credentialOpen(); 
-      })
-      .catch((err) => {
-       axiosErrorManager(err)
-      });
   };
 
-  const handleResendOTP = () => {
-    setTimeLeft(120);
-    setCanResend(false);
-    setOtp(new Array(6).fill(""));
-    setError("");
-    console.log("Resending OTP...");
-    // Trigger resend logic here if needed
+  const handleResendOTP = async () => {
+    if (isResending || resendAttempts >= MAX_RESEND_ATTEMPTS) return;
+    
+    clearErrors();
+    
+    // Validate email before resending
+    const emailError = validateEmail();
+    if (emailError) {
+      setError("email", emailError);
+      return;
+    }
+
+    setIsResending(true);
+    
+    try {
+      // Add your resend OTP API call here
+      // await dispatch(resendOTP({ email })).unwrap();
+      
+      console.log("Resending OTP...");
+      
+      // Reset form state
+      setTimeLeft(RESEND_TIMEOUT);
+      setCanResend(false);
+      setOtp(new Array(6).fill(""));
+      setResendAttempts(prev => prev + 1);
+      
+      // Focus first input
+      setTimeout(() => {
+        inputRefs.current[0]?.focus();
+      }, 100);
+      
+    } catch (err: any) {
+      console.error("Resend OTP failed:", err);
+      
+      if (err?.response?.status === 429) {
+        setError("network", "Too many resend requests. Please wait before trying again.");
+      } else {
+        setError("network", "Failed to resend code. Please try again.");
+      }
+      
+    } finally {
+      setIsResending(false);
+    }
   };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const isFormValid = () => {
+    return otp.join("").length === 6 && !Object.values(errors).some(error => error) && email;
   };
 
   return (
@@ -133,9 +298,18 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
         </div>
         <h2 className="text-xl font-semibold text-gray-800 mb-2">Verify Your Email</h2>
         <p className="text-sm text-gray-600">
-          We’ve sent a 6-digit verification code to your email address. Please enter it below.
+          We've sent a 6-digit verification code to{" "}
+          <span className="font-medium">{email || "your email address"}</span>. 
+          Please enter it below.
         </p>
       </div>
+
+      {/* Email Error */}
+      {errors.email && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 text-sm">{errors.email}</p>
+        </div>
+      )}
 
       {/* OTP Input Fields */}
       <div className="mb-6">
@@ -158,12 +332,24 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
               onChange={(e) => handleChange(e.target, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               onPaste={handlePaste}
-              className="w-12 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00423D] focus:border-transparent transition duration-200"
+              disabled={isSubmitting}
+              className={`w-12 h-12 text-center text-lg font-semibold border rounded-lg focus:outline-none focus:ring-2 transition duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                errors.otp 
+                  ? "border-red-300 focus:ring-red-500 focus:border-red-500" 
+                  : "border-gray-300 focus:ring-[#00423D] focus:border-transparent"
+              }`}
               required
+              aria-label={`Digit ${index + 1} of verification code`}
             />
           ))}
         </div>
-        {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
+        
+        {/* OTP Error */}
+        {errors.otp && (
+          <p className="text-red-500 text-sm mt-2 text-center" role="alert">
+            {errors.otp}
+          </p>
+        )}
       </div>
 
       {/* Timer and Resend */}
@@ -174,28 +360,62 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
             <span className="font-medium text-[#00423D]">{formatTime(timeLeft)}</span>
           </p>
         ) : (
-          <button
-            onClick={handleResendOTP}
-            className="text-sm text-[#00423D] hover:text-[#415C41] font-medium transition duration-200"
-          >
-            Didn’t receive the code? Resend
-          </button>
+          <div>
+            <button
+              onClick={handleResendOTP}
+              disabled={isResending || resendAttempts >= MAX_RESEND_ATTEMPTS}
+              className="text-sm text-[#00423D] hover:text-[#415C41] font-medium transition duration-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+            >
+              {isResending ? "Sending..." : "Didn't receive the code? Resend"}
+            </button>
+            {resendAttempts >= MAX_RESEND_ATTEMPTS && (
+              <p className="text-xs text-red-500 mt-1">
+                Maximum resend attempts reached. Please contact support if needed.
+              </p>
+            )}
+            {resendAttempts > 0 && resendAttempts < MAX_RESEND_ATTEMPTS && (
+              <p className="text-xs text-gray-500 mt-1">
+                Resend attempts: {resendAttempts}/{MAX_RESEND_ATTEMPTS}
+              </p>
+            )}
+          </div>
         )}
       </div>
+
+      {/* Network Error */}
+      {errors.network && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 text-sm">{errors.network}</p>
+        </div>
+      )}
 
       {/* Verify Button */}
       <button
         onClick={handleSubmit}
-        disabled={otp.join("").length !== 6}
-        className="w-full bg-[#00423D] text-white py-3 rounded-lg font-medium hover:bg-[#415C41] transition duration-300 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+        disabled={!isFormValid() || isSubmitting}
+        className="w-full bg-[#00423D] text-white py-3 rounded-lg font-medium hover:bg-[#415C41] transition duration-300 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+        aria-label="Verify OTP code"
       >
-        VERIFY CODE
+        {isSubmitting ? (
+          <>
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            VERIFYING...
+          </>
+        ) : (
+          "VERIFY CODE"
+        )}
       </button>
 
       {/* Help Text */}
       <div className="mt-4 text-center">
         <p className="text-xs text-gray-500">
-          Check your spam folder if you don’t see the email in your inbox.
+          Check your spam folder if you don't see the email in your inbox.
+        </p>
+        <p className="text-xs text-gray-500 mt-1">
+          The verification code will expire in {formatTime(timeLeft)}.
         </p>
       </div>
     </div>

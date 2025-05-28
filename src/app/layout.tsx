@@ -4,7 +4,6 @@ import "./globals.css";
 import ReduxProvider from "@/redux/provider";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-// import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = Geist({
