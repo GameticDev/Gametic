@@ -51,18 +51,13 @@ const userSlice = createSlice({
       })
       .addCase(fetchAllUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string || "Something went wrong";
+        state.error = action.payload || "Something wrong";
       })
       .addCase(blockUser.pending, (state) => {
         state.banLoading = true;
-         state.error = null;
       })
       .addCase(blockUser.fulfilled, (state) => {
         state.banLoading = false;
-        const updatedUser = action.payload.user;
-        state.users = state.users.map(user => 
-          user._id === updatedUser._id ? updatedUser : user
-        );
       })
       .addCase(blockUser.rejected, (state, action) => {
         state.banLoading = false;
