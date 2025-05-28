@@ -56,7 +56,7 @@ const RatingModal: React.FC<RatingModalProps> = ({ turfId, onClose, onSuccess })
         {turf && (
           <div className="mb-6">
             <h4 className="font-semibold text-lg">{turf.name}</h4>
-            <p className="text-gray-600">{turf.address}, {turf.city}</p>
+            <p className="text-gray-600">{turf.location}, {turf.city}</p>
           </div>
         )}
 

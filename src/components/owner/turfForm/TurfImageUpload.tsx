@@ -3,10 +3,12 @@ import React from 'react';
 interface TurfImageUploadProps {
   register: any;
   errors: any;
-  previewImages: string[];
-  existingImages: string[];
-  setPreviewImages: React.Dispatch<React.SetStateAction<string[]>>;
-  setValue: any;
+  // previewImages: string[];
+  // existingImages: string[];
+   previewImages: (string | File)[];
+  existingImages: (string | File)[];
+  // setPreviewImages: React.Dispatch<React.SetStateAction<string[]>>;
+  // setValue: any;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   removeImage: (index: number) => void;
 }
@@ -16,8 +18,8 @@ const TurfImageUpload: React.FC<TurfImageUploadProps> = ({
   errors,
   previewImages,
   existingImages,
-  setPreviewImages,
-  setValue,
+  // setPreviewImages,
+  // setValue,
   onImageChange,
   removeImage,
 }) => {

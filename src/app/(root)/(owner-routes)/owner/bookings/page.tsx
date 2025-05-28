@@ -14,7 +14,8 @@ import { Booking } from "@/types/turf";
 const BookingsPage = () => {
   const dispatch = useAppDispatch();
   const { turfs, loading } = useAppSelector((state) => state.turf);
-  const { userInfo } = useAppSelector((state) => state.auth);
+  // const { userInfo } = useAppSelector((state) => state.auth);
+  const user = useAppSelector(state => state.auth.user);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<Booking['status'] | "all">("all");
@@ -23,10 +24,10 @@ const BookingsPage = () => {
   const [expandedBooking, setExpandedBooking] = useState<string | null>(null);
 
   useEffect(() => {
-    if (userInfo?._id) {
-      dispatch(fetchTurfs(userInfo._id));
+    if (user?._id) {
+      dispatch(fetchTurfs(user._id));
     }
-  }, [dispatch, userInfo]);
+  }, [dispatch, user]);
 
   // Extract all bookings from all turfs
   const allBookings = turfs.flatMap((turf) => 
