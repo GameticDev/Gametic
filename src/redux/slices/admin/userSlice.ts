@@ -1,4 +1,4 @@
-import { blockUser, fetchAllUser } from "@/redux/actions/admin/userActions";
+import { blockUser, deleteUser, fetchAllUser } from "@/redux/actions/admin/userActions";
 import { createSlice } from "@reduxjs/toolkit";
 import { User } from "lucide-react";
 
@@ -66,8 +66,18 @@ const userSlice = createSlice({
       })
       .addCase(blockUser.rejected, (state, action) => {
         state.banLoading = false;
-       state.error = action.payload as string || "Something went wrong";
-      });
+        state.error = action.payload || "Someting wrong";
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Someting wrong";
+      })
   },
 });
 export default userSlice.reducer;
