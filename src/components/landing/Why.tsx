@@ -77,7 +77,7 @@ export default function WhyChooseUs() {
               Host Games, Join the Action
             </h2>
             <p className="text-white/90 text-sm leading-relaxed max-w-xl">
-              Take control of your game day by hosting your own matches — set the time, location, and format. Or jump into games organized by others to meet new players, challenge your skills, and stay active in the community. Whether it's a quick pickup game or a planned showdown, you're always just a few clicks away from the action.
+              Take control of your game day by hosting your own matches — set the time, location, and format. Or jump into games organized by others to meet new players, challenge your skills, and stay active in the community. Whether it&apos;s a quick pickup game or a planned showdown, you&apos;re always just a few clicks away from the action.
             </p>
           </div>
           <div className="flex items-center gap-4">

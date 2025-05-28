@@ -3,7 +3,6 @@
 import { useAppDispatch } from "@/redux/hooks";
 import { useState, useRef, useEffect } from "react";
 import { emailverification } from "../../redux/actions/authantication/authanticationAction";
-import axiosErrorManager from "@/utils/axiosErrorManager";
 
 interface OTPFormProps {
   credentialOpen: () => void;
@@ -21,22 +20,20 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
   const [canResend, setCanResend] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isResending, setIsResending] = useState(false);
-  const [resendAttempts, setResendAttempts] = useState(0);
+  // const [isResending, setIsResending] = useState(false);
+  // const [resendAttempts, setResendAttempts] = useState(0);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const dispatch = useAppDispatch();
 
   const email = localStorage.getItem("email") || "";
 
-  // Constants for validation
-  const MAX_RESEND_ATTEMPTS = 3;
-  const RESEND_TIMEOUT = 120; // 2 minutes
+  // const MAX_RESEND_ATTEMPTS = 3;
+  // const RESEND_TIMEOUT = 120; // 2 minutes
 
   useEffect(() => {
     inputRefs.current[0]?.focus();
     
-    // Validate email on component mount
     if (!email) {
       setErrors(prev => ({
         ...prev,
@@ -45,7 +42,6 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
     }
   }, [email]);
 
-  // Timer countdown
   useEffect(() => {
     if (timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
@@ -55,7 +51,6 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
     }
   }, [timeLeft]);
 
-  // Validation functions
   const validateOTP = (otpArray: string[]): string | null => {
     const otpString = otpArray.join("");
     
@@ -79,7 +74,6 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
       return "Email not found. Please log in again.";
     }
     
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return "Invalid email format.";
@@ -102,7 +96,6 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
   const handleChange = (element: HTMLInputElement, index: number) => {
     const value = element.value;
     
-    // Only allow single digits
     if (value && !/^\d$/.test(value)) {
       return;
     }
@@ -111,31 +104,26 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
     newOtp[index] = value;
     setOtp(newOtp);
     
-    // Clear errors when user starts typing
     if (errors.otp) {
       setErrors(prev => ({ ...prev, otp: undefined }));
     }
 
-    // Auto-focus next input
     if (value !== "" && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    // Handle backspace navigation
     if (e.key === "Backspace") {
       if (!otp[index] && index > 0) {
         inputRefs.current[index - 1]?.focus();
       } else if (otp[index]) {
-        // Clear current field and stay on it
         const newOtp = [...otp];
         newOtp[index] = "";
         setOtp(newOtp);
       }
     }
     
-    // Handle arrow key navigation
     if (e.key === "ArrowLeft" && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -144,10 +132,9 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Handle Enter key to submit
     if (e.key === "Enter") {
       e.preventDefault();
-      handleSubmit(e as any);
+      handleSubmit(e);
     }
   };
 
@@ -155,7 +142,6 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
     e.preventDefault();
     const pasteData = e.clipboardData.getData("text").trim();
     
-    // Validate pasted data
     if (!/^\d+$/.test(pasteData)) {
       setError("otp", "Pasted content must contain only numbers.");
       return;
@@ -176,7 +162,6 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
     setOtp(newOtp);
     clearErrors();
 
-    // Focus the last input or next empty input
     const nextIndex = Math.min(pasteArray.length - 1, 5);
     inputRefs.current[nextIndex]?.focus();
   };
@@ -188,14 +173,12 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
 
     clearErrors();
     
-    // Validate email
     const emailError = validateEmail();
     if (emailError) {
       setError("email", emailError);
       return;
     }
 
-    // Validate OTP
     const otpError = validateOTP(otp);
     if (otpError) {
       setError("otp", otpError);
@@ -208,7 +191,7 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
     try {
       await dispatch(emailverification({ email, otp: otpString })).unwrap();
       credentialOpen();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("OTP verification failed:", err);
       
       if (err) {
@@ -220,50 +203,50 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
     }
   };
 
-  const handleResendOTP = async () => {
-    if (isResending || resendAttempts >= MAX_RESEND_ATTEMPTS) return;
+  // const handleResendOTP = async () => {
+  //   if (isResending || resendAttempts >= MAX_RESEND_ATTEMPTS) return;
     
-    clearErrors();
+  //   clearErrors();
     
-    // Validate email before resending
-    const emailError = validateEmail();
-    if (emailError) {
-      setError("email", emailError);
-      return;
-    }
+  //   // Validate email before resending
+  //   const emailError = validateEmail();
+  //   if (emailError) {
+  //     setError("email", emailError);
+  //     return;
+  //   }
 
-    setIsResending(true);
+  //   setIsResending(true);
     
-    try {
-      // Add your resend OTP API call here
-      // await dispatch(resendOTP({ email })).unwrap();
+  //   try {
+  //     // Add your resend OTP API call here
+  //     // await dispatch(resendOTP({ email })).unwrap();
       
-      console.log("Resending OTP...");
+  //     console.log("Resending OTP...");
       
-      // Reset form state
-      setTimeLeft(RESEND_TIMEOUT);
-      setCanResend(false);
-      setOtp(new Array(6).fill(""));
-      setResendAttempts(prev => prev + 1);
+  //     // Reset form state
+  //     setTimeLeft(RESEND_TIMEOUT);
+  //     setCanResend(false);
+  //     setOtp(new Array(6).fill(""));
+  //     setResendAttempts(prev => prev + 1);
       
-      // Focus first input
-      setTimeout(() => {
-        inputRefs.current[0]?.focus();
-      }, 100);
+  //     // Focus first input
+  //     setTimeout(() => {
+  //       inputRefs.current[0]?.focus();
+  //     }, 100);
       
-    } catch (err: any) {
-      console.error("Resend OTP failed:", err);
+  //   } catch (err) {
+  //     console.error("Resend OTP failed:", err);
       
-      if (err?.response?.status === 429) {
-        setError("network", "Too many resend requests. Please wait before trying again.");
-      } else {
-        setError("network", "Failed to resend code. Please try again.");
-      }
+  //     if (err?.response?.status === 429) {
+  //       setError("network", "Too many resend requests. Please wait before trying again.");
+  //     } else {
+  //       setError("network", "Failed to resend code. Please try again.");
+  //     }
       
-    } finally {
-      setIsResending(false);
-    }
-  };
+  //   } finally {
+  //     setIsResending(false);
+  //   }
+  // };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -277,7 +260,6 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
 
   return (
     <div className="w-full">
-      {/* Header Info */}
       <div className="text-center mb-6">
         <div className="flex justify-center mb-4">
           <div className="w-16 h-16 bg-[#00423D] rounded-full flex items-center justify-center">
@@ -298,20 +280,18 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
         </div>
         <h2 className="text-xl font-semibold text-gray-800 mb-2">Verify Your Email</h2>
         <p className="text-sm text-gray-600">
-          We've sent a 6-digit verification code to{" "}
+          We&apos;ve sent a 6-digit verification code to{" "}
           <span className="font-medium">{email || "your email address"}</span>. 
           Please enter it below.
         </p>
       </div>
 
-      {/* Email Error */}
       {errors.email && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-600 text-sm">{errors.email}</p>
         </div>
       )}
 
-      {/* OTP Input Fields */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
           Enter Verification Code
@@ -352,7 +332,6 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
         )}
       </div>
 
-      {/* Timer and Resend */}
       <div className="text-center mb-6">
         {!canResend ? (
           <p className="text-sm text-gray-600">
@@ -361,8 +340,8 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
           </p>
         ) : (
           <div>
-            <button
-              onClick={handleResendOTP}
+            {/* <button
+              // onClick={handleResendOTP}
               disabled={isResending || resendAttempts >= MAX_RESEND_ATTEMPTS}
               className="text-sm text-[#00423D] hover:text-[#415C41] font-medium transition duration-200 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
@@ -377,19 +356,17 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
               <p className="text-xs text-gray-500 mt-1">
                 Resend attempts: {resendAttempts}/{MAX_RESEND_ATTEMPTS}
               </p>
-            )}
+            )} */}
           </div>
         )}
       </div>
 
-      {/* Network Error */}
       {errors.network && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-600 text-sm">{errors.network}</p>
         </div>
       )}
 
-      {/* Verify Button */}
       <button
         onClick={handleSubmit}
         disabled={!isFormValid() || isSubmitting}
@@ -409,10 +386,9 @@ const OTPForm = ({ credentialOpen }: OTPFormProps) => {
         )}
       </button>
 
-      {/* Help Text */}
       <div className="mt-4 text-center">
         <p className="text-xs text-gray-500">
-          Check your spam folder if you don't see the email in your inbox.
+          Check your spam folder if you don&apos;t see the email in your inbox.
         </p>
         <p className="text-xs text-gray-500 mt-1">
           The verification code will expire in {formatTime(timeLeft)}.
