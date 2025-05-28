@@ -1,7 +1,7 @@
 "use client";
 import { useAppDispatch } from "@/redux/hooks";
 import { useState } from "react";
-import { emailCheck } from '../../redux/actions/authantication/authanticationAction'
+import { emailCheck } from "../../redux/actions/authantication/authanticationAction";
 
 interface EmailData {
   email: string;
@@ -34,29 +34,29 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
     if (!email) {
       return "Email is required";
     }
-    
+
     const trimmedEmail = email.trim();
     if (trimmedEmail !== email) {
       return "Email cannot have leading or trailing spaces";
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
       return "Please enter a valid email address";
     }
-    
+
     if (trimmedEmail.length > 254) {
       return "Email address is too long";
     }
-    
-    if (trimmedEmail.includes('..')) {
+
+    if (trimmedEmail.includes("..")) {
       return "Email cannot contain consecutive dots";
     }
-    
-    if (trimmedEmail.startsWith('.') || trimmedEmail.endsWith('.')) {
+
+    if (trimmedEmail.startsWith(".") || trimmedEmail.endsWith(".")) {
       return "Email cannot start or end with a dot";
     }
-    
+
     return undefined;
   };
 
@@ -64,30 +64,30 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
     if (!role) {
       return "Please select an account type";
     }
-    
+
     if (role !== "user" && role !== "owner") {
       return "Invalid account type selected";
     }
-    
+
     return undefined;
   };
 
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {};
-    
+
     const emailError = validateEmail(data.email);
     if (emailError) newErrors.email = emailError;
-    
+
     const roleError = validateRole(data.role);
     if (roleError) newErrors.role = roleError;
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+
     setData({
       ...data,
       [name]: value,
@@ -100,7 +100,7 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
       });
     }
 
-    if (name === 'email' && value) {
+    if (name === "email" && value) {
       const emailError = validateEmail(value);
       if (emailError) {
         setErrors({
@@ -128,7 +128,7 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    setErrors(prev => ({ ...prev, general: undefined }));
+    setErrors((prev) => ({ ...prev, general: undefined }));
 
     if (!validateForm()) {
       return;
@@ -139,24 +139,23 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
     try {
       await dispatch(emailCheck(data)).unwrap();
       onEmailSubmit(data);
-      localStorage.setItem('email', data.email);
+      localStorage.setItem("email", data.email);
       openOtp();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to send OTP:", error);
-      
+
       let errorMessage = "Failed to send OTP. Please try again.";
-      
-      if (error?.message) {
-        errorMessage = error.message;
-      } else if (typeof error === 'string') {
+
+      if (typeof error === "string") {
         errorMessage = error;
-      } else if (error?.error) {
-        errorMessage = error.error;
       }
 
-      if (errorMessage.toLowerCase().includes('email')) {
+      if (errorMessage.toLowerCase().includes("email")) {
         setErrors({ email: errorMessage });
-      } else if (errorMessage.toLowerCase().includes('role') || errorMessage.toLowerCase().includes('account')) {
+      } else if (
+        errorMessage.toLowerCase().includes("role") ||
+        errorMessage.toLowerCase().includes("account")
+      ) {
         setErrors({ role: errorMessage });
       } else {
         setErrors({ general: errorMessage });
@@ -178,9 +177,11 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Account Type <span className="text-red-500">*</span>
         </label>
-        <div className={`flex rounded-lg border p-1 ${
-          errors.role ? 'border-red-300' : 'border-gray-300'
-        }`}>
+        <div
+          className={`flex rounded-lg border p-1 ${
+            errors.role ? "border-red-300" : "border-gray-300"
+          }`}
+        >
           <button
             type="button"
             onClick={() => handleToggleChange("user")}
@@ -218,7 +219,9 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg
-              className={`w-5 h-5 ${errors.email ? 'text-red-400' : 'text-gray-400'}`}
+              className={`w-5 h-5 ${
+                errors.email ? "text-red-400" : "text-gray-400"
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -239,13 +242,13 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
             onChange={handleChange}
             className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition duration-200 ${
               errors.email
-                ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                : 'border-gray-300 focus:ring-[#00423D] focus:border-transparent'
+                ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-300 focus:ring-[#00423D] focus:border-transparent"
             }`}
             placeholder="you@example.com"
             required
-            aria-invalid={errors.email ? 'true' : 'false'}
-            aria-describedby={errors.email ? 'email-error' : undefined}
+            aria-invalid={errors.email ? "true" : "false"}
+            aria-describedby={errors.email ? "email-error" : undefined}
           />
         </div>
         {errors.email && (
@@ -260,11 +263,11 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
         disabled={isSubmitting}
         className={`w-full py-3 rounded-lg font-medium transition duration-300 shadow-md hover:shadow-lg ${
           isSubmitting
-            ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-            : 'bg-[#00423D] text-white hover:bg-[#415C41]'
+            ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+            : "bg-[#00423D] text-white hover:bg-[#415C41]"
         }`}
       >
-        {isSubmitting ? 'SENDING OTP...' : 'CONTINUE'}
+        {isSubmitting ? "SENDING OTP..." : "CONTINUE"}
       </button>
     </div>
   );

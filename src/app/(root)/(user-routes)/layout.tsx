@@ -1,4 +1,3 @@
-import Navbar from "@/components/landing/navbar";
 import React, { ReactNode } from "react";
 
 interface LayoutProps {
@@ -8,7 +7,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-white">
-      <Navbar/>
+      {children}
     </div>
   );
 };

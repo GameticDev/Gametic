@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
@@ -33,17 +33,7 @@ const ChevronRight = () => (
   </svg>
 );
 
-const Quote = () => (
-  <svg
-    width="40"
-    height="40"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className="opacity-20 absolute -top-4 -left-2"
-  >
-    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z" />
-  </svg>
-);
+
 
 type Testimonial = {
   quote: string;
@@ -62,9 +52,9 @@ export const AnimatedTestimonials = ({
   const [active, setActive] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setActive((prev) => (prev + 1) % testimonials.length);
-  };
+  },[testimonials.length]);
 
   const handlePrev = () => {
     setActive((prev) => (prev - 1 + testimonials.length) % testimonials.length);
@@ -79,7 +69,7 @@ export const AnimatedTestimonials = ({
       const interval = setInterval(handleNext, 5000);
       return () => clearInterval(interval);
     }
-  }, [autoplay, isHovered]);
+  }, [autoplay, handleNext, isHovered]);
 
   const randomRotateY = () => {
     return Math.floor(Math.random() * 21) - 10;

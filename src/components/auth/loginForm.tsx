@@ -31,16 +31,16 @@ const LoginForm = () => {
     if (!email) {
       return "Email is required";
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return "Please enter a valid email address";
     }
-    
+
     if (email.length > 254) {
       return "Email is too long";
     }
-    
+
     return undefined;
   };
 
@@ -48,34 +48,34 @@ const LoginForm = () => {
     if (!password) {
       return "Password is required";
     }
-    
+
     if (password.length < 6) {
       return "Password must be at least 6 characters long";
     }
-    
+
     if (password.length > 128) {
       return "Password is too long";
     }
-    
+
     return undefined;
   };
 
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {};
-    
+
     const emailError = validateEmail(data.email);
     if (emailError) newErrors.email = emailError;
-    
+
     const passwordError = validatePassword(data.password);
     if (passwordError) newErrors.password = passwordError;
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+
     setData({
       ...data,
       [name]: value,
@@ -90,12 +90,12 @@ const LoginForm = () => {
 
     if (value) {
       let fieldError: string | undefined;
-      if (name === 'email') {
+      if (name === "email") {
         fieldError = validateEmail(value);
-      } else if (name === 'password') {
+      } else if (name === "password") {
         fieldError = validatePassword(value);
       }
-      
+
       if (fieldError) {
         setErrors({
           ...errors,
@@ -107,9 +107,9 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    
-    setErrors(prev => ({ ...prev, general: undefined }));
-    
+
+    setErrors((prev) => ({ ...prev, general: undefined }));
+
     if (!validateForm()) {
       return;
     }
@@ -118,24 +118,20 @@ const LoginForm = () => {
 
     try {
       const res = await dispatch(loginUser(data)).unwrap();
-      
+
       const role = res.user.role;
       if (role === "user") {
         route.push("/home");
       } else {
         route.push("/owner");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       let errorMessage = "An error occurred during login";
-      
-      if (err?.message) {
-        errorMessage = err.message;
-      } else if (typeof err === 'string') {
+
+      if (typeof err === "string") {
         errorMessage = err;
-      } else if (err?.error) {
-        errorMessage = err.error;
       }
-      
+
       setErrors({ general: errorMessage });
     } finally {
       setIsSubmitting(false);
@@ -157,7 +153,9 @@ const LoginForm = () => {
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg
-              className={`w-5 h-5 ${errors.email ? 'text-red-400' : 'text-gray-400'}`}
+              className={`w-5 h-5 ${
+                errors.email ? "text-red-400" : "text-gray-400"
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -178,13 +176,13 @@ const LoginForm = () => {
             onChange={handleChange}
             className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition duration-200 ${
               errors.email
-                ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                : 'border-gray-300 focus:ring-[#00423D] focus:border-transparent'
+                ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-300 focus:ring-[#00423D] focus:border-transparent"
             }`}
             placeholder="you@example.com"
             required
-            aria-invalid={errors.email ? 'true' : 'false'}
-            aria-describedby={errors.email ? 'email-error' : undefined}
+            aria-invalid={errors.email ? "true" : "false"}
+            aria-describedby={errors.email ? "email-error" : undefined}
           />
         </div>
         {errors.email && (
@@ -201,7 +199,9 @@ const LoginForm = () => {
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg
-              className={`w-5 h-5 ${errors.password ? 'text-red-400' : 'text-gray-400'}`}
+              className={`w-5 h-5 ${
+                errors.password ? "text-red-400" : "text-gray-400"
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -222,13 +222,13 @@ const LoginForm = () => {
             onChange={handleChange}
             className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition duration-200 ${
               errors.password
-                ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                : 'border-gray-300 focus:ring-[#00423D] focus:border-transparent'
+                ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-300 focus:ring-[#00423D] focus:border-transparent"
             }`}
             placeholder="••••••••"
             required
-            aria-invalid={errors.password ? 'true' : 'false'}
-            aria-describedby={errors.password ? 'password-error' : undefined}
+            aria-invalid={errors.password ? "true" : "false"}
+            aria-describedby={errors.password ? "password-error" : undefined}
           />
         </div>
         {errors.password && (
@@ -251,11 +251,11 @@ const LoginForm = () => {
         disabled={isSubmitting}
         className={`w-full py-3 rounded-lg font-medium transition duration-300 shadow-md hover:shadow-lg ${
           isSubmitting
-            ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-            : 'bg-[#00423D] text-white hover:bg-[#415C41]'
+            ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+            : "bg-[#00423D] text-white hover:bg-[#415C41]"
         }`}
       >
-        {isSubmitting ? 'LOGGING IN...' : 'LOGIN'}
+        {isSubmitting ? "LOGGING IN..." : "LOGIN"}
       </button>
     </div>
   );
