@@ -49,7 +49,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
 
   const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
     dispatch(googleLogin(credentialResponse.credential!));
-    router.push('/user')
+    router.push('/home')
 
   };
 
@@ -158,7 +158,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   />
                 </div>
 
-                <div className={`flex items-center my-6`}>
+                <div className={`flex items-center my-3`}>
 
                   <div className="flex-1 border-t border-gray-300"></div>
                   <div className="px-4 text-sm text-gray-500">
