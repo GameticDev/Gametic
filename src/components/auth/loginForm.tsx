@@ -30,7 +30,7 @@ interface LoginData {
   const handleSubmit = async(e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      await dispatch(loginUser(data));
+      const res = await dispatch(loginUser(data));
       alert("Login successful");
     } catch (error) {
       console.log(error);

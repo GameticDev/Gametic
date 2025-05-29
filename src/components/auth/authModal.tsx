@@ -5,6 +5,10 @@ import OTPForm from "./otpForm";
 import EmailForm from "./regEmailForm";
 import CredentialsForm from "./credentialForm";
 
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { useAppDispatch } from "@/redux/hooks";
+import { googleLogin } from "@/redux/actions/authantication/authanticationAction";
+import { useRouter } from "next/navigation";
 
 interface LoginModalProps {
   open: boolean;
@@ -13,16 +17,18 @@ interface LoginModalProps {
 }
 interface EmailData {
   email: string;
-  accountType: "user" | "owner";
+  role: "user" | "owner";
 }
 
 export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [toggleAuth, setToggleAuth] = useState<string>(toggle);
   const [otpOpen, setOtpOpen] = useState<boolean>(false);
   const [openCredential, setOpenCredential] = useState<boolean>(false);
   const [data, setData] = useState<EmailData>({
     email: "",
-    accountType: "user",
+    role: "user",
   });
 
 
@@ -38,7 +44,13 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
   };
 
   const onEmailSubmit = (emailData: EmailData) => {
-    setData(emailData)
+    setData(emailData);
+  };
+
+  const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
+    dispatch(googleLogin(credentialResponse.credential!));
+    router.push('/user')
+
   };
 
   if (!open) return null;
@@ -80,7 +92,11 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
             {otpOpen ? (
               <OTPForm credentialOpen={credentialOpen} />
             ) : openCredential ? (
-              <CredentialsForm email={data.email} accountType={data.accountType} />
+
+              <CredentialsForm
+                email={data.email}
+                role={data.role}
+              />
             ) : (
               <>
                 <button
@@ -104,9 +120,8 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   </svg>
                 </button>
 
-                <div
-                  className={`text-center mb-8`}
-                >
+                <div className={`text-center mb-8`}>
+
                   <div className="w-16 h-16 bg-[#98916D]/10 flex items-center justify-center rounded-full mx-auto mb-4">
                     <svg
                       className="w-8 h-8 text-[#00423D]"
@@ -133,39 +148,18 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   </p>
                 </div>
 
-                <div
-                  className={`mb-6`}
-                >
-                  <button className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg p-3 hover:bg-gray-50 transition duration-200">
-                    <svg
-                      className="w-5 h-5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"
-                        fill="#4285F4"
-                      />
-                      <path
-                        d="M5.344 14.949l-.822 3.063 3.063-.82c.845.52 1.817.825 2.863.825 3.073 0 5.557-2.483 5.557-5.556 0-3.075-2.484-5.558-5.557-5.558-3.075 0-5.557 2.483-5.557 5.558 0 1.074.305 2.066.852 2.923z"
-                        fill="#34A853"
-                      />
-                      <path
-                        d="M5.344 14.949l-.822 3.063 3.063-.82c.845.52 1.817.825 2.863.825 3.073 0 5.557-2.483 5.557-5.556 0-3.075-2.484-5.558-5.557-5.558-3.075 0-5.557 2.483-5.557 5.558 0 1.074.305 2.066.852 2.923z"
-                        fill="#FBBC05"
-                      />
-                      <path
-                        d="M5.344 14.949l-.822 3.063 3.063-.82c.845.52 1.817.825 2.863.825 3.073 0 5.557-2.483 5.557-5.556 0-3.075-2.484-5.558-5.557-5.558-3.075 0-5.557 2.483-5.557 5.558 0 1.074.305 2.066.852 2.923z"
-                        fill="#EA4335"
-                      />
-                    </svg>
-                    <span className="font-medium">Continue with Google</span>
-                  </button>
+
+                <div className={`mb-6`}>
+                  <GoogleLogin
+                    onSuccess={handleGoogleLogin}
+                    onError={() => {
+                      console.log("Google login failed");
+                    }}
+                  />
                 </div>
 
-                <div
-                  className={`flex items-center my-6`}
-                >
+                <div className={`flex items-center my-6`}>
+
                   <div className="flex-1 border-t border-gray-300"></div>
                   <div className="px-4 text-sm text-gray-500">
                     or continue with email
@@ -179,9 +173,9 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 ) : (
                   <EmailForm openOtp={openOtp} onEmailSubmit={onEmailSubmit} />
                 )}
-                <div
-                  className={`text-center text-sm mt-6`}
-                >
+
+                <div className={`text-center text-sm mt-6`}>
+
                   {toggleAuth === "login"
                     ? "Don't have an account?"
                     : "Already have an account?"}
@@ -204,7 +198,6 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
           </div>
         </div>
       </div>
-
     </>
   );
 }

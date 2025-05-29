@@ -8,10 +8,10 @@ interface CredentialsData {
 
 interface CredentialsFormProps {
   email: string;
-  accountType: "user" | "owner";
+  role: "user" | "owner";
 }
 
-const CredentialsForm = ({ email, accountType }: CredentialsFormProps) => {
+const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
   const [data, setData] = useState<CredentialsData>({
     username: "",
     password: "",
@@ -28,7 +28,7 @@ const CredentialsForm = ({ email, accountType }: CredentialsFormProps) => {
     e.preventDefault();
     console.log({
         email,
-        accountType,
+        role,
         username:data.username,
         pass:data.password
     })
@@ -42,7 +42,7 @@ const CredentialsForm = ({ email, accountType }: CredentialsFormProps) => {
           <span className="font-medium">Email:</span> {email}
         </div>
         <div className="text-sm text-gray-600">
-          <span className="font-medium">Account Type:</span> {accountType === "user" ? "User Account" : "Owner Account"}
+          <span className="font-medium">Account Type:</span> {role === "user" ? "User Account" : "Owner Account"}
         </div>
       </div>
 

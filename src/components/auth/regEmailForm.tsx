@@ -1,23 +1,27 @@
 "use client";
+import { useAppDispatch } from "@/redux/hooks";
 import { useState } from "react";
+import { emailCheck } from '../../redux/actions/authantication/authanticationAction'
 
 interface EmailData {
   email: string;
-  accountType: "user" | "owner";
+  role: "user" | "owner";
 }
 
 interface EmailFormProps {
   onEmailSubmit: (data: EmailData) => void;
     openOtp: () => void;
-
-
 }
 
 const EmailForm = ({ openOtp,onEmailSubmit }: EmailFormProps) => {
   const [data, setData] = useState<EmailData>({
     email: "",
-    accountType: "user",
+    role: "user",
   });
+
+  
+
+  const dispatch = useAppDispatch()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({
@@ -26,19 +30,27 @@ const EmailForm = ({ openOtp,onEmailSubmit }: EmailFormProps) => {
     });
   };
 
-  const handleToggleChange = (accountType: "user" | "owner") => {
+  const handleToggleChange = (role: "user" | "owner") => {
     setData({
       ...data,
-      accountType: accountType,
+      role: role,
     });
   };
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    onEmailSubmit(data);
-    openOtp()
-  };
 
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    try {
+      await dispatch(emailCheck(data));
+      onEmailSubmit(data); 
+      localStorage.setItem('email' , data.email)
+      openOtp(); 
+    } catch (error) {
+      console.error("Failed to send OTP:", error);
+      // Optionally show error to user here
+    }
+  };
   return (
     <div className="w-full">
       {/* Account Type Toggle */}
@@ -51,7 +63,7 @@ const EmailForm = ({ openOtp,onEmailSubmit }: EmailFormProps) => {
             type="button"
             onClick={() => handleToggleChange("user")}
             className={`flex-1 py-2 px-4 rounded-md text-center text-sm font-medium transition-colors duration-200 ${
-              data.accountType === "user"
+              data.role === "user"
                 ? "bg-[#00423D] text-white"
                 : "text-gray-700 hover:bg-gray-100"
             }`}
@@ -62,7 +74,7 @@ const EmailForm = ({ openOtp,onEmailSubmit }: EmailFormProps) => {
             type="button"
             onClick={() => handleToggleChange("owner")}
             className={`flex-1 py-2 px-4 rounded-md text-center text-sm font-medium transition-colors duration-200 ${
-              data.accountType === "owner"
+              data.role === "owner"
                 ? "bg-[#00423D] text-white"
                 : "text-gray-700 hover:bg-gray-100"
             }`}

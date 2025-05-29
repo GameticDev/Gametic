@@ -1,11 +1,16 @@
-// app/user/join/layout.tsx
-import React from 'react';
+import Navbar from "@/components/landing/navbar";
+import React, { ReactNode } from "react";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div>
-      {/* You can add a sidebar or nav here if needed */}
-      {children}
+    <div className="flex min-h-screen bg-white">
+      <Navbar/>
     </div>
   );
-}
+};
+
+export default Layout;
