@@ -357,6 +357,7 @@ export interface TurfData {
   city: string;
   area: string;
   location: string;
+  address?: string;
 
   // address: {        // More structured address
   //   city: string;
@@ -373,6 +374,7 @@ export interface TurfData {
 
   turfType: string;
   size: string;
+  // size: number;
   images: string[];
   amenities?: string[]; 
   hourlyRate: number;
@@ -430,6 +432,7 @@ export type TurfFormInputs = {
   city: string;
   area: string;
   location: string;
+  address: string;
 
   // address: {
   //   city: string;
@@ -446,9 +449,8 @@ export type TurfFormInputs = {
   turfType: string;
   size: string;
   hourlyRate: number;
-  // images: FileList | string[] | null;
   images: File[] | string[] | null;
-  //  images: string[];
+// images: (File | string)[];
 
    amenities?: string[];
    description?: string;

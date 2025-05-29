@@ -26,8 +26,7 @@ const predefinedTimeSlots = [
 ];
 
 const TurfAvailability: React.FC<TurfAvailabilityProps> = ({ register, errors, control }) => {
-  const selectedDays = useWatch({ control, name: 'availability.days' });
-
+    const selectedDays = useWatch({ control, name: 'availability.days' }) || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -37,7 +36,7 @@ const TurfAvailability: React.FC<TurfAvailabilityProps> = ({ register, errors, c
             Select Available Days <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-3">
-            {['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'].map((day) => (
+            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
               <div key={day} className="flex items-center">
                 <input
                   type="checkbox"

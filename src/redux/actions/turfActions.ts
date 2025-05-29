@@ -8,6 +8,7 @@ import { TurfData } from '@/types/turf';
 export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: string }>(
   'turf/addTurf',
   async (formData, { rejectWithValue }) => {
+    console.log(",,,,,,,,",formData)
     try {
       const response = await axiosInstance.post('/owner/addTurf', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
