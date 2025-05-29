@@ -22,12 +22,12 @@ const HeroSection = () => {
             </h1>
 
             <p className="text-base md:text-[17px] pl-0 md:pl-3 max-w-full md:max-w-[850px] mb-5 text-gray-700 leading-relaxed">
-              This isn't just a platform — it's where{" "}
+              This isn&apos;t just a platform — it&apos;s where{" "}
               <span className="font-semibold text-[#00423d]">
                 passion meets purpose
               </span>
               . A space built for players who live for the thrill of the game,
-              the spirit of teamwork, and the rush of competition - it's a
+              the spirit of teamwork, and the rush of competition - it&apos;s a
               movement, a community, and your home for all things sport.
             </p>
 
