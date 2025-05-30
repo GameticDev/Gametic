@@ -13,19 +13,21 @@ const Page = () => {
   }
 
   const [data, setData] = useState<LoginData>({
-    email: '',
-    password: '',
+    email:"",
+    password:""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value)
     setData({
       ...data,
       [e.target.name]: e.target.value,
     });
   };
-
+  
   const handleSubmit = async(e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log(data,"abhay")
     try {
       await dispatch(loginUser(data));
       alert("ok")

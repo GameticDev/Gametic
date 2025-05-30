@@ -29,6 +29,7 @@ export default function RegistrationForm() {
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(data,"abhay")
     dispatch(registerUser(data));
   };
 

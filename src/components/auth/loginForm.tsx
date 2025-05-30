@@ -120,8 +120,9 @@ const LoginForm = () => {
       const res = await dispatch(loginUser(data)).unwrap();
 
       const role = res.user.role;
+      console.log(role,"this is role")
       if (role === "user") {
-        route.push("/home");
+        route.push("/user");
       } else {
         route.push("/owner");
       }
