@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage"
+import storage from "redux-persist/lib/storage";
 import {
   emailCheck,
   emailverification,
@@ -9,7 +9,7 @@ import {
 } from "../../actions/authantication/authanticationAction";
 import { AuthResponse, User } from "../../../types/authantication";
 import { persistReducer } from "redux-persist";
-
+import { loginAdmin } from "@/redux/actions/admin/auth";
 
 interface AuthState {
   user: User | null;
@@ -18,7 +18,6 @@ interface AuthState {
   isVerified: boolean;
   isAuth: boolean;
   role: "user" | "admin" | "owner";
-
 }
 
 const initialState: AuthState = {
@@ -28,7 +27,6 @@ const initialState: AuthState = {
   isVerified: false,
   isAuth: false,
   role: "user",
-
 };
 
 const authSlice = createSlice({
@@ -85,6 +83,24 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(loginAdmin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        loginAdmin.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.loading = false;
+          state.user = action.payload.user;
+          console.log(action.payload.user);
+          state.isAuth = true;
+          state.role = "admin";
+        }
+      )
+      .addCase(loginAdmin.rejected, (state, action: PayloadAction<unknown>) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
       .addCase(googleLogin.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -94,7 +110,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         console.log(action.payload.user);
         state.isAuth = true;
-          state.role = "user";
+        state.role = "user";
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
@@ -141,7 +157,7 @@ const authSlice = createSlice({
 const persistConfig = {
   key: "auth",
   storage,
-  whitelist: ["user", "isAuth","role"],
+  whitelist: ["user", "isAuth", "role"],
 };
 
 export const { logoutUser, clearError } = authSlice.actions;
