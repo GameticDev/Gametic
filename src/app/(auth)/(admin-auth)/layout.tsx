@@ -1,4 +1,3 @@
-import Navbar from "@/components/user/navbar";
 import React, { ReactNode } from "react";
 
 interface LayoutProps {
@@ -7,12 +6,9 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="flex w-full min-h-screen bg-white">
-      <div className="w-full">
-        <Navbar/>
+    <div className="flex justify-center items-center min-h-screen bg-white w-full">
+        <main className="overflow-auto p-4 w-full flex justify-center">{children}</main>
       </div>
-      {children}
-    </div>
   );
 };
 
