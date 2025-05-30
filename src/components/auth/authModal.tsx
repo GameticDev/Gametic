@@ -31,7 +31,6 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
     role: "user",
   });
 
-
   useEffect(() => {
     setToggleAuth(toggle);
   }, [toggle]);
@@ -47,14 +46,12 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
     setData(emailData);
   };
 
-  const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
-    dispatch(googleLogin(credentialResponse.credential!));
-    router.push('/home')
-
+  const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    await dispatch(googleLogin(credentialResponse.credential!));
+    router.push("/home");
   };
 
   if (!open) return null;
-
 
   return (
     <>
@@ -92,11 +89,7 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
             {otpOpen ? (
               <OTPForm credentialOpen={credentialOpen} />
             ) : openCredential ? (
-
-              <CredentialsForm
-                email={data.email}
-                role={data.role}
-              />
+              <CredentialsForm email={data.email} role={data.role} />
             ) : (
               <>
                 <button
@@ -121,7 +114,6 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 </button>
 
                 <div className={`text-center mb-8`}>
-
                   <div className="w-16 h-16 bg-[#98916D]/10 flex items-center justify-center rounded-full mx-auto mb-4">
                     <svg
                       className="w-8 h-8 text-[#00423D]"
@@ -148,7 +140,6 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                   </p>
                 </div>
 
-
                 <div className={`mb-6`}>
                   <GoogleLogin
                     onSuccess={handleGoogleLogin}
@@ -159,14 +150,12 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 </div>
 
                 <div className={`flex items-center my-3`}>
-
                   <div className="flex-1 border-t border-gray-300"></div>
                   <div className="px-4 text-sm text-gray-500">
                     or continue with email
                   </div>
                   <div className="flex-1 border-t border-gray-300"></div>
                 </div>
-
 
                 {toggleAuth === "login" ? (
                   <LoginForm />
@@ -175,7 +164,6 @@ export default function AuthModal({ open, onClose, toggle }: LoginModalProps) {
                 )}
 
                 <div className={`text-center text-sm mt-6`}>
-
                   {toggleAuth === "login"
                     ? "Don't have an account?"
                     : "Already have an account?"}
