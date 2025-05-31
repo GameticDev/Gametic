@@ -1,14 +1,17 @@
+
 // import React from 'react';
 // import { FiAlertCircle } from 'react-icons/fi';
+// import { UseFormRegister, FieldErrors, Control, UseFormWatch } from 'react-hook-form';
+// import { TurfFormValues } from '@/types/turf';
 
 // interface TurfBasicInfoProps {
-//   register: any;
-//   errors: any;
-//   control: any;
-//    watch?: any; // Add watch if you need to track field values
+//   register: UseFormRegister<TurfFormValues>;
+//   errors: FieldErrors<TurfFormValues>;
+//   control: Control<TurfFormValues>;
+//   watch?: UseFormWatch<TurfFormValues>;
 // }
 
-// const TurfBasicInfo: React.FC<TurfBasicInfoProps> = ({ register, errors, control }) => {
+// const TurfBasicInfo: React.FC<TurfBasicInfoProps> = ({ register, errors }) => {
 //   return (
 //     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //       {/* Name */}
@@ -139,14 +142,13 @@
 
 import React from 'react';
 import { FiAlertCircle } from 'react-icons/fi';
-import { UseFormRegister, FieldErrors, Control, UseFormWatch } from 'react-hook-form';
-import { TurfFormValues } from '@/types/turf';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
+import { TurfFormInputs } from '@/types/turf';
 
 interface TurfBasicInfoProps {
-  register: UseFormRegister<TurfFormValues>;
-  errors: FieldErrors<TurfFormValues>;
-  control: Control<TurfFormValues>;
-  watch?: UseFormWatch<TurfFormValues>;
+  register: UseFormRegister<TurfFormInputs>;
+  errors: FieldErrors<TurfFormInputs>;
+  // control?: Control<TurfFormInputs>;
 }
 
 const TurfBasicInfo: React.FC<TurfBasicInfoProps> = ({ register, errors }) => {
@@ -224,29 +226,29 @@ const TurfBasicInfo: React.FC<TurfBasicInfoProps> = ({ register, errors }) => {
         )}
       </div>
 
-     {/* Location */}
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Location <span className="text-red-500">*</span>
-  </label>
-  <input
-    type="text"
-    {...register('location', { 
-      required: 'Location is required',
-    minLength: {
+      {/* Location */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Location <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          {...register('location', { 
+            required: 'Location is required',
+            minLength: {
               value: 3,
               message: 'Location must be at least 3 characters'
             }
            })}
-    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-    placeholder="Enter location"
-  />
-  {errors.location && (
-    <p className="mt-1 text-sm text-red-600 flex items-center">
-      <FiAlertCircle className="mr-1" /> {errors.location.message}
-    </p>
-  )}
-</div>
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Enter location"
+        />
+        {errors.location && (
+          <p className="mt-1 text-sm text-red-600 flex items-center">
+            <FiAlertCircle className="mr-1" /> {errors.location.message}
+          </p>
+        )}
+      </div>
 
       {/* Address */}
       <div className="md:col-span-2">
@@ -255,8 +257,8 @@ const TurfBasicInfo: React.FC<TurfBasicInfoProps> = ({ register, errors }) => {
         </label>
         <textarea
           {...register('address', { 
-            required: 'Address is required' ,
-          minLength: {
+            required: 'Address is required',
+            minLength: {
               value: 10,
               message: 'Address must be at least 10 characters'
             }

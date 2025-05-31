@@ -2,8 +2,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../redux/store';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
 import { addTurf, updateTurf } from '@/redux/actions/turfActions';
 import { toast } from 'react-toastify';
 import { FiX } from 'react-icons/fi';
@@ -44,7 +44,7 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
     reset,
     setValue,
     control,
-    watch,
+    // watch,
     trigger,
   } = useForm<TurfFormInputs>({
     mode: 'onChange',
@@ -109,6 +109,7 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
       });
     }
   }, [turfToEdit, setValue, reset]);
+//  }, [turfToEdit, setValue, reset, setExistingImages, setPreviewImages, DEFAULT_AVAILABILITY]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -221,20 +222,33 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
         toast.success('Turf added successfully!');
       }
       onClose();
-    } catch (error: any) {
-      console.error('Submission error:', error);
-      toast.error(error.message || 'Failed to save turf');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+
+    }catch (error) {
+    if (error instanceof Error) {
+    toast.error(error.message || 'Failed to save turf');
+  } else {
+    toast.error('Failed to save turf');
+  }
+}
+  }
+
+//   } catch (error: any) {
+  //     console.error('Submission error:', error);
+  //     toast.error(error.message || 'Failed to save turf');
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
 
   const prevStep = () => {
     setStep((prev) => Math.max(prev - 1, 1));
   };
 
-  const validateCurrentStep = async () => {
-    let fieldsToValidate: string[] = [];
+  // const validateCurrentStep = async () => {
+  //   let fieldsToValidate: string[] = [];
+  const validateCurrentStep = async (): Promise<boolean> => {
+  let fieldsToValidate: readonly string[] = [];
 
     switch (step) {
       case 1:
@@ -252,12 +266,27 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
         return true;
     }
 
+  //   const isValid = await trigger(fieldsToValidate as any);
+  //   if (!isValid) {
+  //     toast.error('Please fill all required fields correctly');
+  //   }
+  //   return isValid;
+  // };
+
+  try {
     const isValid = await trigger(fieldsToValidate as any);
+    // const isValid = await trigger(fieldsToValidate);
+
     if (!isValid) {
       toast.error('Please fill all required fields correctly');
     }
     return isValid;
-  };
+  } catch (error) {
+    console.error('Validation error:', error);
+    toast.error('Validation failed');
+    return false;
+  }
+};
 
  return (
     <div className="relative bg-white rounded-lg p-6 max-w-4xl mx-auto">
@@ -293,7 +322,8 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
           <TurfBasicInfo
             register={register}
             errors={errors}
-            control={control} />
+            // control={control}
+             />
         )}
 
         {step === 2 && (
@@ -358,4 +388,3 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
 };
 
 export default AddTurfForm;
-

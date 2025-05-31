@@ -72,23 +72,12 @@ export interface TurfData {
   area: string;
   location: string;
   address: string;
-
-  // address: {        // More structured address
-  //   city: string;
-  //   area: string;
-  //   street?: string;
-  //   landmark?: string;
-  //   postalCode?: string;
-  // };
   coordinates?: {    // For map integration
     lat: number;
     lng: number;
   };
-
-
   turfType: string;
   size: string;
-  // size: number;
   images: string[];
   amenities?: string[]; 
   hourlyRate: number;
@@ -141,6 +130,17 @@ export type Availability = {
 
 };
 
+
+// export interface TurfFormInputs extends TurfFormValues {
+//   ownerId: string;
+//   amenities?: string[];
+//   description?: string;
+//   rules?: string[];
+//   cancellationPolicy?: string;
+//   availability: Availability;
+//   _id?: string;
+//   images: File[] | string[] | null;
+// }
 export type TurfFormInputs = {
   ownerId: string;
   name: string;
