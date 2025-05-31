@@ -61,10 +61,15 @@ const turfSlice = createSlice({
         state.loading = false;
         state.turfs = action.payload;
       })
-      .addCase(fetchTurfs.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload?.message ?? 'Failed to fetch turfs';
-      })
+      // .addCase(fetchTurfs.rejected, (state, action: PayloadAction<any>) => {
+      //   state.loading = false;
+      //   state.error = action.payload?.message ?? 'Failed to fetch turfs';
+      // })
+
+      .addCase(fetchTurfs.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload ?? 'Failed to fetch turfs';
+})
 
       .addCase(updateTurf.pending, (state) => {
         state.loading = true;
@@ -73,29 +78,50 @@ const turfSlice = createSlice({
       .addCase(updateTurf.fulfilled, (state, action: PayloadAction<TurfData>) => {
         state.loading = false;
         state.success = true;
+
+         if (!action.payload || !action.payload._id) {
+    // Log or handle unexpected payload shape gracefully
+    console.error('UpdateTurf fulfilled action payload missing _id:', action.payload);
+    return;
+  }
+
         const index = state.turfs.findIndex(t => t._id === action.payload._id);
         if (index !== -1) {
           state.turfs[index] = action.payload;
         }
       })
-      .addCase(updateTurf.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload?.message ?? 'Failed to update turf';
-      })
+      // .addCase(updateTurf.rejected, (state, action: PayloadAction<any>) => {
+      //   state.loading = false;
+      //   state.error = action.payload?.message ?? 'Failed to update turf';
+      // })
+
+      .addCase(updateTurf.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload ?? 'Failed to update turf';
+})
+      
 
       .addCase(deleteTurf.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteTurf.fulfilled, (state, action: PayloadAction<string>) => {
-        state.loading = false;
-        state.success = true;
-        state.turfs = state.turfs.filter(t => t._id !== action.payload);
-      })
-      .addCase(deleteTurf.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload?.message ?? 'Failed to delete turf';
-      });
+.addCase(deleteTurf.fulfilled, (state, action) => {
+  console.log('shanu deleteTurf.fulfilled payload:', action.payload);
+  state.loading = false;
+  state.success = true;
+  state.turfs = state.turfs.filter(t => t._id !== action.payload);
+})
+
+
+      // .addCase(deleteTurf.rejected, (state, action: PayloadAction<any>) => {
+      //   state.loading = false;
+      //   state.error = action.payload?.message ?? 'Failed to delete turf';
+      // });
+
+.addCase(deleteTurf.rejected, (state, action) => {
+  state.loading = false;
+ state.error = action.payload ?? 'Failed to delete turf';
+});
   },
 });
 

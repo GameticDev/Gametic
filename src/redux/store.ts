@@ -6,7 +6,6 @@ import adminVenueReducer from "./slices/admin/venueSlice";
 import turfDetailsReducer from './slices/turfDetailsSlice';
 import {
   persistStore,
-  persistReducer,
   FLUSH,
   REHYDRATE,
   PAUSE,

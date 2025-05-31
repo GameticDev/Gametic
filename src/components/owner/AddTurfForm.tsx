@@ -19,6 +19,12 @@ interface AddTurfFormProps {
   turfToEdit?: TurfFormInputs | null;
 }
 
+  const DEFAULT_AVAILABILITY: Availability = {
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    startTime: '06:00',
+    endTime: '20:00',
+  };
+
 const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
   console.log("Turf data passed to AddTurfForm:", turfToEdit);
 
@@ -30,12 +36,6 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
 
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const DEFAULT_AVAILABILITY: Availability = {
-    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    startTime: '06:00',
-    endTime: '20:00',
-  };
 
   const {
     register,
@@ -109,7 +109,6 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
       });
     }
   }, [turfToEdit, setValue, reset]);
-//  }, [turfToEdit, setValue, reset, setExistingImages, setPreviewImages, DEFAULT_AVAILABILITY]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -246,9 +245,16 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
   };
 
   // const validateCurrentStep = async () => {
-  //   let fieldsToValidate: string[] = [];
+    // let fieldsToValidate: string[] = [];
   const validateCurrentStep = async (): Promise<boolean> => {
-  let fieldsToValidate: readonly string[] = [];
+// let fieldsToValidate: string[] = [];
+type TurfFormField =
+  | keyof TurfFormInputs
+  | 'availability.days'
+  | 'availability.startTime'
+  | 'availability.endTime';
+
+let fieldsToValidate: TurfFormField[] = [];
 
     switch (step) {
       case 1:
@@ -259,6 +265,7 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
         break;
       case 3:
         fieldsToValidate = ['availability.days', 'availability.startTime', 'availability.endTime'];
+
         break;
       case 4:
         return true;
@@ -266,16 +273,11 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
         return true;
     }
 
-  //   const isValid = await trigger(fieldsToValidate as any);
-  //   if (!isValid) {
-  //     toast.error('Please fill all required fields correctly');
-  //   }
-  //   return isValid;
-  // };
-
   try {
-    const isValid = await trigger(fieldsToValidate as any);
-    // const isValid = await trigger(fieldsToValidate);
+    // const isValid = await trigger(fieldsToValidate as any);
+    const isValid = await trigger(fieldsToValidate);
+
+
 
     if (!isValid) {
       toast.error('Please fill all required fields correctly');
