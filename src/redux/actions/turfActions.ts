@@ -66,7 +66,7 @@ export const fetchTurfs = createAsyncThunk('turf/fetchTurfs', async (_, { reject
   try {
     const response = await axiosInstance.get('/owner/getTurfs'); // Make sure your backend has this route
     return response.data; // should return array of turfs
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || error.message);
+  } catch (error) {
+    return rejectWithValue(error);
   }
 });

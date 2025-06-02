@@ -1,191 +1,176 @@
-// "use client";
+"use client";
 
-// import React, { useState } from 'react';
-// import { Heart, Star, MapPin, Clock, Users, Zap } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import axios from "axios";
+import debounce from "lodash.debounce";
+import { useRouter } from "next/navigation";
+
+type Turf = {
+  _id: string;
+  name: string;
+  city: string;
+  area: string;
+  turfType: string;
+  size: string;
+  hourlyRate: number;
+  images: string[];
+  availability: {
+    days: string[];
+    startTime: string;
+    endTime: string;
+    timeSlots: string[] | false;
+  };
+};
+
+const categories = ["football", "cricket", "tennis", "basketball"];
+const PAGE_SIZE = 6;
+
+const TurfList = () => {
+  const [turfs, setTurfs] = useState<Turf[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const router = useRouter();
+
+  // Fetch turfs from API
+  const fetchTurfs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params: any = { page, limit: PAGE_SIZE };
+      if (selectedCategory) params.category = selectedCategory;
+      if (searchTerm.trim()) params.search = searchTerm.trim();
+
+      const res = await axios.get("http://localhost:5000/api/getAllturf", { params });
+      setTurfs(res.data.turf || []);
+      setTotalPages(res.data.totalPages || 1);
+    } catch (err) {
+      console.error("Error fetching turf data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, selectedCategory, searchTerm]);
+
+  // Debounced searchTerm setter
+  const debouncedSearch = useRef(
+    debounce((val: string) => {
+      setSearchTerm(val);
+      setPage(1);
+    }, 500)
+  ).current;
+
+  // Update searchTerm when input changes (debounced)
+  useEffect(() => {
+    debouncedSearch(searchInput);
+    // Cleanup debounce on unmount
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [searchInput, debouncedSearch]);
 
 
+  useEffect(() => {
+    fetchTurfs();
+  }, [fetchTurfs]);
 
-// const SportsFacilitiesBooking: React.FC = () => {
-//   const [favorites, setFavorites] = useState<Set<number>>(new Set());
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [selectedSport, setSelectedSport] = useState('all');
-//   const [priceFilter, setPriceFilter] = useState<number | null>(null);
-//   const [dateFilter, setDateFilter] = useState('');
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategory(e.target.value);
+    setPage(1);
+  };
 
-  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
 
+  return (
+    <div className="p-6 max-w-7xl mx-auto bg-white">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-5">
+        <select
+          className="border border-[#00423d] text-[#00423d] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00423d]/50"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          <option value="">All Sports</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat} className="capitalize">
+              {cat}
+            </option>
+          ))}
+        </select>
 
-//   const toggleFavorite = (id: number) => {
-//     const newFavorites = new Set(favorites);
-//     newFavorites.has(id) ? newFavorites.delete(id) : newFavorites.add(id);
-//     setFavorites(newFavorites);
-//   };
+        <input
+          type="text"
+          placeholder="Search turfs by name..."
+          value={searchInput}
+          onChange={handleSearchChange}
+          className="border border-[#00423d] text-[#00423d] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00423d]/50 flex-grow max-w-xs"
+        />
+      </div>
 
-//   const sportTypes = ['all', 'Football', 'Cricket', 'Basketball', 'Tennis', 'Swimming', 'Badminton', 'Hockey', 'Volleyball', 'Multi-Sport'];
+      {loading ? (
+        <div className="text-center py-10 text-xl text-[#00524a] font-semibold">Loading turfs...</div>
+      ) : turfs.length === 0 ? (
+        <p className="text-center text-[#7a7455] col-span-full italic">No turfs found matching your criteria.</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {turfs.map((turf) => (
+              <div
+                key={turf._id}
+                className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border border-[#98916d]/30"
+              >
+                <img src={turf.images[0]} alt={turf.name} className="w-full h-60 object-cover" />
+                <div className="p-5 space-y-2">
+                  <h2 className="text-2xl font-bold text-[#00423d]">{turf.name}</h2>
+                  <p className="text-sm text-[#7a7455]">
+                    {turf.city}, {turf.area}
+                  </p>
+                  <p className="text-[#00524a] font-semibold text-sm">
+                    ₹{turf.hourlyRate}/hr • {turf.turfType}
+                  </p>
+                  <p className="text-xs text-[#7a7455]">
+                    Open: {turf.availability.startTime} - {turf.availability.endTime}
+                  </p>
+                  <p className="text-xs text-[#7a7455]">
+                    Days: {turf.availability.days.join(", ")}
+                  </p>
+                  <button
+                    className="mt-3 w-full bg-gradient-to-r from-[#00423d] to-[#00524a] text-white py-2 rounded-full hover:scale-105 hover:shadow-lg transition-transform duration-300"
+                    onClick={() => router.push(`facilities/${turf._id}/viewdetails/`)}
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
 
-//   const filteredFacilities = facilities.filter(facility => {
-//     const sportMatch = selectedSport === 'all' || facility.sportType === selectedSport;
-//     const priceMatch = priceFilter === null || facility.pricePerHour <= priceFilter;
-//     const dateMatch = !dateFilter || facility.availability.toLowerCase().includes(dateFilter.toLowerCase());
-//     return sportMatch && priceMatch && dateMatch;
-//   });
+          <div className="sticky bottom-0 bg-white py-5 flex justify-center space-x-6 border-t border-[#98916d]/40 shadow-md z-10 mt-8">
+            <button
+              className="px-5 py-2 bg-gradient-to-r from-[#00423d] to-[#00524a] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 hover:shadow-lg transition-transform duration-300"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <span className="text-[#7a7455] font-semibold self-center">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              className="px-5 py-2 bg-gradient-to-r from-[#00423d] to-[#00524a] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 hover:shadow-lg transition-transform duration-300"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
-//   const itemsPerPage = 9;
-//   const totalPages = Math.ceil(filteredFacilities.length / itemsPerPage);
-//   const startIndex = (currentPage - 1) * itemsPerPage;
-//   const currentFacilities = filteredFacilities.slice(startIndex, startIndex + itemsPerPage);
-
-//   const getSportIcon = (sportType: string) => {
-//     switch (sportType) {
-//       case 'Football': return '⚽';
-//       case 'Cricket': return '🏏';
-//       case 'Basketball': return '🏀';
-//       case 'Tennis': return '🎾';
-//       case 'Swimming': return '🏊';
-//       case 'Badminton': return '🏸';
-//       case 'Hockey': return '🏑';
-//       case 'Volleyball': return '🏐';
-//       default: return '🏟️';
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-white p-6 text-[#204E4A]">
-//       <div className="max-w-7xl mx-auto">
-//         {/* Header */}
-//         <div className="mb-8">
-//           <h1 className="text-4xl font-bold text-[#204E4A] mb-2">Book Sports Facilities & Turfs</h1>
-//           <p className="text-[#4A6E6B]">Find and book premium sports facilities for your games and training sessions.</p>
-//         </div>
-
-//         {/* Filters */}
-//         <div className="mb-8 flex flex-wrap gap-4 sticky">
-//           <select
-//             value={selectedSport}
-//             onChange={(e) => setSelectedSport(e.target.value)}
-//             className="px-4 py-2 border rounded-lg bg-[#EDF3EF] text-[#204E4A]"
-//           >
-//             {sportTypes.map(sport => (
-//               <option key={sport} value={sport}>
-//                 {sport === 'all' ? 'All Sports' : `${getSportIcon(sport)} ${sport}`}
-//               </option>
-//             ))}
-//           </select>
-
-//           <input
-//             type="number"
-//             placeholder="Max Price"
-//             value={priceFilter || ''}
-//             onChange={(e) => setPriceFilter(e.target.value ? Number(e.target.value) : null)}
-//             className="px-4 py-2 border rounded-lg bg-[#EDF3EF] text-[#204E4A]"
-//           />
-
-//           <input
-//             type="text"
-//             placeholder="Date (e.g., Today)"
-//             value={dateFilter}
-//             onChange={(e) => setDateFilter(e.target.value)}
-//             className="px-4 py-2 border rounded-lg bg-[#EDF3EF] text-[#204E4A]"
-//           />
-//         </div>
-
-//         {/* Grid */}
-//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-//           {currentFacilities.map(facility => (
-//             <div key={facility.id} className="bg-[#F7FAF7] border border-[#D0E3D2] rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-//               <div className="relative h-48 overflow-hidden rounded-t-xl">
-//                 <img src={facility.image} alt={facility.name} className="object-cover w-full h-full hover:scale-105 transition-transform duration-300" />
-//                 <button
-//                   onClick={() => toggleFavorite(facility.id)}
-//                   className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-[#E2F0E2]"
-//                 >
-//                   <Heart className={`w-5 h-5 ${favorites.has(facility.id) ? 'fill-green-600 text-green-600' : 'text-gray-600'}`} />
-//                 </button>
-//                 <div className="absolute bottom-3 left-3 bg-[#A8D5BA] text-[#204E4A] text-sm px-3 py-1 rounded-full flex items-center gap-1">
-//                   <span>{getSportIcon(facility.sportType)}</span>
-//                   {facility.sportType}
-//                 </div>
-//                 <div className="absolute top-3 left-3 bg-[#69A297] text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-//                   <Zap className="w-3 h-3" />
-//                   {facility.availability}
-//                 </div>
-//               </div>
-
-//               <div className="p-5 text-[#204E4A]">
-//                 <div className="flex items-center gap-1 text-sm mb-2">
-//                   <MapPin className="w-4 h-4" />
-//                   <span>{facility.location}</span>
-//                 </div>
-//                 <h3 className="font-semibold text-lg mb-2">{facility.name}</h3>
-
-//                 <div className="flex items-center gap-4 mb-3 text-sm">
-//                   <div className="flex items-center gap-1">
-//                     <Clock className="w-4 h-4" />
-//                     {facility.openHours}
-//                   </div>
-//                   <div className="flex items-center gap-1">
-//                     <Users className="w-4 h-4" />
-//                     {facility.capacity}
-//                   </div>
-//                 </div>
-
-//                 <div className="mb-3">
-//                   <div className="flex flex-wrap gap-1 text-xs">
-//                     {facility.amenities.slice(0, 3).map((item, idx) => (
-//                       <span key={idx} className="bg-[#D0E3D2] text-[#204E4A] px-2 py-1 rounded-full">
-//                         {item}
-//                       </span>
-//                     ))}
-//                     {facility.amenities.length > 3 && (
-//                       <span className="bg-[#D0E3D2] text-[#204E4A] px-2 py-1 rounded-full">+{facility.amenities.length - 3} more</span>
-//                     )}
-//                   </div>
-//                 </div>
-
-//                 <div className="flex items-center justify-between mb-4">
-//                   <div className="flex items-center gap-2">
-//                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-//                     <span className="font-medium">{facility.rating}</span>
-//                     <span className="text-sm">({facility.reviews})</span>
-//                   </div>
-//                   <div className="text-right">
-//                     <span className="text-xl font-bold text-[#2F855A]">${facility.pricePerHour.toFixed(2)}</span>
-//                     <span className="text-sm block text-gray-500">/hour</span>
-//                   </div>
-//                 </div>
-
-//                 <div className="flex gap-2">
-//                   <button className="flex-1 bg-[#69A297] hover:bg-[#557C6F] text-white py-2 rounded-lg font-medium transition">
-//                     Book Now
-//                   </button>
-//                   <button className="px-4 py-2 border border-[#69A297] text-[#69A297] hover:bg-[#EDF3EF] rounded-lg transition">
-//                     View Details
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Pagination */}
-//         <div className="flex items-center justify-center gap-2">
-//           {Array.from({ length: totalPages }, (_, i) => (
-//             <button
-//               key={i + 1}
-//               onClick={() => setCurrentPage(i + 1)}
-//               className={`w-10 h-10 rounded-full font-medium transition-colors duration-200 ${
-//                 currentPage === i + 1
-//                   ? 'bg-[#69A297] text-white'
-//                   : 'bg-[#EDF3EF] text-[#204E4A] hover:bg-[#D0E3D2]'
-//               }`}
-//             >
-//               {i + 1}
-//             </button>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default SportsFacilitiesBooking;
+export default TurfList;
