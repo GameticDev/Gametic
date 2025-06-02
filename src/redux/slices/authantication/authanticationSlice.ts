@@ -5,6 +5,7 @@ import {
   emailverification,
   googleLogin,
   loginUser,
+  logout,
   registerUser,
 } from "../../actions/authantication/authanticationAction";
 import { AuthResponse, User } from "../../../types/authantication";
@@ -33,11 +34,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logoutUser(state) {
-      state.user = null;
-      state.error = null;
-      state.loading = false;
-    },
     clearError(state) {
       state.error = null;
     },
@@ -89,6 +85,7 @@ const authSlice = createSlice({
           state.loading = false;
           state.user = action.payload.user;
           console.log(action.payload.user);
+          console.log(action.payload.user.id)
           state.isAuth = true;
           state.role = action.payload.user.role;
         }
@@ -142,12 +139,26 @@ const authSlice = createSlice({
       })
       .addCase(
         emailverification.rejected,
-        (state, action: PayloadAction<any>) => {
+        (state, action: PayloadAction<unknown>) => {
           state.loading = false;
-          state.error = action.payload || "OTP verification failed";
+          state.error = action.payload as string;
           state.isVerified = false;
         }
       )
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuth = false;
+        state.role = "user";
+      })
+      .addCase(logout.rejected, (state, action: PayloadAction<unknown>) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
@@ -157,5 +168,5 @@ const persistConfig = {
   whitelist: ["user", "isAuth", "role"],
 };
 
-export const { logoutUser, clearError } = authSlice.actions;
+export const { clearError } = authSlice.actions;
 export default persistReducer(persistConfig, authSlice.reducer);

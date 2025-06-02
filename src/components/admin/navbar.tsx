@@ -1,4 +1,6 @@
+"use client"
 import { Search, Bell, Settings } from "lucide-react";
+import StaggeredDropDown from "./ui/staggeredDropDown";
 
 export default function Navbar() {
   const notificationCount = 4;
@@ -33,7 +35,7 @@ export default function Navbar() {
           {/* User Avatar */}
           <button className="flex items-center justify-center">
             <div className="w-8 h-8 bg-gradient-to-r from-[#415C41] to-[#00423D] rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">AG</span>
+              <StaggeredDropDown/>
             </div>
           </button>
         </div>

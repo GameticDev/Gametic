@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import LoginFrom from "./(feildform)/page"
+import LoginFrom from "@/components/auth/loginForm"
 
 interface LoginModalProps {
   onClose?: () => void;

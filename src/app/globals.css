@@ -3,4 +3,13 @@
   themes: --default;
 }
 
+.react-datepicker__portal,
+.react-datepicker__triangle,
+.react-datepicker {
+  background-color: white !important;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #d1d5db !important; /* gray-300 */
+  border-radius: 0.375rem; /* rounded-md */
+  z-index: 50 !important;
+}
 
