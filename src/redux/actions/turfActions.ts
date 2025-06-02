@@ -3,6 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '@/utils/axiosInstance';
 // import { Turf } from '@/types/turf';
 import { TurfData } from '@/types/turf';
+import axiosErrorManager from '@/utils/axiosErrorManager';
 
 
 export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: string }>(
@@ -15,8 +16,8 @@ export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: strin
       });
       console.log(response.data)
       return response.data.Turf;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+    } catch (error) {
+      return rejectWithValue(axiosErrorManager(error));
     }
   }
 );
@@ -31,8 +32,8 @@ export const fetchTurfs = createAsyncThunk(
       
       // Adjust this based on your actual API response structure
       return response.data.turf || response.data.allTurf || [];
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+    } catch (error) {
+      return rejectWithValue(axiosErrorManager(error));
     }
   }
 );
@@ -45,8 +46,8 @@ export const updateTurf = createAsyncThunk(
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+    } catch (error) {
+      return rejectWithValue(axiosErrorManager(error));
     }
   }
 );
@@ -57,8 +58,8 @@ export const deleteTurf = createAsyncThunk(
     try {
       await axiosInstance.delete(`/owner/turfs/${turfId}`);
       return turfId;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+    } catch (error) {
+      return rejectWithValue(axiosErrorManager(error));
     }
   }
 );
@@ -69,8 +70,8 @@ export const fetchTurfById = createAsyncThunk<TurfData, string, { rejectValue: s
     try {
       const response = await axiosInstance.get(`/owner/getTurf/${id}`);
       return response.data.Turf;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+    } catch (error) {
+      return rejectWithValue(axiosErrorManager(error));
     }
   }
 );
