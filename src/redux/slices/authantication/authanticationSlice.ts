@@ -40,6 +40,21 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(emailCheck.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        emailCheck.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.loading = false;
+          state.user = action.payload.user;
+        }
+      )
+      .addCase(emailCheck.rejected, (state, action: PayloadAction<unknown>) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -60,7 +75,6 @@ const authSlice = createSlice({
           state.error = action.payload as string;
         }
       )
-
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -118,13 +132,11 @@ const authSlice = createSlice({
         state.error = null;
         state.isVerified = false;
       })
-
       .addCase(emailverification.fulfilled, (state) => {
         state.loading = false;
         state.error = null;
         state.isVerified = true;
       })
-
       .addCase(
         emailverification.rejected,
         (state, action: PayloadAction<unknown>) => {
@@ -133,18 +145,17 @@ const authSlice = createSlice({
           state.isVerified = false;
         }
       )
-      .addCase(emailCheck.pending, (state) => {
+      .addCase(logout.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        emailCheck.fulfilled,
-        (state, action: PayloadAction<AuthResponse>) => {
-          state.loading = false;
-          state.user = action.payload.user;
-        }
-      )
-      .addCase(emailCheck.rejected, (state, action: PayloadAction<unknown>) => {
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuth = false;
+        state.role = "user";
+      })
+      .addCase(logout.rejected, (state, action: PayloadAction<unknown>) => {
         state.loading = false;
         state.error = action.payload as string;
       })

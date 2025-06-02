@@ -10,7 +10,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { googleLogin } from "@/redux/actions/authantication/authanticationAction";
 import { useRouter } from "next/navigation";
 
-interface LoginModalProps {
+export interface LoginModalProps {
   open: boolean;
   toggle: string;
   onClose: () => void;
