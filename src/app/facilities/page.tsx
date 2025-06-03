@@ -54,7 +54,7 @@ const TurfList = () => {
     }
   }, [page, selectedCategory, searchTerm]);
 
-  // Debounced searchTerm setter
+
   const debouncedSearch = useRef(
     debounce((val: string) => {
       setSearchTerm(val);
@@ -62,7 +62,7 @@ const TurfList = () => {
     }, 500)
   ).current;
 
-  // Update searchTerm when input changes (debounced)
+ 
   useEffect(() => {
     debouncedSearch(searchInput);
     // Cleanup debounce on unmount
