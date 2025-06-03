@@ -40,7 +40,7 @@ function Page() {
 
     const fetchTurf = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/getTurf/${id}`);
+        const res = await axios.get(`http://localhost:5000/api/owner/getTurf/${id}`);
         setTurf(res.data.Turf);
         setMainImage(res.data.Turf.images[0]);
       } catch (error) {
@@ -57,7 +57,7 @@ function Page() {
   if (!turf) return <div className="p-10 text-center text-red-600">Turf not found</div>;
 
   return (
-    <div className="bg-[#F5FBFF] min-h-screen py-10 px-4">
+    <div className="bg-[#F5FBFF] min-h-screen py-10 px-4 mt">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
