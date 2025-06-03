@@ -48,7 +48,7 @@ const userSlice = createSlice({
         state.totalBannedUsers = action.payload.totalBannedUsers;
         console.log(action.payload)
         state.totalUsers = action.payload.totalUsers;
-      })
+      }) 
       .addCase(fetchAllUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Something wrong";
