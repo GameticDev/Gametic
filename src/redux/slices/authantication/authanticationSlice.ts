@@ -85,7 +85,7 @@ const authSlice = createSlice({
           state.loading = false;
           state.user = action.payload.user;
           console.log(action.payload.user);
-          console.log(action.payload.user.id)
+          console.log(action.payload.user.id);
           state.isAuth = true;
           state.role = action.payload.user.role;
         }
@@ -145,20 +145,6 @@ const authSlice = createSlice({
           state.isVerified = false;
         }
       )
-      .addCase(logout.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.loading = false;
-        state.user = null;
-        state.isAuth = false;
-        state.role = "user";
-      })
-      .addCase(logout.rejected, (state, action: PayloadAction<unknown>) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
       .addCase(logout.pending, (state) => {
         state.loading = true;
         state.error = null;
