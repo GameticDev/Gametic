@@ -29,8 +29,8 @@ interface PasswordRequirements {
 }
 
 const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
-  const route = useRouter();
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const [data, setData] = useState<CredentialsData>({
     username: "",
@@ -205,11 +205,11 @@ const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
 
     try {
       await dispatch(registerUser(credential)).unwrap();
-
+      const role = credential.role;
       if (role === "user") {
-        route.push("/home");
+        router.push("/home");
       } else {
-        route.push("/owner");
+        router.push("/owner");
       }
     } catch (error: unknown) {
       console.error("Registration failed:", error);

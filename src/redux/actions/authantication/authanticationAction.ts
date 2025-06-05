@@ -29,10 +29,7 @@ export const loginUser = createAsyncThunk<AuthResponse, LoginData>(
   "auth/loginUser",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post<AuthResponse>(
-        "/login",
-        data
-      );
+      const response = await axiosInstance.post<AuthResponse>("/login", data);
       return response.data;
     } catch (error) {
       return rejectWithValue(axiosErrorManager(error));
@@ -44,11 +41,8 @@ export const googleLogin = createAsyncThunk(
   "auth/googleLogin",
   async (credential: string, { rejectWithValue }) => {
     try {
-      console.log(credential)
-      const response = await axiosInstance.post(
-        "/auth/google",
-        { credential }
-      );
+      console.log(credential);
+      const response = await axiosInstance.post("/auth/google", { credential });
       return response.data;
     } catch (error) {
       return rejectWithValue(axiosErrorManager(error));
@@ -56,33 +50,45 @@ export const googleLogin = createAsyncThunk(
   }
 );
 export const emailCheck = createAsyncThunk<AuthResponse, RegisterData>(
-  'auth/emailcheck',
+  "auth/emailcheck",
   async (data, { rejectWithValue }) => {
-    
     try {
-      console.log(data ,"fghjjhg");
-      
-      const response = await axiosInstance.post<AuthResponse>('/emailverification', data);
-      
-      return response.data ;
+      console.log(data, "fghjjhg");
+
+      const response = await axiosInstance.post<AuthResponse>(
+        "/emailverification",
+        data
+      );
+
+      return response.data;
     } catch (error) {
-      console.log(error , "log");
+      console.log(error, "log");
       return rejectWithValue(axiosErrorManager(error));
-      
     }
   }
 );
 
+export const emailverification = createAsyncThunk<
+  AuthResponse,
+  { email: string; otp: string }
+>("auth/emailverification", async (data, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.post<AuthResponse>("/verifyotp", data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
 
-export const emailverification = createAsyncThunk<AuthResponse, {email: string; otp: string}>(
-  'auth/emailverification',
-  async (data, { rejectWithValue }) => {
+    return rejectWithValue(axiosErrorManager(error));
+  }
+});
+
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post<AuthResponse>('/verifyotp', data);
+      const response = await axiosInstance.post("/logout");
       return response.data;
     } catch (error) {
-      console.log(error);
-      
       return rejectWithValue(axiosErrorManager(error));
     }
   }
