@@ -1,82 +1,75 @@
-'use client'
+
+'use client';
+import AddTournament from '@/components/user/addTournament';
 import TournamentCard from '@/components/user/tournamentCard';
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+
+
 export interface Tournament {
   id: string;
   title: string;
   subtitle: string;
   location: string;
   distance: string;
-  playersJoined: number;
+  joinedTeams: number;
   maxPlayers: number;
-  startDate: string;
-  endDate: string;
+  dateFrom: string;
+  dateTo: string;
   entryFee: number;
   prizePool: number;
-  status: "Upcoming" | "Ongoing" | "Completed";
+  status: 'Upcoming' | 'Ongoing' | 'Completed';
   image: string;
   icon: string;
 }
 
-// export const demoTournaments: Tournament[] = [
-//   {
-//     id: "1",
-//     title: "BPL",
-//     subtitle: "Bengaluru premier league",
-//     location: "South United Football Club, RBANM's Ground",
-//     distance: "~0.10 km",
-//     playersJoined: 5,
-//     maxPlayers: 8,
-//     startDate: "May 8",
-//     endDate: "May 20",
-//     entryFee: 1000,
-//     prizePool: 10000,
-//     status: "Upcoming",
-//     image: "/stadium.jpg",
-//     icon: "/football-icon.png"
-//   },
-//   {
-//     id: "2",
-//     title: "CPL",
-//     subtitle: "Chennai pro league",
-//     location: "Chennai Football Arena",
-//     distance: "~2.3 km",
-//     playersJoined: 6,
-//     maxPlayers: 10,
-//     startDate: "June 1",
-//     endDate: "June 10",
-//     entryFee: 800,
-//     prizePool: 7500,
-//     status: "Ongoing",
-//     image: "/stadium.jpg",
-//     icon: "/football-icon.png"
-//   }
-// ];
+function Page() {
+  const [data, setData] = useState<Tournament[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const data={id: "2",
-    title: "CPL",
-    subtitle: "Chennai pro league",
-    location: "Chennai Football Arena",
-    distance: "~2.3 km",
-    playersJoined: 6,
-    maxPlayers: 10,
-    startDate: "June 1",
-    endDate: "June 10",
-    entryFee: 800,
-    prizePool: 7500,
-    status: "Ongoing",
-    image: "/stadium.jpg",
-    icon: "/football-icon.png"
-}
+  const[showModal,setShowmodal]=useState(false)
 
-function page() {
+  function openModal(){
+    setShowmodal(true)
+  }
+
+  function closeModal(){
+    setShowmodal(false)
+  }
+
+  useEffect(() => {
+    const fetchTournament = async () => {
+      try {
+        const res = await axios.get('http://localhost:8085/api/getAllTournament');
+        setData(res.data.post);
+        console.log(res.data.post) 
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTournament();
+  }, []);
+
+  if (loading) return <div className="p-10 text-center text-xl">Loading...</div>;
+  // if (!data.length) return <div className="p-10 text-center text-red-600">No tournaments found</div>;
+ 
+ 
   return (
-    <main className="flex flex-wrap bg-amber-500 justify-center items-start gap-6 p-6 min-h-screen">
-      {[...Array(10)].map(tournament => (
+    <>
+    <div className='flex justify-end mt-4'>
+      <button onClick={openModal} style={{ backgroundColor: '#415C41' }} className=' bg- py-2 px-3 rounded-xl font-semibold text-white'>Add Tournament</button>
+    </div>
+    <main className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 min-h-screen">
+      {data?.map((tournament) => (
         <TournamentCard key={tournament.id} data={tournament} />
       ))}
+          {showModal && <AddTournament onClose={closeModal}/> }
+
     </main>
+    </>
   );
 }
 
-export default page
+export default Page;
