@@ -4,7 +4,10 @@ import axios from "axios";
 import debounce from "lodash.debounce";
 import { useRouter } from "next/navigation";
 
-type Turf = {
+import VenueCard from "@/components/user/venue/venueCard";
+
+export type Turf = {
+
   _id: string;
   name: string;
   city: string;
@@ -22,7 +25,9 @@ type Turf = {
 };
 
 const categories = ["football", "cricket", "tennis", "basketball"];
-const PAGE_SIZE = 6;
+
+const PAGE_SIZE = 12;
+
 
 const TurfList = () => {
   const [turfs, setTurfs] = useState<Turf[]>([]);
@@ -43,7 +48,11 @@ const TurfList = () => {
       if (selectedCategory) params.category = selectedCategory;
       if (searchTerm.trim()) params.search = searchTerm.trim();
 
-      const res = await axios.get("http://localhost:5000/api/getAllturf", { params });
+
+      const res = await axios.get("http://localhost:5000/api/getAllturf", {
+        params,
+      });
+
       setTurfs(res.data.turf || []);
       setTotalPages(res.data.totalPages || 1);
     } catch (err) {
@@ -75,6 +84,9 @@ const TurfList = () => {
     fetchTurfs();
   }, [fetchTurfs]);
 
+
+  console.log(turfs);
+
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(e.target.value);
     setPage(1);
@@ -85,7 +97,8 @@ const TurfList = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto bg-white">
+    <div className="p-6 max-w-8xl mx-auto pt-20">
+
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-5">
         <select
           className="border border-[#00423d] text-[#00423d] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00423d]/50"
@@ -110,40 +123,53 @@ const TurfList = () => {
       </div>
 
       {loading ? (
-        <div className="text-center py-10 text-xl text-[#00524a] font-semibold">Loading turfs...</div>
+        <div className="text-center py-10 text-xl text-[#00524a] font-semibold">
+          Loading turfs...
+        </div>
       ) : turfs.length === 0 ? (
-        <p className="text-center text-[#7a7455] col-span-full italic">No turfs found matching your criteria.</p>
+        <p className="text-center text-[#7a7455] col-span-full italic">
+          No turfs found matching your criteria.
+        </p>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {turfs.map((turf) => (
               <div
                 key={turf._id}
-                className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border border-[#98916d]/30"
+                onClick={() =>
+                  router.push(`facilities/${turf._id}/viewdetails/`)
+                }
               >
-                <img src={turf.images[0]} alt={turf.name} className="w-full h-60 object-cover" />
-                <div className="p-5 space-y-2">
-                  <h2 className="text-2xl font-bold text-[#00423d]">{turf.name}</h2>
-                  <p className="text-sm text-[#7a7455]">
-                    {turf.city}, {turf.area}
-                  </p>
-                  <p className="text-[#00524a] font-semibold text-sm">
-                    ₹{turf.hourlyRate}/hr • {turf.turfType}
-                  </p>
-                  <p className="text-xs text-[#7a7455]">
-                    Open: {turf.availability.startTime} - {turf.availability.endTime}
-                  </p>
-                  <p className="text-xs text-[#7a7455]">
-                    Days: {turf.availability.days.join(", ")}
-                  </p>
-                  <button
-                    className="mt-3 w-full bg-gradient-to-r from-[#00423d] to-[#00524a] text-white py-2 rounded-full hover:scale-105 hover:shadow-lg transition-transform duration-300"
-                    onClick={() => router.push(`facilities/${turf._id}/viewdetails/`)}
-                  >
-                    View Details
-                  </button>
-                </div>
+                <VenueCard turf={turf} />
               </div>
+              // <div
+              //   key={turf._id}
+              //   className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border border-[#98916d]/30"
+              // >
+              //   <img src={turf.images[0]} alt={turf.name} className="w-full h-60 object-cover" />
+              //   <div className="p-5 space-y-2">
+              //     <h2 className="text-2xl font-bold text-[#00423d]">{turf.name}</h2>
+              //     <p className="text-sm text-[#7a7455]">
+              //       {turf.city}, {turf.area}
+              //     </p>
+              //     <p className="text-[#00524a] font-semibold text-sm">
+              //       ₹{turf.hourlyRate}/hr • {turf.turfType}
+              //     </p>
+              //     <p className="text-xs text-[#7a7455]">
+              //       Open: {turf.availability.startTime} - {turf.availability.endTime}
+              //     </p>
+              //     <p className="text-xs text-[#7a7455]">
+              //       Days: {turf.availability.days.join(", ")}
+              //     </p>
+              //     <button
+              //       className="mt-3 w-full bg-gradient-to-r from-[#00423d] to-[#00524a] text-white py-2 rounded-full hover:scale-105 hover:shadow-lg transition-transform duration-300"
+              //       onClick={() => router.push(`facilities/${turf._id}/viewdetails/`)}
+              //     >
+              //       View Details
+              //     </button>
+              //   </div>
+              // </div>
+
             ))}
           </div>
 
@@ -173,3 +199,4 @@ const TurfList = () => {
 };
 
 export default TurfList;
+
