@@ -1,16 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaFilter, FaPlus, FaSearch, FaChevronDown } from "react-icons/fa";
 import HostModal from "./join/hostModal";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { fetchAllMatches } from "@/redux/actions/user/hostActions";
 
 const JoinFilter = () => {
   const [selectedSport, setSelectedSport] = useState("All Sports");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
+  const dispatch = useAppDispatch();
+  const { matches } = useAppSelector((state) => state.host);
 
   const handleOpen = () => {
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    dispatch(fetchAllMatches({ page: 1, limit: 12, search: search }));
+  }, [dispatch, search]);
+  console.log(matches);
 
   const sportTypes = [
     "All Sports",
@@ -36,9 +46,7 @@ const JoinFilter = () => {
               type="text"
               placeholder="Search activities or locations"
               className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all duration-200"
-              //   style={{
-              //     focusRingColor: '#415C41'
-              //   }}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           {/* Sport Filter Dropdown */}

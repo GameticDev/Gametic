@@ -1,5 +1,5 @@
 "use client";
-import { ChevronDown, ChevronLeft, Search, X } from "lucide-react";
+import { ChevronDown, Search, X } from "lucide-react";
 import { useState } from "react";
 interface SearchUserProps {
   onSearch: (search: string) => void;

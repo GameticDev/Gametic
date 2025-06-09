@@ -40,7 +40,7 @@ function Page() {
 
     const fetchTurf = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/owner/getTurf/${id}`);
+        const res = await axios.get(`http://localhost:5000/api/getTurf/${id}`);
         setTurf(res.data.Turf);
         setMainImage(res.data.Turf.images[0]);
       } catch (error) {
