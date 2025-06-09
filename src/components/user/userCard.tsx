@@ -179,6 +179,7 @@ const ActivityCard: React.FC<Match> = ({
           </div>
         </div>
       </div>
+
     </div>
   );
 };

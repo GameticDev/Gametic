@@ -13,6 +13,7 @@ const JoinFilter = () => {
   const dispatch = useAppDispatch();
   const { matches } = useAppSelector((state) => state.host);
 
+
   const handleOpen = () => {
     setIsOpen(false);
   };
@@ -46,6 +47,7 @@ const JoinFilter = () => {
               type="text"
               placeholder="Search activities or locations"
               className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all duration-200"
+
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>

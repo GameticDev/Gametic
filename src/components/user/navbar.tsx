@@ -36,6 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
   return (
     <nav className={`w-full h-16 ${className} bg-white`}>
+
       <div className="w-full h-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
