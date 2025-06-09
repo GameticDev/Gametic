@@ -22,6 +22,13 @@ export type Turf = {
   };
 };
 
+interface FetchTurfsParams {
+  page: number;
+  limit: number;
+  category?: string;
+  search?: string;
+}
+
 const categories = ["football", "cricket", "tennis", "basketball"];
 const PAGE_SIZE = 12;
 
@@ -40,7 +47,7 @@ const TurfList = () => {
   const fetchTurfs = useCallback(async () => {
     setLoading(true);
     try {
-      const params: any = { page, limit: PAGE_SIZE };
+      const params: FetchTurfsParams = { page, limit: PAGE_SIZE };
       if (selectedCategory) params.category = selectedCategory;
       if (searchTerm.trim()) params.search = searchTerm.trim();
 
