@@ -1,8 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import turfReducer from "./slices/turfSlice";
+import profileReducer from './slices/profileSlices';
 import authReducer from './slices/authantication/authanticationSlice';
 import adminUserReducer from "./slices/admin/userSlice";
 import adminVenueReducer from "./slices/admin/venueSlice";
+import bookingReducer from "./slices/bookingSlice";
+
 import turfDetailsReducer from './slices/turfDetailsSlice';
 import {
   persistStore,
@@ -18,6 +21,8 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     turf: turfReducer,
+    profile: profileReducer,
+    booking: bookingReducer,
     adminUsers: adminUserReducer,
     adminVenues: adminVenueReducer,
   

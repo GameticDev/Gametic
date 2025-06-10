@@ -1,15 +1,16 @@
-
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '@/utils/axiosInstance';
 // import { Turf } from '@/types/turf';
 import { TurfData } from '@/types/turf';
 import axiosErrorManager from '@/utils/axiosErrorManager';
-
+// import { User } from '@/types/authantication';
 
 export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: string }>(
   'turf/addTurf',
   async (formData, { rejectWithValue }) => {
     console.log(",,,,,,,,",formData)
+
+
     try {
       const response = await axiosInstance.post('/owner/addTurf', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -17,18 +18,60 @@ export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: strin
       console.log(response.data)
       return response.data.Turf;
     } catch (error) {
+       console.error('Detailed error:', error);
       return rejectWithValue(axiosErrorManager(error));
     }
   }
 );
 
 
+// export const fetchTurfs = createAsyncThunk(
+//   'turf/fetchTurfs',
+//   // async (ownerId:string, { rejectWithValue }) => {
+//   async (ownerId:string, { rejectWithValue }) => {
+//     try {
+//       const response = await axiosInstance.get(`/owner/getAllturf?ownerId=${ownerId}`);
+//       return response.data.turf || response.data.allTurf || [];
+//     } catch (error) {
+//       return rejectWithValue(axiosErrorManager(error));
+//     }
+//   }
+// );
+
 export const fetchTurfs = createAsyncThunk(
   'turf/fetchTurfs',
-  async (ownerId, { rejectWithValue }) => {
+  async (
+    params: { 
+      ownerId: string;
+      page?: number;
+      limit?: number;
+    }, 
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axiosInstance.get(`/owner/getAllturf?ownerId=${ownerId}`);
-      return response.data.turf || response.data.allTurf || [];
+      // const { ownerId, page = 1, limit = 6 } = params;
+      
+      const response = await axiosInstance.get(`/owner/getAllturf`, {
+        params: {
+          ownerId: params.ownerId,
+          page: params.page || 1,
+          limit: params.limit || 6
+        }
+      });
+
+      // Handle different response structures
+      const turfs = response.data.turf || response.data.allTurf || response.data.data || [];
+      const totalCount = response.data.total || response.data.totalCount || 0;
+console.log('API Response from action......:', {
+  data: response.data,
+  extractedTurfs: turfs,
+  extractedTotal: totalCount
+});
+      return {
+        turfs,
+        totalCount
+      };
+
     } catch (error) {
       return rejectWithValue(axiosErrorManager(error));
     }

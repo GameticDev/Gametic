@@ -33,11 +33,16 @@ export default function Navbar() {
           </button>
 
           {/* User Avatar */}
-          <button className="flex items-center justify-center">
+          {/* <button className="flex items-center justify-center">
             <div className="w-8 h-8 bg-gradient-to-r from-[#415C41] to-[#00423D] rounded-full flex items-center justify-center">
               <StaggeredDropDown/>
             </div>
-          </button>
+          </button> */}
+          <div className="flex items-center justify-center">
+  <div className="w-8 h-8 bg-gradient-to-r from-[#415C41] to-[#00423D] rounded-full flex items-center justify-center">
+    <StaggeredDropDown />
+  </div>
+</div>
         </div>
       </div>
     </div>
