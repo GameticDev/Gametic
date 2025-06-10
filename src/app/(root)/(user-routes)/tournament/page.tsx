@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 
 
 export interface Tournament {
-  id: string;
+  _id: string;
   title: string;
   subtitle: string;
   location: string;
@@ -58,12 +58,12 @@ function Page() {
  
   return (
     <>
-    <div className='flex justify-end mt-4'>
+    <div className='flex justify-end mt-16'>
       <button onClick={openModal} style={{ backgroundColor: '#415C41' }} className=' bg- py-2 px-3 rounded-xl font-semibold text-white'>Add Tournament</button>
     </div>
     <main className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 min-h-screen">
       {data?.map((tournament) => (
-        <TournamentCard key={tournament.id} data={tournament} />
+        <TournamentCard key={tournament._id} data={tournament} />
       ))}
           {showModal && <AddTournament onClose={closeModal}/> }
 

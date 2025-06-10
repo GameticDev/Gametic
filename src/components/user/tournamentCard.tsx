@@ -1,4 +1,5 @@
-import { Tournament } from "@/app/(root)/(user-routes)/tournament/page";
+
+ import { Tournament } from "@/app/(root)/(user-routes)/tournament/page";
 import {
   FaCalendarAlt,
   FaMapMarkerAlt,
@@ -7,15 +8,26 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import AddTeamModal from "./AddTeamForm";
+import { useRouter } from "next/navigation";
 
 interface Props {
   data: Tournament;
 }
 
 export default function TournamentCard({ data }: Props) {
+   const router = useRouter();
+
+  const handleCardClick = () => {
+    router.push(`/tournament/${data._id}`);
+  };
     const[showModal,setShowModal]=useState(false)
+    const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams.length);
+ const handleTeamJoined = () => {
+  setJoinedTeamsCount((prev) => prev + 1);
+};
+
      const openModal=()=>{
     setShowModal(true)
   }
@@ -26,8 +38,8 @@ export default function TournamentCard({ data }: Props) {
  
   return (
     <div className="w-[277px] rounded-xl overflow-hidden shadow-md border border-gray-200 bg-white">
-      <img
-        src={data.image}
+      <img onClick={handleCardClick}
+        src={data.image} 
         alt="Stadium"
         className="w-full h-32 object-cover"
       />
@@ -53,7 +65,7 @@ export default function TournamentCard({ data }: Props) {
 
         <div className="mt-1 flex items-center justify-center gap-2 text-sm text-gray-600">
           <FaUsers />
-          <span>{data?.joinedTeams.length}</span>
+          <span>{joinedTeamsCount}</span>
         </div>
 
         <div className="mt-1 flex items-center justify-center gap-2 text-sm text-gray-600">
@@ -75,7 +87,7 @@ export default function TournamentCard({ data }: Props) {
           </div>
         </div>
       </div>
-      {showModal && <AddTeamModal onClose={closeModal}/>}
+      {showModal && <AddTeamModal  tournamentId={data._id} onTeamJoined={handleTeamJoined} onClose={closeModal}/>}
     </div>
   );
-}
+} 
