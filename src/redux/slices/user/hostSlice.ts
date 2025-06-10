@@ -4,6 +4,7 @@ import {
   fetchMatchById,
   fetchVenueBySport,
   hostGame,
+  joinGame,
 } from "@/redux/actions/user/hostActions";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -33,7 +34,7 @@ export interface Match {
     | "volleyball"
     | "hockey";
   maxPlayers: number;
-  joinedPlayers: string[];
+  joinedPlayers: { _id: string; username: string }[];
   turfId: TurfRef;
   date: Date;
   startTime: string;
@@ -48,6 +49,7 @@ export interface Match {
 interface HostState {
   matches: Match[];
   match: Match | null;
+  joinMatch: Match | null;
   venues: Turf[];
   loading: boolean;
   error: string | null;
@@ -55,6 +57,7 @@ interface HostState {
 const INITIAL_STATE: HostState = {
   matches: [],
   venues: [],
+  joinMatch: null,
   match: null,
   loading: false,
   error: null,
@@ -114,6 +117,19 @@ const hostSlice = createSlice({
         state.loading = false;
         state.error = "something wrong";
       })
+      .addCase(joinGame.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(joinGame.fulfilled, (state, action) => {
+        state.loading = false;
+        state.joinMatch = action.payload.match;
+        state.error = null;
+      })
+      .addCase(joinGame.rejected, (state) => {
+        state.loading = false;
+        state.error = "something wrong";
+      });
   },
 });
 

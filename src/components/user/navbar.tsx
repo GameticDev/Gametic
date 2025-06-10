@@ -69,7 +69,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
               </Link>
 
               <Link
-                href="/tournaments"
+                href="/home/tournament"
                 className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <Calendar className="h-4 w-4" />

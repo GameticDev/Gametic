@@ -1,12 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import turfReducer from "./slices/turfSlice";
-import profileReducer from './slices/profileSlices';
+import profileReducer from "./slices/profileSlices";
 import bookingReducer from "./slices/bookingSlice";
 import authReducer from "./slices/authantication/authanticationSlice";
 import adminUserReducer from "./slices/admin/userSlice";
 import adminVenueReducer from "./slices/admin/venueSlice";
 import turfDetailsReducer from "./slices/turfDetailsSlice";
 import hostReducer from "./slices/user/hostSlice";
+import userVenueReducer from "./slices/user/venueSlice";
 import {
   persistStore,
   FLUSH,
@@ -27,6 +28,7 @@ export const store = configureStore({
     adminVenues: adminVenueReducer,
     host: hostReducer,
     turfDetails: turfDetailsReducer,
+    userVeune: userVenueReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -15,12 +15,12 @@ interface FetchMatchesResponse {
 interface HostMatch {
   title: string;
   sports: string;
-  maxPlayers: string;
+  maxPlayers: number;
   turfId: string;
   date: string; // Format: YYYY-MM-DD
   startTime: string; // Format: HH:MM (24-hour)
   endTime: string; // Format: HH:MM (24-hour)
-  paymentPerPerson: string;
+  paymentPerPerson: number;
 }
 
 export const fetchAllMatches = createAsyncThunk<
@@ -44,7 +44,7 @@ export const fetchAllMatches = createAsyncThunk<
 
 export const fetchMatchById = createAsyncThunk<
   { match: Match },
-  { matchId: string },
+  { matchId: string | undefined },
   { rejectValue: string }
 >("host/fetchMatchById", async ({ matchId }, { rejectWithValue }) => {
   try {
@@ -62,6 +62,19 @@ export const hostGame = createAsyncThunk<
 >("hostGame/host", async (hostData, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.post("/host-match", hostData);
+    return response.data.match;
+  } catch (error) {
+    return rejectWithValue(axiosErrorManager(error));
+  }
+});
+
+export const joinGame = createAsyncThunk<
+  { match: Match },
+  { matchId: string | undefined },
+  { rejectValue: string }
+>("joinGame/host", async ({matchId}, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.post(`join-match/${matchId}`);
     return response.data.match;
   } catch (error) {
     return rejectWithValue(axiosErrorManager(error));

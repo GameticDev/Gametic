@@ -109,9 +109,9 @@ const VenueList: React.FC<VenuesListProps> = ({ search }) => {
                     <td className="p-4">
                       <div className="flex items-center">
                         <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 relative">
-                          {item?.image?.[0] ? (
+                          {item?.images?.[0] ? (
                             <Image
-                              src={item.image[0]}
+                              src={item.images[0]}
                               fill
                               alt={item.name}
                               className="object-cover"

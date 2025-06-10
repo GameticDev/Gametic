@@ -22,6 +22,16 @@ interface RazorpayResponse {
   razorpay_order_id: string;
   razorpay_signature: string;
 }
+interface RazorpayErrorResponse {
+  error: {
+    code: string;
+    description: string;
+    source: string;
+    step: string;
+    reason: string;
+    metadata: Record<string, unknown>;
+  };
+}
 
 const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   const dispatch = useAppDispatch();
@@ -326,40 +336,6 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     }
   };
 
-  // Verify payment
-  const verifyPayment = async (paymentData: RazorpayResponse) => {
-    try {
-      const response = await axiosInstance.post(
-        "/verify-hosting-payment",
-        {
-          razorpay_payment_id: paymentData.razorpay_payment_id,
-          razorpay_order_id: paymentData.razorpay_order_id,
-          razorpay_signature: paymentData.razorpay_signature,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("Payment verification response:", response.data);
-
-      if (response.data.success) {
-        return response.data;
-      } else {
-        throw new Error(response.data.message || "Payment verification failed");
-      }
-    } catch (error: any) {
-      console.error("Payment verification error:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
-      throw new Error(`Payment verification failed: ${error.message}`);
-    }
-  };
 
   // Handle form validation
   const validateForm = () => {
@@ -393,7 +369,6 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     return true;
   };
 
-  // Handle payment and form submission
   const handleSubmit = async () => {
     if (!validateForm()) {
       return;
@@ -417,47 +392,36 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
         name: "Sports Hosting",
         description: `Hosting fee for ${formData.title}`,
         order_id: orderData.id,
-        handler: async (response: RazorpayResponse) => {
-          try {
-            console.log("Razorpay response:", response);
+        handler: async (response:RazorpayResponse) => {
+          console.log("Razorpay response:", response);
+          alert("Payment successful! Your match has been hosted successfully.");
 
-            alert(
-              "Payment successful! Your match has been hosted successfully."
-            );
+          const hostData = {
+            title: formData.title,
+            sports: formData.sports,
+            maxPlayers: Number(formData.maxPlayers),
+            turfId: formData.turfId,
+            date: formData.date,
+            startTime: formData.startTime,
+            endTime: formData.endTime,
+            paymentPerPerson: Number(formData.paymentPerPerson),
+          };
+          await dispatch(hostGame({ hostData }));
 
-            const hostData = {
-              title: formData.title,
-              sports: formData.sports,
-              maxPlayers: formData.maxPlayers,
-              turfId: formData.maxPlayers,
-              date: formData.date,
-              startTime: formData.startTime,
-              endTime: formData.endTime,
-              paymentPerPerson: formData.paymentPerPerson,
-            };
-            await dispatch(hostGame({hostData}));
+          setFormData({
+            title: "",
+            sports: "football",
+            date: "",
+            turfId: "",
+            timeSlot: "",
+            startTime: "",
+            endTime: "",
+            maxPlayers: "",
+            paymentPerPerson: "",
+          });
 
-            setFormData({
-              title: "",
-              sports: "football",
-              date: "",
-              turfId: "",
-              timeSlot: "",
-              startTime: "",
-              endTime: "",
-              maxPlayers: "",
-              paymentPerPerson: "",
-            });
-
-            onClose();
-          } catch (error: any) {
-            console.error("Payment verification error:", error);
-            alert(
-              `Payment verification failed: ${error.message}. Please contact support.`
-            );
-          } finally {
-            setIsProcessingPayment(false);
-          }
+          onClose();
+          setIsProcessingPayment(false);
         },
         prefill: {
           name: "",
@@ -481,7 +445,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
       };
 
       const razorpay = new window.Razorpay(options);
-      razorpay.on("payment.failed", (response: any) => {
+      razorpay.on("payment.failed", (response:RazorpayErrorResponse) => {
         console.error("Payment failed:", response.error);
         alert(
           `Payment failed: ${response.error.description}. Please try again.`
@@ -489,9 +453,9 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
         setIsProcessingPayment(false);
       });
       razorpay.open();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error during payment process:", error);
-      alert(`Failed to initiate payment: ${error.message}. Please try again.`);
+      alert(`Failed to initiate payment. Please try again.`);
       setIsProcessingPayment(false);
     }
   };
