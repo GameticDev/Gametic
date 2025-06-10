@@ -1,6 +1,7 @@
 
 'use client';
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
@@ -28,7 +29,11 @@ interface AddTurfFormProps {
 const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
   console.log("Turf data passed to AddTurfForm:", turfToEdit);
 
+const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
+  console.log("Turf data passed to AddTurfForm:", turfToEdit);
+
   const dispatch = useDispatch<AppDispatch>();
+  const user = useAppSelector(state => state.auth.user);
   const user = useAppSelector(state => state.auth.user);
   const [step, setStep] = useState(1);
   const [previewImages, setPreviewImages] = useState<(string | File)[]>([]);
@@ -353,6 +358,37 @@ let fieldsToValidate: TurfFormField[] = [];
           />
         )}
 
+        <div className="flex justify-between pt-4">
+          {step > 1 ? (
+            <button
+              type="button"
+              onClick={prevStep}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-300 border border-gray-700 rounded-md hover:bg-gray-50"
+            >
+              Back
+            </button>
+          ) : (
+            <div />
+          )}
+
+          {step < 4 ? (
+            <button
+              type="button"
+              onClick={nextStep}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-6 py-2 text-sm font-semibold text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400"
+            >
+              {isSubmitting ? 'Submitting...' : turfToEdit ? 'Update Turf' : 'Add Turf'}
+            </button>
+          )}
+        </div>
         <div className="flex justify-between pt-4">
           {step > 1 ? (
             <button

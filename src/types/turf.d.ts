@@ -60,10 +60,22 @@ export interface TurfData {
   cancellationPolicy?: string;
 
   availability:Availability
+  status: 'active' | 'inactive' | 'maintenance'; 
+  bookings?: Booking[];
+  ratings?: Rating[];
+  averageRating?: number;
+  description?:string;
+  bookings: Booking[];
+ 
+  rules?: string[];
+  cancellationPolicy?: string;
+
+  availability:Availability
   createdAt?: Date;
   updatedAt?: Date;
 }
 
+export interface TurfFormValues {
 export interface TurfFormValues {
   name: string;
   city: string;

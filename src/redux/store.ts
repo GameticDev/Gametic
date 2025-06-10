@@ -17,8 +17,10 @@ import {
   REGISTER,
 } from "redux-persist";
 
+
 export const store = configureStore({
   reducer: {
+    auth: authReducer,
     auth: authReducer,
     turf: turfReducer,
     profile: profileReducer,
