@@ -1,7 +1,9 @@
+import HeroSection from "@/components/user/heroSection";
+
 const Page = () => {
     return (
-        <div>
-            
+        <div className="min-h-screen">
+            <HeroSection/>
         </div>
     );
 }

@@ -46,7 +46,7 @@ export async function middleware(request: NextRequest) {
 
   const allowedPath = rolePaths[role as keyof typeof rolePaths];
   if (pathname.startsWith(allowedPath)) {
-    return NextResponse.next(); // Allow access to role-specific path
+    return NextResponse.next();
   }
 
   return NextResponse.redirect(new URL(allowedPath, request.url));

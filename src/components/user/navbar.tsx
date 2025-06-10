@@ -5,6 +5,12 @@ import { ChevronDown, Menu, X, MapPin, Calendar, User } from "lucide-react";
 import { useAppDispatch } from "@/redux/hooks";
 import { logout } from "@/redux/actions/authantication/authanticationAction";
 import { useRouter } from "next/navigation";
+import localFont from "next/font/local";
+
+const racesport = localFont({
+  src: "../../fonts/RaceSport.ttf",
+  variable: "--font-RaceSport",
+});
 
 interface NavbarProps {
   className?: string;
@@ -29,17 +35,16 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
   };
 
   return (
-    <nav className={` shadow-lg w-full h-16 ${className}`}>
+    <nav className={`w-full h-16 ${className}`}>
       <div className="w-full h-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center">
               <span
-                className="text-2xl font-bold text-[#998869] tracking-wider uppercase"
-                style={{ fontFamily: 'monospace, "Courier New", serif' }}
+                className={`text-xl font-bold text-[#00423d] tracking-wider uppercase ${racesport.className}`}
               >
-                GAMETIC
+                GAMETIC!
               </span>
             </Link>
           </div>
@@ -48,8 +53,8 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <Link
-                href="/join"
-                className="flex items-center space-x-1 text-[#98916D] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
+                href="/home/join"
+                className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <User className="h-5 w-5" />
                 <span>Join</span>
@@ -57,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
               <Link
                 href="/venues"
-                className="flex items-center space-x-1 text-[#98916D] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
+                className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <MapPin className="h-5 w-5" />
                 <span>Venues</span>
@@ -65,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
               <Link
                 href="/tournaments"
-                className="flex items-center space-x-1 text-[#98916D] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
+                className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <Calendar className="h-4 w-4" />
                 <span>Tournaments</span>
@@ -79,12 +84,11 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
               <div className="relative">
                 <button
                   onClick={toggleProfile}
-                  className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
+                  className="flex items-center text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
                 >
-                  <div className="h-9 w-9 rounded-full flex items-center justify-center border-2 border-[#415C41]">
-                    <User className="h-5 w-5 text-[#998869]" />
+                  <div className="h-9 w-9 flex items-center justify-center">
+                    <User className="h-5 w-5 text-[#00423d]" />
                   </div>
-                  <span>Profile</span>
                   <ChevronDown
                     className={`h-5 w-5 transition-transform duration-200 ${
                       isProfileOpen ? "rotate-180" : ""
@@ -96,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-[#00423D] rounded-md shadow-lg py-1 z-50 border border-[#415C41] list-none">
                     <Link
-                      href="/profile"
+                      href="home/profile"
                       className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200"
                     >
                       View Profile

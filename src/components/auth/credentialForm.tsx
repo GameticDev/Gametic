@@ -2,6 +2,7 @@
 import { registerUser } from "@/redux/actions/authantication/authanticationAction";
 import { useAppDispatch } from "@/redux/hooks";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface CredentialsData {
   username: string;
@@ -29,6 +30,7 @@ interface PasswordRequirements {
 
 const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const [data, setData] = useState<CredentialsData>({
     username: "",
@@ -203,6 +205,12 @@ const CredentialsForm = ({ email, role }: CredentialsFormProps) => {
 
     try {
       await dispatch(registerUser(credential)).unwrap();
+      const role = credential.role;
+      if (role === "user") {
+        router.push("/home");
+      } else {
+        router.push("/owner");
+      }
     } catch (error: unknown) {
       console.error("Registration failed:", error);
 

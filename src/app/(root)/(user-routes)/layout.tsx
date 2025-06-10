@@ -7,11 +7,11 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="flex w-full min-h-screen bg-white">
-      <div className="w-full">
-        <Navbar/>
+    <div className="w-full min-h-screen bg-[#F0EFEB]">
+      <div className="w-full fixed top-0 z-50">
+        <Navbar />
       </div>
-      {children}
+      <main className="">{children}</main>{" "}
     </div>
   );
 };
