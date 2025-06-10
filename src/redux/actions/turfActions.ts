@@ -51,7 +51,7 @@ export const fetchTurfs = createAsyncThunk(
     try {
       // const { ownerId, page = 1, limit = 6 } = params;
       
-      const response = await axiosInstance.get(`/owner/getAllturf`, {
+      const response = await axiosInstance.get(`/getAllturf`, {
         params: {
           ownerId: params.ownerId,
           page: params.page || 1,
