@@ -65,7 +65,7 @@ const ActivityCard: React.FC<Match> = ({
           </div>
           <div>
             <p className="text-base font-bold text-gray-800">
-              {userId.username}
+              {userId?.username}
             </p>
             <p className="text-xs text-gray-500 font-medium">Host</p>
           </div>

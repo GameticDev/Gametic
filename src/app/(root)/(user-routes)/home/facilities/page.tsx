@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import VenueCard from "@/components/user/venue/venueCard";
 
 export type Turf = {
-
   _id: string;
   name: string;
   city: string;
@@ -16,6 +15,10 @@ export type Turf = {
   size: string;
   hourlyRate: number;
   images: string[];
+  bookedSlot: {
+    date: string;
+    slots: { start: string; end: string }[];
+  }[];
   availability: {
     days: string[];
     startTime: string;
@@ -34,7 +37,6 @@ interface FetchTurfsParams {
 const categories = ["football", "cricket", "tennis", "basketball"];
 
 const PAGE_SIZE = 12;
-
 
 const TurfList = () => {
   const [turfs, setTurfs] = useState<Turf[]>([]);
@@ -55,8 +57,7 @@ const TurfList = () => {
       if (selectedCategory) params.category = selectedCategory;
       if (searchTerm.trim()) params.search = searchTerm.trim();
 
-
-      const res = await axios.get("http://localhost:5000/api/getAllturf", {
+      const res = await axios.get("http://localhost:5000/api/owner/getAllturf", {
         params,
       });
 
@@ -86,11 +87,9 @@ const TurfList = () => {
     };
   }, [searchInput, debouncedSearch]);
 
-
   useEffect(() => {
     fetchTurfs();
   }, [fetchTurfs]);
-
 
   console.log(turfs);
 
@@ -105,7 +104,6 @@ const TurfList = () => {
 
   return (
     <div className="p-6 max-w-8xl mx-auto pt-20">
-
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-5">
         <select
           className="border border-[#00423d] text-[#00423d] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00423d]/50"
@@ -176,7 +174,6 @@ const TurfList = () => {
               //     </button>
               //   </div>
               // </div>
-
             ))}
           </div>
 
@@ -206,4 +203,3 @@ const TurfList = () => {
 };
 
 export default TurfList;
-

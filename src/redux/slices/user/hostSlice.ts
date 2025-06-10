@@ -1,4 +1,10 @@
-import { fetchAllMatches, fetchMatchById } from "@/redux/actions/user/hostActions";
+import { Turf } from "@/app/(root)/(user-routes)/home/facilities/page";
+import {
+  fetchAllMatches,
+  fetchMatchById,
+  fetchVenueBySport,
+  hostGame,
+} from "@/redux/actions/user/hostActions";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface UserRef {
@@ -42,11 +48,13 @@ export interface Match {
 interface HostState {
   matches: Match[];
   match: Match | null;
+  venues: Turf[];
   loading: boolean;
   error: string | null;
 }
 const INITIAL_STATE: HostState = {
   matches: [],
+  venues: [],
   match: null,
   loading: false,
   error: null,
@@ -69,16 +77,42 @@ const hostSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "someting wrong";
       })
-      .addCase(fetchMatchById.pending,(state)=>{
+      .addCase(fetchMatchById.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchMatchById.fulfilled,(state,action)=>{
+      .addCase(fetchMatchById.fulfilled, (state, action) => {
         state.loading = false;
         state.match = action.payload.match;
       })
-      .addCase(fetchMatchById.rejected,(state,action)=>{
+      .addCase(fetchMatchById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "something wrong"
+        state.error = action.payload || "something wrong";
+      })
+      .addCase(hostGame.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(hostGame.fulfilled, (state, action) => {
+        state.loading = false;
+        state.match = action.payload.match;
+        state.error = null;
+      })
+      .addCase(hostGame.rejected, (state) => {
+        state.loading = false;
+        state.error = "something wrong";
+      })
+      .addCase(fetchVenueBySport.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchVenueBySport.fulfilled, (state, action) => {
+        state.loading = false;
+        state.venues = action.payload.venues;
+        state.error = null;
+      })
+      .addCase(fetchVenueBySport.rejected, (state) => {
+        state.loading = false;
+        state.error = "something wrong";
       })
   },
 });
