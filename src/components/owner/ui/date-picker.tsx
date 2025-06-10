@@ -15,6 +15,8 @@ interface DatePickerProps {
   placeholder?: string;
   placeholderText?: string;
   customInput?: React.ReactNode;
+  inline?: boolean; 
+   initialFocus?: boolean;
 }
 
 
@@ -24,8 +26,22 @@ export function DatePicker({
   onChange,
   placeholder = "Pick a date",
   customInput,
+   inline = false,
+   initialFocus = true,
   ...props
 }: DatePickerProps) {
+    if (inline) {
+    return (
+      <Calendar
+        mode="single"
+        selected={selected || undefined}
+        onSelect={(date: Date | undefined) => onChange(date || null)}
+        className={cn("rounded-md border", className)}
+        {...props}
+      />
+    );
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -45,12 +61,15 @@ export function DatePicker({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      {/* <PopoverContent className="w-auto p-0" align="start"> */}
+      <PopoverContent className="w-auto p-0 bg-white shadow-md border border-gray-200 rounded-md z-50" align="start">
+
         <Calendar
           mode="single"
           selected={selected || undefined}
           onSelect={(date: Date | undefined) => onChange(date || null)}
-          initialFocus
+          // initialFocus
+            initialFocus={initialFocus}
           {...props}
         />
       </PopoverContent>

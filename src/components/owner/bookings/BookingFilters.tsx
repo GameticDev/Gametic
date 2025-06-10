@@ -73,22 +73,25 @@ export const BookingFilters = ({
           </Select>
 
           {/* Date Filter */}
-          <DatePicker
-            selected={dateFilter || undefined}
-            onChange={handleDateChange}
-            placeholderText="Filter by date"
-            customInput={
-              <div className="relative w-full">
-                <CalendarIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                   className="pl-9 bg-white border-none"
-                  value={dateFilter ? format(dateFilter, "PPP") : ""}
-                  placeholder="Filter by date"
-                  readOnly
-                />
-              </div>
-            }
-          />
+                    <div className="relative">
+            <DatePicker
+              selected={dateFilter || undefined}
+              onChange={handleDateChange}
+              placeholderText="Filter by date"
+              customInput={
+                <div className="relative w-full">
+                  <CalendarIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    className="pl-9 bg-white border-gray-300 cursor-pointer focus:ring-primary focus:ring-2"
+                    value={dateFilter ? format(dateFilter, "PPP") : ""}
+                    placeholder="Filter by date"
+                    readOnly
+                  />
+                </div>
+              }
+            />
+          </div>
+
 
           {/* Turf Filter */}
           <Select value={turfFilter} onValueChange={onTurfChange}>

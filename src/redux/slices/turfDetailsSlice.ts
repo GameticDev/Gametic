@@ -1,6 +1,5 @@
 
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axiosInstance from '@/utils/axiosInstance';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TurfData } from '@/types/turf';
 import { fetchTurfById } from '../actions/turfActions';
 

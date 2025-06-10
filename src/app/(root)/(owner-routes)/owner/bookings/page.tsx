@@ -10,6 +10,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components
 import { BookingFilters } from "@/components/owner/bookings/BookingFilters";
 import { BookingRow } from "@/components/owner/bookings/BookingRow";
 import { Booking } from "@/types/turf";
+import { updateBookingStatus } from "@/redux/actions/bookingActions";
 
 const BookingsPage = () => {
   const dispatch = useAppDispatch();
@@ -23,12 +24,27 @@ const BookingsPage = () => {
   const [turfFilter, setTurfFilter] = useState<string>("all");
   const [expandedBooking, setExpandedBooking] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user?.id) {
-      dispatch(fetchTurfs(user.id));
-    }
-  }, [dispatch, user]);
+  // useEffect(() => {
+  //   if (user?.id) {
+  //     dispatch(fetchTurfs(user.id));
+  //   }
+  // }, [dispatch, user]);
 
+
+    useEffect(() => {
+    const loadTurfs = async () => {
+      try {
+        if (user?.id) {
+          await dispatch(fetchTurfs({ ownerId: user.id }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch turfs:", error);//toast 
+      }
+    };
+    loadTurfs();
+  }, [dispatch, user?.id]);
+  
+  
   // Extract all bookings from all turfs
   const allBookings = turfs.flatMap((turf) => 
     turf.bookings?.map(booking => ({
@@ -40,11 +56,6 @@ const BookingsPage = () => {
 
   // Filter bookings based on search and filters
   const filteredBookings = allBookings.filter((booking) => {
-    // const matchesSearch = 
-    //   booking.userId.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //   booking.turfName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //   booking.userId.phone?.includes(searchTerm);
-    
     const matchesSearch =
   (booking.userId?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ?? false) ||
   booking.turfName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,15 +74,18 @@ const BookingsPage = () => {
     new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  const handleStatusChange = async (bookingId: string, newStatus: Booking['status']) => {
-    try {
-      // Here you would dispatch an action to update the booking status
-      // await dispatch(updateBookingStatus({ bookingId, status: newStatus }));
-      console.log(`Updating booking ${bookingId} to status ${newStatus}`);
-    } catch (error) {
-      console.error("Failed to update booking status:", error);
+ const handleStatusChange = async (bookingId: string, newStatus: Booking['status']) => {
+  try {
+    await dispatch(updateBookingStatus({ bookingId, status: newStatus }));
+    if (user?.id) {
+      console.log(user.id,"user?.id......")
+      dispatch(fetchTurfs({ ownerId: user.id }));
     }
-  };
+    console.log(`Updating booking ${bookingId} to status ${newStatus}`);
+  } catch (error) {
+    console.error("Failed to update booking status:", error);
+  }
+};
 
   if (loading) {
     return (
@@ -82,18 +96,22 @@ const BookingsPage = () => {
   }
 
   return (
-    // <div className="container mx-auto px-4 py-8 ml-[300px]">
-    <div className="max-w-6xl mx-auto px-4 py-8">
-
-      <div className="flex flex-col space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Bookings Management</h1>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">
+     <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex flex-col space-y-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Bookings Management</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Manage and track all your turf bookings in one place
+            </p>
+          </div>
+          <div className="bg-primary/10 px-4 py-2 rounded-lg">
+            <span className="text-sm font-medium text-primary">
               {sortedBookings.length} {sortedBookings.length === 1 ? "booking" : "bookings"} found
             </span>
           </div>
         </div>
+
 
         <BookingFilters
           searchTerm={searchTerm}
@@ -107,49 +125,89 @@ const BookingsPage = () => {
           onTurfChange={setTurfFilter}
         />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Bookings</CardTitle>
+        <Card className="border shadow-sm rounded-xl overflow-hidden">
+          <CardHeader className="bg-gray-50 border-b">
+            <CardTitle className="text-lg font-semibold text-gray-800">Recent Bookings</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {sortedBookings.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No bookings found matching your criteria</p>
+              <div className="text-center py-16">
+                <div className="mx-auto flex flex-col items-center justify-center">
+                  <svg
+                    className="h-12 w-12 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      vectorEffect="non-scaling-stroke"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">No bookings found</h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Try adjusting your search or filter criteria
+                  </p>
+                </div>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Turf</TableHead>
-                    <TableHead>Date & Time</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Payment</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedBookings.map((booking) => (
-                    <BookingRow
-                      key={booking._id}
-                      booking={booking}
-                      expanded={expandedBooking === booking._id}
-                      onToggleExpand={() => 
-                        setExpandedBooking(expandedBooking === booking._id ? null : booking._id)
-                      }
-                      onStatusChange={(status) => handleStatusChange(booking._id, status)}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
+              <div className="overflow-x-auto">
+                <Table className="min-w-full divide-y divide-gray-200">
+                  <TableHeader className="bg-gray-50">
+                    <TableRow>
+                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Customer
+                      </TableHead>
+                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Turf
+                      </TableHead>
+                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Date & Time
+                      </TableHead>
+                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Duration
+                      </TableHead>
+                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Amount
+                      </TableHead>
+                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </TableHead>
+                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Payment
+                      </TableHead>
+                      <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="bg-white divide-y divide-gray-200">
+                    {sortedBookings.map((booking) => (
+                      <BookingRow
+                        key={booking._id}
+                        booking={booking}
+                        expanded={expandedBooking === booking._id}
+                        onToggleExpand={() => 
+                          setExpandedBooking(expandedBooking === booking._id ? null : booking._id)
+                        }
+                        onStatusChange={(status) => handleStatusChange(booking._id, status)}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>
+
       </div>
     </div>
   );
 };
 
 export default BookingsPage;
+

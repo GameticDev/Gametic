@@ -22,6 +22,23 @@ export const BookingRow = ({
   onToggleExpand,
   onStatusChange,
 }: BookingRowProps) => {
+  const renderUserInfo = () => {
+    if (!booking.userId) {
+      console.log('Booking userId:', booking.userId);
+      return (
+        <div className="text-gray-400 italic">Unknown User</div>
+      );
+    }
+      return (
+      <div>
+        <div className="font-medium">{booking.userId.name}</div>
+        {booking.userId.phone && (
+          <div className="text-xs text-gray-500">{booking.userId.phone}</div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       <TableRow
@@ -29,10 +46,14 @@ export const BookingRow = ({
         onClick={onToggleExpand}
       >
         <TableCell className="font-medium">
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <User className="h-4 w-4 mr-2 text-gray-500" />
             {booking.userId.name}
-          </div>
+          </div> */}
+          <div className="flex items-center">
+  <User className="h-4 w-4 mr-2 text-gray-500" />
+  {renderUserInfo()}
+</div>
         </TableCell>
         <TableCell>{booking.turfName}</TableCell>
         <TableCell>

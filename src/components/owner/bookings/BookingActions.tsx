@@ -30,7 +30,7 @@ export const BookingActions = ({
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="bg-white shadow-md border border-gray-200 rounded-md z-50">
         <DropdownMenuItem
           onClick={(e) => {
             e.stopPropagation();
