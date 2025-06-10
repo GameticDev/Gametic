@@ -1,149 +1,90 @@
-"use client"
-import React, { useState } from 'react';
-import { User, Heart, Users, Box } from 'lucide-react';
+import React from 'react';
+import { MapPin, Star } from 'lucide-react';
 import Image from 'next/image';
 
-interface TabItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  count?: number;
+interface TravelCardProps {
+  id?: string;
+  imageUrl?: string;
+  location?: string;
+  rating?: number;
+  reviewCount?: number;
+  duration?: string;
+  title?: string;
+  price?: number;
+  currency?: string;
 }
 
-const ProfilePage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('profile');
-
-  const tabs: TabItem[] = [
-    {
-      id: 'profile',
-      label: 'Profile',
-      icon: <User className="w-4 h-4" />,
-    },
-    {
-      id: 'followers',
-      label: 'Followers',
-      icon: <Heart className="w-4 h-4" />,
-      count: 1.2,
-    },
-    {
-      id: 'friends',
-      label: 'Friends',
-      icon: <Users className="w-4 h-4" />,
-      count: 847,
-    },
-    {
-      id: 'gallery',
-      label: 'Gallery',
-      icon: <Box className="w-4 h-4" />,
-      count: 23,
-    },
-  ];
-
-  const handleTabClick = (tabId: string): void => {
-    setActiveTab(tabId);
-  };
-
-  const formatCount = (count: number): string => {
-    if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}k`;
-    }
-    return count.toString();
-  };
-
+const TravelCard: React.FC<TravelCardProps> = ({
+  imageUrl = "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+  location = "Los Angeles, USA",
+  rating = 5.00,
+  reviewCount = 309,
+  duration = "4 Nights - 4 Days",
+  title = "Mystic Marvels: Uncover Hidden Legends and Lore",
+  price = 256.00,
+  currency = "$"
+}) => {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="w-full bg-white shadow-2xl overflow-hidden border border-gray-200/50">
-        {/* Header with sports background */}
-        <div className="relative h-52 overflow-hidden" style={{ backgroundColor: '#00423D' }}>
-          <Image
-            src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Zm9vdGJhbGx8ZW58MHx8MHx8fDA%3D"
-            alt="sports background"
-            fill
-            className="absolute inset-0 object-cover"
-          />
-
-          {/* Profile content */}
-          <div className="relative z-10 flex items-end h-full p-8">
-            <div className="flex items-end space-x-6">
-              {/* Avatar with custom styling */}
-              <div className="relative">
-                <div className="w-26 h-26 rounded-full bg-white shadow-xl flex items-center justify-center text-4xl font-bold text-gray-700 border-4 border-white">
-                  JF
-                </div>
-              </div>
-
-              {/* Name and title */}
-              <div className="pb-4">
-                <h1 className="text-4xl font-bold text-white mb-2">
-                  Jaydon Frankie
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation tabs */}
-        <div className="border-b border-gray-100 z-10">
-          <div className="flex justify-end gap-5">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTabClick(tab.id)}
-                className={`flex items-center justify-center space-x-2 py-4 px-6 text-sm font-medium transition-all duration-200 ${
-                  activeTab === tab.id
-                    ? 'border-b-2 border-blue-600 bg-blue-50/50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-                style={{
-                  color: activeTab === tab.id ? '#00423D' : '#415C41',
-                  borderBottomColor: activeTab === tab.id ? '#00423D' : 'transparent'
-                }}
-              >
-                {tab.icon}
-                <span>{tab.label}</span>
-                {tab.count !== undefined && (
-                  <span 
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      activeTab === tab.id
-                        ? 'text-white'
-                        : 'text-gray-600'
-                    }`}
-                    style={{
-                      backgroundColor: activeTab === tab.id ? '#98916D' : '#98916D30'
-                    }}
-                  >
-                    {typeof tab.count === 'number' && tab.count < 1000 
-                      ? tab.count 
-                      : formatCount(tab.count as number)}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Content area */}
-        <div className="p-8">
-          <div className="text-center py-12">
-            <div 
-              className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: '#00423D' }}
-            >
-              <div className="text-white">
-                {tabs.find(tab => tab.id === activeTab)?.icon}
-              </div>
-            </div>
-            <h3 className="text-xl font-semibold mb-2" style={{ color: '#00423D' }}>
-              {tabs.find(tab => tab.id === activeTab)?.label} Content
-            </h3>
-            <p style={{ color: '#415C41' }}>
-              This is where the {activeTab} content would be displayed.
-            </p>
-          </div>
+    <div className="w-[350px] bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 p-1">
+      {/* Image Container */}
+      <div className="relative rounded-2xl">
+        <Image 
+          src={imageUrl}
+          alt={title}
+          width={200}
+          height={200}
+          className="w-full h-64 object-cover rounded-lg  "
+        />
       </div>
+      
+      {/* Content Container */}
+      <div className="p-5">
+        {/* Location */}
+        <div className="flex items-center text-[#98916d] text-sm mb-3">
+          <MapPin className="w-4 h-4 mr-1" />
+          <span>{location}</span>
+        </div>
+        
+        {/* Rating and Duration */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
+            <span className="text-sm font-medium text-gray-700">
+              {rating.toFixed(2)} ({reviewCount})
+            </span>
+          </div>
+          <span className="text-sm text-gray-500">{duration}</span>
+        </div>
+        
+        {/* Title */}
+        <h3 className="text-lg font-semibold text-gray-800 mb-4 leading-tight">
+          {title}
+        </h3>
+        
+        {/* Price */}
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-500">From:</span>
+          <div className="flex items-baseline mr-5">
+            <span className="text-2xl font-bold text-[#98916d]">
+              {currency}{price.toFixed(2)}
+            </span>
+            <span className="text-sm text-gray-500 ml-1">/ Per Person</span>
+          </div>
+        </div>
+        
+
       </div>
     </div>
   );
 };
 
-export default ProfilePage;
+// Demo Component
+const TravelCardDemo: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <TravelCard />
+    </div>
+  );
+};
+
+export default TravelCardDemo;
