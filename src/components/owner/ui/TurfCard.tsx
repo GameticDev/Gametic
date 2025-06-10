@@ -4,6 +4,7 @@ import { FiEdit2, FiTrash2, FiMapPin, FiDollarSign, FiCalendar, FiStar } from 'r
 // import { Turf } from '@/types/turf';
 import { TurfData } from '@/types/turf';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 
 
@@ -56,13 +57,23 @@ const TurfCard = ({
             )}
           >
             {turf.images.map((img: string, idx: number) => (
-              <div key={idx} className="h-48">
-                <img
-                  src={img}
-                  alt={`${turf.name} image ${idx + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              // <div key={idx} className="h-48">
+              //   <img
+              //     src={img}
+              //     alt={`${turf.name} image ${idx + 1}`}
+              //     className="w-full h-full object-cover"
+              //   />
+              // </div>
+              <div key={idx} className="relative h-48 w-full">
+  <Image
+    src={img}
+    alt={`${turf.name} image ${idx + 1}`}
+    fill
+    className="object-cover"
+    // sizes="100vw"
+    sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+  />
+</div>
             ))}
           </Carousel>
         ) : (

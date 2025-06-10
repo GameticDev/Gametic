@@ -9,6 +9,7 @@ interface TurfState {
   loading: boolean;
   error: string | null;
   success: boolean;
+  totalCount: number;
 }
 
 const initialState: TurfState = {
@@ -16,6 +17,7 @@ const initialState: TurfState = {
   loading: false,
   error: null,
   success: false,
+  totalCount: 0,
 };
 
 const turfSlice = createSlice({
@@ -26,6 +28,13 @@ const turfSlice = createSlice({
       state.success = false;
       state.error = null;
     },
+    //       // Optional: Add a reducer to manually set turfs if needed
+    //   setTurfs(state, action: PayloadAction<{ turfs: TurfData[]; totalCount?: number }>) {
+    //     state.turfs = action.payload.turfs;
+    //     if (action.payload.totalCount !== undefined) {
+    //       state.totalCount = action.payload.totalCount;
+    //     }
+    //   },
   },
   extraReducers: (builder) => {
     builder
@@ -39,63 +48,72 @@ const turfSlice = createSlice({
         state.success = true;
         if (action.payload) {
           state.turfs = [action.payload, ...state.turfs];
-          // state.turfs.unshift(action.payload); 
+          state.totalCount += 1;
         }
       })
-      // .addCase(addTurf.rejected, (state, action: PayloadAction<any>) => {
-      //   state.loading = false;
-      //   state.error = action.payload?.message ?? 'Failed to add turf';
-      // })
-
       .addCase(addTurf.rejected, (state, action) => {
-  state.loading = false;
-  state.error = action.payload ?? 'Failed to add turf';
-})
-
-
+        state.loading = false;
+        state.error = action.payload as string || 'Failed to add turf';
+      })
       .addCase(fetchTurfs.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchTurfs.fulfilled, (state, action: PayloadAction<TurfData[]>) => {
+      .addCase(fetchTurfs.fulfilled, (state, action) => {
         state.loading = false;
-        state.turfs = action.payload;
+        state.turfs = action.payload.turfs;
+        state.totalCount = action.payload.totalCount;
       })
-      .addCase(fetchTurfs.rejected, (state, action: PayloadAction<any>) => {
+
+
+      .addCase(fetchTurfs.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message ?? 'Failed to fetch turfs';
+        state.error = action.payload as string || 'Failed to fetch turfs';
       })
 
       .addCase(updateTurf.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.success = false;
       })
       .addCase(updateTurf.fulfilled, (state, action: PayloadAction<TurfData>) => {
         state.loading = false;
         state.success = true;
+
+        if (!action.payload?._id) {
+          console.error('UpdateTurf payload missing _id:', action.payload);
+          return;
+        }
+
         const index = state.turfs.findIndex(t => t._id === action.payload._id);
         if (index !== -1) {
           state.turfs[index] = action.payload;
         }
       })
-      .addCase(updateTurf.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(updateTurf.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message ?? 'Failed to update turf';
+        // state.error = action.payload ?? 'Failed to update turf';
+        state.error = action.payload as string || 'Failed to update turf';
       })
+
 
       .addCase(deleteTurf.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.success = false;
       })
+      // .addCase(deleteTurf.fulfilled, (state, action) => {
       .addCase(deleteTurf.fulfilled, (state, action: PayloadAction<string>) => {
+        console.log('shanu deleteTurf.fulfilled payload:', action.payload);
         state.loading = false;
         state.success = true;
         state.turfs = state.turfs.filter(t => t._id !== action.payload);
+        state.totalCount = Math.max(0, state.totalCount - 1);
       })
-      .addCase(deleteTurf.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(deleteTurf.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message ?? 'Failed to delete turf';
-      });
+        state.error = action.payload as string || 'Failed to delete turf';
+      })
   },
 });
 

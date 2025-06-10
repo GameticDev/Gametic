@@ -3,12 +3,20 @@ export interface User {
   username: string;
   email: string;
   role:"user" | "admin" | "owner"
+  picture?: string;
+  phone?:string;
+  location?:string
+  bio?:string
+  businessName?:string
+
 }
 
 export interface AuthState {
   user: User | null;
   loading: boolean;
   error: string | null;
+  isVerified: boolean;
+  isAuth: boolean;
 }
 
 // export const initialState: AuthState = {
@@ -49,12 +57,12 @@ export interface AuthState {
   isVerified: boolean;
 }
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  // Add more fields if needed
-}
+// export interface User {
+//   id: string;
+//   name: string;
+//   email: string;
+//   // Add more fields if needed
+// }
 
 export interface AuthResponse {
   user: User;
@@ -65,6 +73,8 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
   isVerified: boolean;
+   isAuth: boolean;
+  role: "user" | "admin" | "owner";
 }
 
 export const initialState: AuthState = {
@@ -72,5 +82,7 @@ export const initialState: AuthState = {
   loading: false,
   error: null,
   isVerified: false,
+   isAuth: false,
+  role: "user",
 };
 
