@@ -1,43 +1,60 @@
 "use client";
+
 import { fetchVenueBySport, hostGame } from "@/redux/actions/user/hostActions";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import axiosInstance from "@/utils/axiosInstance";
 import { X, MapPin, Users, Trophy, CreditCard, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
-
-// Extend Window interface for Razorpay
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
+import type { RazorpayResponse, RazorpayError, RazorpayOptions } from "@/types/razorpay";
 
 interface HostModalProp {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface RazorpayResponse {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
+interface Venue {
+  _id: string;
+  name: string;
+  hourlyRate: number;
+  bookedSlot?: Array<{
+    date: string;
+    slots: Array<{
+      start: string;
+      end: string;
+    }>;
+  }>;
 }
-interface RazorpayErrorResponse {
-  error: {
-    code: string;
-    description: string;
-    source: string;
-    step: string;
-    reason: string;
-    metadata: Record<string, unknown>;
-  };
+
+interface FormData {
+  title: string;
+  sports: string;
+  date: string;
+  turfId: string;
+  timeSlot: string;
+  startTime: string;
+  endTime: string;
+  maxPlayers: string;
+  paymentPerPerson: string;
+}
+
+interface TimeSlot {
+  id: string;
+  label: string;
+  startTime: string;
+  endTime: string;
+}
+
+interface OrderData {
+  id: string;
+  amount: number;
+  currency: string;
 }
 
 const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   const dispatch = useAppDispatch();
-  const { venues } = useAppSelector((state) => state.host);
+  const { venues } = useAppSelector((state) => state.host) as { venues: Venue[] | null };
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     sports: "football",
     date: "",
@@ -49,8 +66,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     paymentPerPerson: "",
   });
 
-  // Sports categories
-  const sportsOptions = [
+  const sportsOptions: string[] = [
     "football",
     "cricket",
     "multi-sport",
@@ -62,114 +78,32 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     "hockey",
   ];
 
-  // Time slot options
-  const timeSlotOptions = [
-    {
-      id: "slot_1",
-      label: "06:00 - 07:00",
-      startTime: "06:00",
-      endTime: "07:00",
-    },
-    {
-      id: "slot_2",
-      label: "07:00 - 08:00",
-      startTime: "07:00",
-      endTime: "08:00",
-    },
-    {
-      id: "slot_3",
-      label: "08:00 - 09:00",
-      startTime: "08:00",
-      endTime: "09:00",
-    },
-    {
-      id: "slot_4",
-      label: "09:00 - 10:00",
-      startTime: "09:00",
-      endTime: "10:00",
-    },
-    {
-      id: "slot_5",
-      label: "10:00 - 11:00",
-      startTime: "10:00",
-      endTime: "11:00",
-    },
-    {
-      id: "slot_6",
-      label: "11:00 - 12:00",
-      startTime: "11:00",
-      endTime: "12:00",
-    },
-    {
-      id: "slot_7",
-      label: "12:00 - 13:00",
-      startTime: "12:00",
-      endTime: "13:00",
-    },
-    {
-      id: "slot_8",
-      label: "13:00 - 14:00",
-      startTime: "13:00",
-      endTime: "14:00",
-    },
-    {
-      id: "slot_9",
-      label: "14:00 - 15:00",
-      startTime: "14:00",
-      endTime: "15:00",
-    },
-    {
-      id: "slot_10",
-      label: "15:00 - 16:00",
-      startTime: "15:00",
-      endTime: "16:00",
-    },
-    {
-      id: "slot_11",
-      label: "16:00 - 17:00",
-      startTime: "16:00",
-      endTime: "17:00",
-    },
-    {
-      id: "slot_12",
-      label: "17:00 - 18:00",
-      startTime: "17:00",
-      endTime: "18:00",
-    },
-    {
-      id: "slot_13",
-      label: "18:00 - 19:00",
-      startTime: "18:00",
-      endTime: "19:00",
-    },
-    {
-      id: "slot_14",
-      label: "19:00 - 20:00",
-      startTime: "19:00",
-      endTime: "20:00",
-    },
-    {
-      id: "slot_15",
-      label: "20:00 - 21:00",
-      startTime: "20:00",
-      endTime: "21:00",
-    },
-    {
-      id: "slot_16",
-      label: "21:00 - 22:00",
-      startTime: "21:00",
-      endTime: "22:00",
-    },
+  const timeSlotOptions: TimeSlot[] = [
+    { id: "slot_1", label: "06:00 - 07:00", startTime: "06:00", endTime: "07:00" },
+    { id: "slot_2", label: "07:00 - 08:00", startTime: "07:00", endTime: "08:00" },
+    { id: "slot_3", label: "08:00 - 09:00", startTime: "08:00", endTime: "09:00" },
+    { id: "slot_4", label: "09:00 - 10:00", startTime: "09:00", endTime: "10:00" },
+    { id: "slot_5", label: "10:00 - 11:00", startTime: "10:00", endTime: "11:00" },
+    { id: "slot_6", label: "11:00 - 12:00", startTime: "11:00", endTime: "12:00" },
+    { id: "slot_7", label: "12:00 - 13:00", startTime: "12:00", endTime: "13:00" },
+    { id: "slot_8", label: "13:00 - 14:00", startTime: "13:00", endTime: "14:00" },
+    { id: "slot_9", label: "14:00 - 15:00", startTime: "14:00", endTime: "15:00" },
+    { id: "slot_10", label: "15:00 - 16:00", startTime: "15:00", endTime: "16:00" },
+    { id: "slot_11", label: "16:00 - 17:00", startTime: "16:00", endTime: "17:00" },
+    { id: "slot_12", label: "17:00 - 18:00", startTime: "17:00", endTime: "18:00" },
+    { id: "slot_13", label: "18:00 - 19:00", startTime: "18:00", endTime: "19:00" },
+    { id: "slot_14", label: "19:00 - 20:00", startTime: "19:00", endTime: "20:00" },
+    { id: "slot_15", label: "20:00 - 21:00", startTime: "20:00", endTime: "21:00" },
+    { id: "slot_16", label: "21:00 - 22:00", startTime: "21:00", endTime: "22:00" },
   ];
 
   useEffect(() => {
     dispatch(fetchVenueBySport({ sport: formData.sports }));
   }, [formData.sports, dispatch]);
 
-  // Load Razorpay script
   useEffect(() => {
     const loadRazorpayScript = () => {
-      return new Promise((resolve) => {
+      return new Promise<boolean>((resolve) => {
         const script = document.createElement("script");
         script.src = "https://checkout.razorpay.com/v1/checkout.js";
         script.onload = () => resolve(true);
@@ -183,8 +117,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     }
   }, [isOpen]);
 
-  // Get available time slots based on selected date and turf
-  const getAvailableTimeSlots = () => {
+  const getAvailableTimeSlots = (): TimeSlot[] => {
     if (!formData.date || !formData.turfId) {
       return [];
     }
@@ -213,8 +146,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     });
   };
 
-  // Calculate payment per person based on hourly rate and number of players
-  const calculatePaymentPerPerson = () => {
+  const calculatePaymentPerPerson = (): string => {
     if (!formData.turfId || !formData.maxPlayers) {
       return "";
     }
@@ -239,7 +171,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  ): void => {
     const { name, value } = e.target;
 
     if (name === "timeSlot" && value) {
@@ -277,7 +209,6 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     }));
   };
 
-  // Update payment when turf or maxPlayers changes
   useEffect(() => {
     const newPayment = calculatePaymentPerPerson();
     if (newPayment !== formData.paymentPerPerson) {
@@ -288,29 +219,28 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     }
   }, [formData.turfId, formData.maxPlayers]);
 
-  const getTimeRange = () => {
+  const getTimeRange = (): string => {
     if (formData.startTime && formData.endTime) {
       return `${formData.startTime} - ${formData.endTime}`;
     }
     return "";
   };
 
-  const getTodayDate = () => {
+  const getTodayDate = (): string => {
     const today = new Date();
     return today.toISOString().split("T")[0];
   };
 
-  const getTurfAmount = () => {
+  const getTurfAmount = (): number => {
     const selectedVenue = venues?.find(
       (venue) => venue._id === formData.turfId
     );
     return selectedVenue ? selectedVenue.hourlyRate : 0;
   };
 
-  // Create Razorpay order
-  const createRazorpayOrder = async () => {
+  const createRazorpayOrder = async (): Promise<OrderData> => {
     try {
-      const response = await axiosInstance.post(
+      const response = await axiosInstance.post<OrderData>(
         "/create-hosting-order",
         {
           title: formData.title,
@@ -336,10 +266,8 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     }
   };
 
-
-  // Handle form validation
-  const validateForm = () => {
-    const requiredFields = [
+  const validateForm = (): boolean => {
+    const requiredFields: (keyof FormData)[] = [
       "title",
       "sports",
       "date",
@@ -350,7 +278,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     ];
 
     for (const field of requiredFields) {
-      if (!formData[field as keyof typeof formData]) {
+      if (!formData[field]) {
         alert(
           `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}`
         );
@@ -369,7 +297,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     return true;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     if (!validateForm()) {
       return;
     }
@@ -383,19 +311,17 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
     try {
       const orderData = await createRazorpayOrder();
-      console.log("Order created:", orderData);
 
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      const options: RazorpayOptions = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "",
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Sports Hosting",
         description: `Hosting fee for ${formData.title}`,
         order_id: orderData.id,
-        handler: async (response:RazorpayResponse) => {
-          console.log("Razorpay response:", response);
+        handler: async (response: RazorpayResponse) => {
           alert("Payment successful! Your match has been hosted successfully.");
-
+          console.log(response)
           const hostData = {
             title: formData.title,
             sports: formData.sports,
@@ -428,12 +354,6 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
           email: "",
           contact: "",
         },
-        notes: {
-          matchTitle: formData.title,
-          sport: formData.sports,
-          date: formData.date,
-          timeSlot: `${formData.startTime} - ${formData.endTime}`,
-        },
         theme: {
           color: "#00423D",
         },
@@ -442,11 +362,16 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
             setIsProcessingPayment(false);
           },
         },
+        notes: {
+          matchTitle: formData.title,
+          sport: formData.sports,
+          date: formData.date,
+          timeSlot: `${formData.startTime} - ${formData.endTime}`,
+        },
       };
 
       const razorpay = new window.Razorpay(options);
-      razorpay.on("payment.failed", (response:RazorpayErrorResponse) => {
-        console.error("Payment failed:", response.error);
+      razorpay.on("payment.failed", (response: { error: RazorpayError }) => {
         alert(
           `Payment failed: ${response.error.description}. Please try again.`
         );
@@ -455,7 +380,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
       razorpay.open();
     } catch (error) {
       console.error("Error during payment process:", error);
-      alert(`Failed to initiate payment. Please try again.`);
+      alert("Failed to initiate payment. Please try again.");
       setIsProcessingPayment(false);
     }
   };
@@ -483,7 +408,6 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
         </button>
 
         <div className="grid grid-cols-2 h-full">
-          {/* Left Side - Image and Heading */}
           <div className="bg-gradient-to-br from-[#00423D] to-[#415C41] p-8 rounded-l-lg flex flex-col justify-center items-center text-white relative overflow-hidden">
             <div className="absolute inset-0 opacity-10">
               <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
@@ -512,8 +436,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
               </div>
               <h1 className="text-3xl font-bold mb-4">Host Your Game</h1>
               <p className="text-lg opacity-90 mb-6 leading-relaxed">
-                Bring your community together for an unforgettable sports
-                experience
+                Bring your community together for an unforgettable sports experience
               </p>
               <div className="space-y-3 text-left">
                 <div className="flex items-center space-x-3">
@@ -538,9 +461,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
               {formData.turfId && formData.maxPlayers && (
                 <div className="mt-8 p-4 bg-white/10 rounded-lg backdrop-blur-sm">
-                  <h3 className="text-lg font-semibold mb-2">
-                    Payment Summary
-                  </h3>
+                  <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
                   <div className="text-sm space-y-1">
                     <div className="flex justify-between">
                       <span>Turf Cost:</span>
@@ -560,23 +481,16 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
             </div>
           </div>
 
-          {/* Right Side - Form */}
           <div className="p-6">
             <div className="h-full flex flex-col">
               <div className="mb-4">
-                <h2 className="text-xl font-bold text-[#415C41] mb-1">
-                  Match Details
-                </h2>
-                <p className="text-sm text-[#998869]">
-                  Fill in the information below
-                </p>
+                <h2 className="text-xl font-bold text-[#415C41] mb-1">Match Details</h2>
+                <p className="text-sm text-[#998869]">Fill in the information below</p>
               </div>
 
               <div className="space-y-3 flex-1">
                 <div>
-                  <label className="block text-xs font-medium text-[#415C41] mb-1">
-                    Match Title
-                  </label>
+                  <label className="block text-xs font-medium text-[#415C41] mb-1">Match Title</label>
                   <input
                     type="text"
                     name="title"
@@ -591,12 +505,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label
-                      htmlFor="sports"
-                      className="block text-xs font-medium text-[#415C41] mb-1"
-                    >
-                      Sport
-                    </label>
+                    <label htmlFor="sports" className="block text-xs font-medium text-[#415C41] mb-1">Sport</label>
                     <select
                       id="sports"
                       name="sports"
@@ -616,9 +525,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-[#415C41] mb-1">
-                      Date
-                    </label>
+                    <label className="block text-xs font-medium text-[#415C41] mb-1">Date</label>
                     <input
                       type="date"
                       name="date"
@@ -633,9 +540,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#415C41] mb-1">
-                    Select a Turf
-                  </label>
+                  <label className="block text-xs font-medium text-[#415C41] mb-1">Select a Turf</label>
                   <select
                     name="turfId"
                     value={formData.turfId}
@@ -654,48 +559,33 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#415C41] mb-1">
-                    Time Slot
-                  </label>
+                  <label className="block text-xs font-medium text-[#415C41] mb-1">Time Slot</label>
                   <select
                     name="timeSlot"
                     value={formData.timeSlot}
                     onChange={handleInputChange}
-                    disabled={
-                      !formData.date || !formData.turfId || isProcessingPayment
-                    }
+                    disabled={!formData.date || !formData.turfId || isProcessingPayment}
                     className="w-full px-3 py-2 border border-[#98916D] rounded-lg focus:ring-2 focus:ring-[#00423D] focus:border-[#00423D] outline-none transition-colors bg-white text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                     required
                   >
                     <option value="">
-                      {!formData.date || !formData.turfId
-                        ? "Select date and turf first"
-                        : "Select time slot"}
+                      {!formData.date || !formData.turfId ? "Select date and turf first" : "Select time slot"}
                     </option>
                     {availableTimeSlots.map((slot) => (
-                      <option key={slot.id} value={slot.id}>
-                        {slot.label}
-                      </option>
+                      <option key={slot.id} value={slot.id}>{slot.label}</option>
                     ))}
                   </select>
 
-                  {formData.date &&
-                    formData.turfId &&
-                    availableTimeSlots.length === 0 && (
-                      <div className="mt-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
-                        <span className="text-sm text-red-600">
-                          No available slots for this date. Please select
-                          another date.
-                        </span>
-                      </div>
-                    )}
+                  {formData.date && formData.turfId && availableTimeSlots.length === 0 && (
+                    <div className="mt-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
+                      <span className="text-sm text-red-600">No available slots for this date. Please select another date.</span>
+                    </div>
+                  )}
 
                   {formData.timeSlot && (
                     <div className="mt-2 px-3 py-2 bg-[#00423D]/5 border border-[#00423D]/20 rounded-lg">
                       <div className="flex items-center justify-center">
-                        <span className="text-sm font-medium text-[#00423D]">
-                          🕖 {getTimeRange()}
-                        </span>
+                        <span className="text-sm font-medium text-[#00423D]">🕖 {getTimeRange()}</span>
                       </div>
                     </div>
                   )}
@@ -703,12 +593,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label
-                      htmlFor="maxPlayers"
-                      className="block text-xs font-medium text-[#415C41] mb-1"
-                    >
-                      Max Players
-                    </label>
+                    <label htmlFor="maxPlayers" className="block text-xs font-medium text-[#415C41] mb-1">Max Players</label>
                     <input
                       id="maxPlayers"
                       type="number"
@@ -725,12 +610,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="paymentPerPerson"
-                      className="block text-xs font-medium text-[#415C41] mb-1"
-                    >
-                      Payment Per Person
-                    </label>
+                    <label htmlFor="paymentPerPerson" className="block text-xs font-medium text-[#415C41] mb-1">Payment Per Person</label>
                     <div className="relative">
                       <input
                         id="paymentPerPerson"
@@ -744,9 +624,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                         readOnly
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                        <span className="text-xs text-[#998869]">
-                          Auto-calculated
-                        </span>
+                        <span className="text-xs text-[#998869]">Auto-calculated</span>
                       </div>
                     </div>
                   </div>
@@ -771,9 +649,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                     </>
                   )}
                 </button>
-                <p className="text-xs text-[#998869] text-center mt-2">
-                  Secure payment powered by Razorpay
-                </p>
+                <p className="text-xs text-[#998869] text-center mt-2">Secure payment powered by Razorpay</p>
               </div>
             </div>
           </div>
