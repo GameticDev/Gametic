@@ -1,8 +1,11 @@
-import { fetchAllVenues } from "@/redux/actions/user/venueAction";
+import {
+  fetchAllVenues,
+  fetchVenueById,
+} from "@/redux/actions/user/venueAction";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface Venue {
- _id: string;
+  _id: string;
   ownerId: string;
   name: string;
   city: string;
@@ -56,12 +59,14 @@ interface VenueState {
   venues: Venue[];
   totalVenues: number;
   totalActiveVenues: number;
+  venue: Venue | null;
   loading: boolean;
   error: string | null;
 }
 
 const INITIAL_STATE: VenueState = {
   venues: [],
+  venue: null,
   totalVenues: 0,
   totalActiveVenues: 0,
   loading: false,
@@ -76,7 +81,7 @@ const venueSliceUser = createSlice({
     builder
       .addCase(fetchAllVenues.pending, (state) => {
         state.loading = true;
-        console.log(state.loading)
+        console.log(state.loading);
       })
       .addCase(fetchAllVenues.fulfilled, (state, action) => {
         state.loading = false;
@@ -85,6 +90,17 @@ const venueSliceUser = createSlice({
         state.totalActiveVenues = action.payload.totalActiveVenues;
       })
       .addCase(fetchAllVenues.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Something wrong";
+      })
+      .addCase(fetchVenueById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchVenueById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.venue = action.payload.turff;
+      })
+      .addCase(fetchVenueById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Something wrong";
       });
