@@ -1,56 +1,77 @@
+"use client";
 
- import { Tournament } from "@/app/(root)/(user-routes)/tournament/page";
-import {
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaTicketAlt,
-  FaTrophy,
-  FaUsers,
-} from "react-icons/fa";
+import { useState } from "react";
+import { FaCalendarAlt, FaMapMarkerAlt, FaTicketAlt, FaTrophy, FaUsers } from "react-icons/fa";
 import moment from "moment";
-import {  useState } from "react";
-import AddTeamModal from "./AddTeamForm";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import AddTeamModal from "./AddTeamForm";
+
+// Define the Tournament interface (adjust based on your actual interface)
+interface Tournament {
+  _id: string;
+  image: string;
+  status: string;
+  title: string;
+  subtitle: string;
+  location: string;
+  distance: string;
+  joinedTeams: string[]; // Assuming joinedTeams is an array of team IDs
+  dateFrom: string;
+  dateTo: string;
+  entryFee: string;
+  prizePool: string;
+}
 
 interface Props {
   data: Tournament;
 }
 
 export default function TournamentCard({ data }: Props) {
-   const router = useRouter();
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+  const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams.length);
 
   const handleCardClick = () => {
     router.push(`/tournament/${data._id}`);
   };
-    const[showModal,setShowModal]=useState(false)
-    const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams.length);
- const handleTeamJoined = () => {
-  setJoinedTeamsCount((prev) => prev + 1);
-};
 
-     const openModal=()=>{
-    setShowModal(true)
-  }
-  const closeModal=()=>{
-    setShowModal(false)
-  }
+  const handleTeamJoined = () => {
+    setJoinedTeamsCount((prev) => prev + 1);
+  };
 
- 
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div className="w-[277px] rounded-xl overflow-hidden shadow-md border border-gray-200 bg-white">
-      <img onClick={handleCardClick}
-        src={data.image} 
-        alt="Stadium"
+      <Image
+        width={277}
+        height={128}
+        onClick={handleCardClick}
+        src={data.image}
+        alt="Tournament stadium"
         className="w-full h-32 object-cover"
       />
       <div className="flex justify-center -mt-6">
         <div className="bg-green-800 rounded-full p-4 border-2 border-gray-200">
-          <button type="button" onClick={openModal} className="text-white font-semibold">Join</button>
+          <button
+            type="button"
+            onClick={openModal}
+            className="text-white font-semibold"
+          >
+            Join
+          </button>
         </div>
       </div>
 
       <div className="px-4 pb-4 pt-2 text-center">
-        <span className="text-sm text-white  bg-green-400 rounded-full px-2 py-0.5 font-medium">
+        <span className="text-sm text-white bg-green-400 rounded-full px-2 py-0.5 font-medium">
           {data.status}
         </span>
         <h2 className="text-xl font-semibold mt-1">{data.title}</h2>
@@ -87,7 +108,13 @@ export default function TournamentCard({ data }: Props) {
           </div>
         </div>
       </div>
-      {showModal && <AddTeamModal  tournamentId={data._id} onTeamJoined={handleTeamJoined} onClose={closeModal}/>}
+      {showModal && (
+        <AddTeamModal
+          tournamentId={data._id}
+          onTeamJoined={handleTeamJoined}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
-} 
+}

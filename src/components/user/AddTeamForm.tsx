@@ -157,7 +157,15 @@ interface TeamFormData {
   memberEmails: string[];
 }
 
-const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId ,onTeamJoined}) => {
+interface AxiosErrorResponse {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
+const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId, onTeamJoined }) => {
   const [formData, setFormData] = useState<TeamFormData>({
     name: "",
     sport: "football",
@@ -169,67 +177,55 @@ const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId ,onTeamJoined}) =
   const [loading, setLoading] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "memberEmails") {
+      const emails = value
+        .split("\n")
+        .map((email) => email.trim())
+        .filter((email) => email.length > 0);
+      setFormData((prev) => ({ ...prev, memberEmails: emails }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleCreateTeam = async (e: React.FormEvent) => {
+  const handleCreateTeam = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axiosInstance.post("/team", formData);
+      const response = await axiosInstance.post<{ team: { _id: string } }>("/team", formData);
       const teamId = response.data.team._id;
       setCreatedTeamId(teamId);
       setTeamCreated(true);
       toast.success("Team created successfully!");
-    } catch (error: any) {
-      const msg = error?.response?.data?.message || "Failed to create team";
+    } catch (error: unknown) {
+      const axiosError = error as AxiosErrorResponse;
+      const msg = axiosError.response?.data?.message || "Failed to create team";
       toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  // const handleJoinTournament = async () => {
-  //   if (!createdTeamId) return;
-  //   setLoading(true);
-  //   try {
-  //     await axiosInstance.patch(`/tournament/${tournamentId}/join-team`, { teamId: createdTeamId });
-  //     toast.success("Team added to tournament!");
-  //     onTeamJoined();
-  //     onClose();
-
-  //   } catch (error: any) {
-  //     const msg = error?.response?.data?.message || "Failed to join tournament";
-  //     toast.error(msg);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleJoinTournament = async () => {
-    if (!createdTeamId) return toast.error("Team ID not found");
+    if (!createdTeamId) {
+      toast.error("Team ID not found");
+      return;
+    }
 
     setLoading(true);
     try {
-      const response = await axiosInstance.patch(
-        `/tournament/${tournamentId}/join-team`,
-        { teamId: createdTeamId }
-      );
-
-
-      // Manually check for expected success condition
-      // if (response.status === 200 || response.status === 201) {
-      //   toast.success("Team added to tournament!");
-      //   onTeamJoined();
-      //   onClose();
-      // } else {
-      //   toast.error("Unexpected response from server.");
-      // }
-    } catch (error: any) {
-      console.error("Join Error:", error?.response?.data || error);
-      const msg = error?.response?.data?.message || "Failed to join tournament";
+      await axiosInstance.patch(`/tournament/${tournamentId}/join-team`, {
+        teamId: createdTeamId,
+      });
+      toast.success("Team added to tournament!");
+      onTeamJoined();
+      onClose();
+    } catch (error: unknown) {
+      const axiosError = error as AxiosErrorResponse;
+      const msg = axiosError.response?.data?.message || "Failed to join tournament";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -237,105 +233,90 @@ const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId ,onTeamJoined}) =
   };
 
   return (
-   
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-30">
-    <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md relative">
-      <button
-        onClick={onClose}
-        className="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl"
-      >
-        ×
-      </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-30">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl"
+          aria-label="Close modal"
+        >
+          ×
+        </button>
 
-      <h2 className="text-xl font-bold mb-4">
-        {teamCreated ? "Team Created" : "Create Team"}
-      </h2>
+        <h2 className="text-xl font-bold mb-4">
+          {teamCreated ? "Team Created" : "Create Team"}
+        </h2>
 
-      {/* SHOW FORM ONLY IF TEAM NOT CREATED */}
-      {!teamCreated && (
-        <form onSubmit={handleCreateTeam} className="space-y-4">
-          <div>
-            <label className="block mb-1 font-medium">Team Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
-            />
-          </div>
+        {!teamCreated && (
+          <form onSubmit={handleCreateTeam} className="space-y-4">
+            <div>
+              <label className="block mb-1 font-medium">Team Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-medium">Sport</label>
-            <select
-              name="sport"
-              value={formData.sport}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
+            <div>
+              <label className="block mb-1 font-medium">Sport</label>
+              <select
+                name="sport"
+                value={formData.sport}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+              >
+                <option value="football">Football</option>
+                <option value="cricket">Cricket</option>
+                <option value="multi-sport">Multi-Sport</option>
+                <option value="swimming">Swimming</option>
+                <option value="basketball">Basketball</option>
+                <option value="badminton">Badminton</option>
+                <option value="tennis">Tennis</option>
+                <option value="volleyball">Volleyball</option>
+                <option value="hockey">Hockey</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium">Team Members (Emails)</label>
+              <textarea
+                name="memberEmails"
+                value={formData.memberEmails.join("\n")}
+                onChange={handleChange}
+                className="w-full border p-2 rounded h-32 resize-none"
+                placeholder="Enter one email per line"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className={`bg-green-800 text-white w-full py-2 rounded hover:bg-green-700 ${loading ? "opacity-60" : ""}`}
+              disabled={loading}
             >
-              <option value="football">Football</option>
-              <option value="cricket">Cricket</option>
-              <option value="multi-sport">Multi-Sport</option>
-              <option value="swimming">Swimming</option>
-              <option value="basketball">Basketball</option>
-              <option value="badminton">Badminton</option>
-              <option value="tennis">Tennis</option>
-              <option value="volleyball">Volleyball</option>
-              <option value="hockey">Hockey</option>
-            </select>
-          </div>
+              {loading ? "Creating..." : "Create Team"}
+            </button>
+          </form>
+        )}
 
-          <div>
-            <label className="block mb-1 font-medium">
-              Team Members (Emails)
-            </label>
-            <textarea
-              name="memberEmails"
-              value={formData.memberEmails.join("\n")}
-              onChange={(e) => {
-                const emails = e.target.value
-                  .split("\n")
-                  .map((email) => email.trim())
-                  .filter((email) => email.length > 0);
-                setFormData((prev) => ({ ...prev, memberEmails: emails }));
-              }}
-              className="w-full border p-2 rounded h-32 resize-none"
-              placeholder="Enter one email per line"
-              required
-            />
-          </div>
-
+        {teamCreated && (
           <button
-            type="submit"
-            className={`bg-green-800 text-white w-full py-2 rounded hover:bg-green-700 ${
-              loading ? "opacity-60" : ""
-            }`}
+            type="button"
+            onClick={handleJoinTournament}
+            className={`mt-4 bg-green-800 text-white w-full py-2 rounded hover:bg-green-900 ${loading ? "opacity-60" : ""}`}
             disabled={loading}
           >
-            {loading ? "Creating..." : "Create Team"}
+            {loading ? "Adding..." : "Add to Tournament"}
           </button>
-        </form>
-      )}
-
-      {/* SHOW ONLY THIS BUTTON IF TEAM IS CREATED */}
-      {teamCreated && (
-        <button
-          type="button"
-          onClick={handleJoinTournament}
-          className={`mt-4 bg-green-800 text-white w-full py-2 rounded hover:bg-green-900 ${
-            loading ? "opacity-60" : ""
-          }`}
-          disabled={loading}
-        >
-          {loading ? "Adding..." : "Add to Tournament"}
-        </button>
-      )}
+        )}
+      </div>
     </div>
-  </div>
-);
-
+  );
 };
 
 export default AddTeamModal;

@@ -1,43 +1,60 @@
 "use client";
+
 import { fetchVenueBySport, hostGame } from "@/redux/actions/user/hostActions";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import axiosInstance from "@/utils/axiosInstance";
 import { X, MapPin, Users, Trophy, CreditCard, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
-
-// Extend Window interface for Razorpay
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
+import type { RazorpayResponse, RazorpayError, RazorpayOptions } from "@/types/razorpay";
 
 interface HostModalProp {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface RazorpayResponse {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
+interface Venue {
+  _id: string;
+  name: string;
+  hourlyRate: number;
+  bookedSlot?: Array<{
+    date: string;
+    slots: Array<{
+      start: string;
+      end: string;
+    }>;
+  }>;
 }
-interface RazorpayErrorResponse {
-  error: {
-    code: string;
-    description: string;
-    source: string;
-    step: string;
-    reason: string;
-    metadata: Record<string, unknown>;
-  };
+
+interface FormData {
+  title: string;
+  sports: string;
+  date: string;
+  turfId: string;
+  timeSlot: string;
+  startTime: string;
+  endTime: string;
+  maxPlayers: string;
+  paymentPerPerson: string;
+}
+
+interface TimeSlot {
+  id: string;
+  label: string;
+  startTime: string;
+  endTime: string;
+}
+
+interface OrderData {
+  id: string;
+  amount: number;
+  currency: string;
 }
 
 const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   const dispatch = useAppDispatch();
-  const { venues } = useAppSelector((state) => state.host);
+  const { venues } = useAppSelector((state) => state.host) as { venues: Venue[] | null };
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     sports: "football",
     date: "",
@@ -50,7 +67,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   });
 
   // Sports categories
-  const sportsOptions = [
+  const sportsOptions: string[] = [
     "football",
     "cricket",
     "multi-sport",
@@ -63,103 +80,23 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   ];
 
   // Time slot options
-  const timeSlotOptions = [
-    {
-      id: "slot_1",
-      label: "06:00 - 07:00",
-      startTime: "06:00",
-      endTime: "07:00",
-    },
-    {
-      id: "slot_2",
-      label: "07:00 - 08:00",
-      startTime: "07:00",
-      endTime: "08:00",
-    },
-    {
-      id: "slot_3",
-      label: "08:00 - 09:00",
-      startTime: "08:00",
-      endTime: "09:00",
-    },
-    {
-      id: "slot_4",
-      label: "09:00 - 10:00",
-      startTime: "09:00",
-      endTime: "10:00",
-    },
-    {
-      id: "slot_5",
-      label: "10:00 - 11:00",
-      startTime: "10:00",
-      endTime: "11:00",
-    },
-    {
-      id: "slot_6",
-      label: "11:00 - 12:00",
-      startTime: "11:00",
-      endTime: "12:00",
-    },
-    {
-      id: "slot_7",
-      label: "12:00 - 13:00",
-      startTime: "12:00",
-      endTime: "13:00",
-    },
-    {
-      id: "slot_8",
-      label: "13:00 - 14:00",
-      startTime: "13:00",
-      endTime: "14:00",
-    },
-    {
-      id: "slot_9",
-      label: "14:00 - 15:00",
-      startTime: "14:00",
-      endTime: "15:00",
-    },
-    {
-      id: "slot_10",
-      label: "15:00 - 16:00",
-      startTime: "15:00",
-      endTime: "16:00",
-    },
-    {
-      id: "slot_11",
-      label: "16:00 - 17:00",
-      startTime: "16:00",
-      endTime: "17:00",
-    },
-    {
-      id: "slot_12",
-      label: "17:00 - 18:00",
-      startTime: "17:00",
-      endTime: "18:00",
-    },
-    {
-      id: "slot_13",
-      label: "18:00 - 19:00",
-      startTime: "18:00",
-      endTime: "19:00",
-    },
-    {
-      id: "slot_14",
-      label: "19:00 - 20:00",
-      startTime: "19:00",
-      endTime: "20:00",
-    },
-    {
-      id: "slot_15",
-      label: "20:00 - 21:00",
-      startTime: "20:00",
-      endTime: "21:00",
-    },
-    {
-      id: "slot_16",
-      label: "21:00 - 22:00",
-      startTime: "21:00",
-      endTime: "22:00",
-    },
+  const timeSlotOptions: TimeSlot[] = [
+    { id: "slot_1", label: "06:00 - 07:00", startTime: "06:00", endTime: "07:00" },
+    { id: "slot_2", label: "07:00 - 08:00", startTime: "07:00", endTime: "08:00" },
+    { id: "slot_3", label: "08:00 - 09:00", startTime: "08:00", endTime: "09:00" },
+    { id: "slot_4", label: "09:00 - 10:00", startTime: "09:00", endTime: "10:00" },
+    { id: "slot_5", label: "10:00 - 11:00", startTime: "10:00", endTime: "11:00" },
+    { id: "slot_6", label: "11:00 - 12:00", startTime: "11:00", endTime: "12:00" },
+    { id: "slot_7", label: "12:00 - 13:00", startTime: "12:00", endTime: "13:00" },
+    { id: "slot_8", label: "13:00 - 14:00", startTime: "13:00", endTime: "14:00" },
+    { id: "slot_9", label: "14:00 - 15:00", startTime: "14:00", endTime: "15:00" },
+    { id: "slot_10", label: "15:00 - 16:00", startTime: "15:00", endTime: "16:00" },
+    { id: "slot_11", label: "16:00 - 17:00", startTime: "16:00", endTime: "17:00" },
+    { id: "slot_12", label: "17:00 - 18:00", startTime: "17:00", endTime: "18:00" },
+    { id: "slot_13", label: "18:00 - 19:00", startTime: "18:00", endTime: "19:00" },
+    { id: "slot_14", label: "19:00 - 20:00", startTime: "19:00", endTime: "20:00" },
+    { id: "slot_15", label: "20:00 - 21:00", startTime: "20:00", endTime: "21:00" },
+    { id: "slot_16", label: "21:00 - 22:00", startTime: "21:00", endTime: "22:00" },
   ];
 
   useEffect(() => {
@@ -169,7 +106,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   // Load Razorpay script
   useEffect(() => {
     const loadRazorpayScript = () => {
-      return new Promise((resolve) => {
+      return new Promise<boolean>((resolve) => {
         const script = document.createElement("script");
         script.src = "https://checkout.razorpay.com/v1/checkout.js";
         script.onload = () => resolve(true);
@@ -184,7 +121,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   }, [isOpen]);
 
   // Get available time slots based on selected date and turf
-  const getAvailableTimeSlots = () => {
+  const getAvailableTimeSlots = (): TimeSlot[] => {
     if (!formData.date || !formData.turfId) {
       return [];
     }
@@ -214,7 +151,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   };
 
   // Calculate payment per person based on hourly rate and number of players
-  const calculatePaymentPerPerson = () => {
+  const calculatePaymentPerPerson = (): string => {
     if (!formData.turfId || !formData.maxPlayers) {
       return "";
     }
@@ -239,7 +176,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  ): void => {
     const { name, value } = e.target;
 
     if (name === "timeSlot" && value) {
@@ -288,19 +225,19 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     }
   }, [formData.turfId, formData.maxPlayers]);
 
-  const getTimeRange = () => {
+  const getTimeRange = (): string => {
     if (formData.startTime && formData.endTime) {
       return `${formData.startTime} - ${formData.endTime}`;
     }
     return "";
   };
 
-  const getTodayDate = () => {
+  const getTodayDate = (): string => {
     const today = new Date();
     return today.toISOString().split("T")[0];
   };
 
-  const getTurfAmount = () => {
+  const getTurfAmount = (): number => {
     const selectedVenue = venues?.find(
       (venue) => venue._id === formData.turfId
     );
@@ -308,9 +245,9 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   };
 
   // Create Razorpay order
-  const createRazorpayOrder = async () => {
+  const createRazorpayOrder = async (): Promise<OrderData> => {
     try {
-      const response = await axiosInstance.post(
+      const response = await axiosInstance.post<OrderData>(
         "/create-hosting-order",
         {
           title: formData.title,
@@ -336,10 +273,9 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     }
   };
 
-
   // Handle form validation
-  const validateForm = () => {
-    const requiredFields = [
+  const validateForm = (): boolean => {
+    const requiredFields: (keyof FormData)[] = [
       "title",
       "sports",
       "date",
@@ -350,7 +286,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     ];
 
     for (const field of requiredFields) {
-      if (!formData[field as keyof typeof formData]) {
+      if (!formData[field]) {
         alert(
           `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}`
         );
@@ -369,7 +305,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     return true;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     if (!validateForm()) {
       return;
     }
@@ -383,19 +319,17 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
     try {
       const orderData = await createRazorpayOrder();
-      console.log("Order created:", orderData);
 
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      const options: RazorpayOptions = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "",
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Sports Hosting",
         description: `Hosting fee for ${formData.title}`,
         order_id: orderData.id,
-        handler: async (response:RazorpayResponse) => {
-          console.log("Razorpay response:", response);
+        handler: async (response: RazorpayResponse) => {
           alert("Payment successful! Your match has been hosted successfully.");
-
+          console.log(response)
           const hostData = {
             title: formData.title,
             sports: formData.sports,
@@ -428,12 +362,6 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
           email: "",
           contact: "",
         },
-        notes: {
-          matchTitle: formData.title,
-          sport: formData.sports,
-          date: formData.date,
-          timeSlot: `${formData.startTime} - ${formData.endTime}`,
-        },
         theme: {
           color: "#00423D",
         },
@@ -442,11 +370,16 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
             setIsProcessingPayment(false);
           },
         },
+        notes: {
+          matchTitle: formData.title,
+          sport: formData.sports,
+          date: formData.date,
+          timeSlot: `${formData.startTime} - ${formData.endTime}`,
+        },
       };
 
       const razorpay = new window.Razorpay(options);
-      razorpay.on("payment.failed", (response:RazorpayErrorResponse) => {
-        console.error("Payment failed:", response.error);
+      razorpay.on("payment.failed", (response: { error: RazorpayError }) => {
         alert(
           `Payment failed: ${response.error.description}. Please try again.`
         );
@@ -455,7 +388,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
       razorpay.open();
     } catch (error) {
       console.error("Error during payment process:", error);
-      alert(`Failed to initiate payment. Please try again.`);
+      alert("Failed to initiate payment. Please try again.");
       setIsProcessingPayment(false);
     }
   };

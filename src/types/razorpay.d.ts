@@ -34,11 +34,15 @@ export interface RazorpayOptions {
   modal: {
     ondismiss: () => void;
   };
+  notes?: Record<string, string>;
 }
 
 export interface RazorpayInstance {
   open(): void;
-  on(event: string, callback: (response: { error: RazorpayError }) => void): void;
+  on(
+    event: string,
+    callback: (response: { error: RazorpayError }) => void
+  ): void;
 }
 
 export interface RazorpayConstructor {

@@ -10,6 +10,7 @@ import { FaRupeeSign } from "react-icons/fa";
 import { IoIosResize } from "react-icons/io";
 import { IoTimeSharp } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
+import Image from "next/image";
 type Turf = {
   _id: string;
   name: string;
@@ -84,20 +85,24 @@ function Page() {
               whileHover={{ scale: 1.01 }}
               className="rounded-2xl overflow-hidden shadow-lg"
             >
-              <img
+              <Image
                 src={mainImage || turf.images[0]}
                 alt="Turf Main"
+                height={20}
+                width={20}
                 className="w-full h-[300px] sm:h-[400px] object-cover"
               />
             </motion.div>
 
             <div className="flex gap-3 mt-4 overflow-x-auto scrollbar-hide">
               {turf.images.map((img, idx) => (
-                <img
+                <Image
                   key={idx}
                   src={img}
                   alt={`thumb-${idx}`}
                   onClick={() => setMainImage(img)}
+                  width={112}
+                  height={80}
                   className={`h-20 w-28 object-cover rounded-xl cursor-pointer border-4 transition-all duration-300 ${
                     mainImage === img ? "border-[#00423d]" : "border-transparent"
                   }`}
