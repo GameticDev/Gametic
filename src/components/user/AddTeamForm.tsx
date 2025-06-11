@@ -132,6 +132,7 @@
 // export default AddTeamModal;
 "use client";
 
+import axiosErrorManager from "@/utils/axiosErrorManager";
 import axiosInstance from "@/utils/axiosInstance";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -184,9 +185,9 @@ const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId ,onTeamJoined}) =
       setCreatedTeamId(teamId);
       setTeamCreated(true);
       toast.success("Team created successfully!");
-    } catch (error: any) {
-      const msg = error?.response?.data?.message || "Failed to create team";
-      toast.error(msg);
+    } catch (error) {
+      // const msg = error?.response?.data?.message || "Failed to join tournament";
+      toast.error(axiosErrorManager(error||"Failed to join tournament"));
     } finally {
       setLoading(false);
     }
@@ -217,6 +218,9 @@ const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId ,onTeamJoined}) =
         `/tournament/${tournamentId}/join-team`,
         { teamId: createdTeamId }
       );
+      console.log(response)
+      onTeamJoined(); // ✅ use it here
+    onClose();
 
 
       // Manually check for expected success condition
@@ -227,10 +231,9 @@ const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId ,onTeamJoined}) =
       // } else {
       //   toast.error("Unexpected response from server.");
       // }
-    } catch (error: any) {
-      console.error("Join Error:", error?.response?.data || error);
-      const msg = error?.response?.data?.message || "Failed to join tournament";
-      toast.error(msg);
+    } catch (error) {
+      // const msg = error?.response?.data?.message || "Failed to join tournament";
+      toast.error(axiosErrorManager(error||"Failed to join tournament"));
     } finally {
       setLoading(false);
     }

@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import moment from 'moment';
 import { FaMapMarkerAlt, FaCalendarAlt, FaTrophy, FaTicketAlt, FaUsers, FaFootballBall } from 'react-icons/fa';
 import axiosInstance from '@/utils/axiosInstance';
+import Image from 'next/image';
 
 interface Team {
   name: string;
@@ -103,11 +104,13 @@ export default function TournamentDetailPage() {
   {/* Main content: Image and details side by side */}
   <div className="flex flex-col md:flex-row gap-10 items-start">
     {/* Left Side - Image */}
-    <img
-      src={tournament.image}
-      alt={tournament.title}
-      className="w-full md:w-1/2 h-96 object-cover rounded-2xl shadow-lg"
-    />
+    <Image
+    src={tournament.image}
+    alt={tournament.title}
+    fill
+    className="object-cover rounded-2xl shadow-lg"
+    sizes="(min-width: 768px) 50vw, 100vw"
+  />
 
     {/* Right Side - Tournament Details */}
     <div className="flex-1 space-y-4 mt-18">

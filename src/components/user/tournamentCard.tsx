@@ -11,6 +11,7 @@ import moment from "moment";
 import {  useState } from "react";
 import AddTeamModal from "./AddTeamForm";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface Props {
   data: Tournament;
@@ -38,11 +39,13 @@ export default function TournamentCard({ data }: Props) {
  
   return (
     <div className="w-[277px] rounded-xl overflow-hidden shadow-md border border-gray-200 bg-white">
-      <img onClick={handleCardClick}
-        src={data.image} 
-        alt="Stadium"
-        className="w-full h-32 object-cover"
-      />
+       <Image
+    src={data.image}
+    alt="Stadium"
+    fill
+    className="object-cover rounded"
+    sizes="100vw"
+  />
       <div className="flex justify-center -mt-6">
         <div className="bg-green-800 rounded-full p-4 border-2 border-gray-200">
           <button type="button" onClick={openModal} className="text-white font-semibold">Join</button>
@@ -50,9 +53,13 @@ export default function TournamentCard({ data }: Props) {
       </div>
 
       <div className="px-4 pb-4 pt-2 text-center">
-        <span className="text-sm text-white  bg-green-400 rounded-full px-2 py-0.5 font-medium">
-          {data.status}
-        </span>
+       <span
+  onClick={handleCardClick}
+  className="text-sm text-white bg-green-400 rounded-full px-2 py-0.5 font-medium cursor-pointer"
+>
+  {data.status}
+</span>
+
         <h2 className="text-xl font-semibold mt-1">{data.title}</h2>
         <p className="text-sm text-gray-500">{data.subtitle}</p>
 
