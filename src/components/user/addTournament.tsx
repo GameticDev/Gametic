@@ -13,7 +13,7 @@ interface TournamentFormData {
   entryFee: number;
   prizePool: number;
   status: "upcoming" | "ongoing" | "completed";
-  image: file | null;
+  image: File | null;
 }
 
 interface Props {
