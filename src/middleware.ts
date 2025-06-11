@@ -26,7 +26,7 @@ async function getUserRole(request: NextRequest): Promise<string | null> {
     return null;
   }
 }
-
+//hello
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const role = await getUserRole(request);
