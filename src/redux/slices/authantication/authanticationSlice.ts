@@ -37,6 +37,13 @@ const authSlice = createSlice({
     clearError(state) {
       state.error = null;
     },
+    updateAuthUser(state, action: PayloadAction<User>) {
+    state.user = {
+    ...state.user, // Keep existing fields
+    ...action.payload // Override with updated fields
+  };
+
+  }
   },
   extraReducers: (builder) => {
     builder
@@ -168,5 +175,5 @@ const persistConfig = {
   whitelist: ["user", "isAuth", "role"],
 };
 
-export const { clearError } = authSlice.actions;
+export const { clearError,updateAuthUser  } = authSlice.actions;
 export default persistReducer(persistConfig, authSlice.reducer);
