@@ -1,10 +1,11 @@
 "use client";
-
 import { useState } from "react";
 import { FaCalendarAlt, FaMapMarkerAlt, FaTicketAlt, FaTrophy, FaUsers } from "react-icons/fa";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import AddTeamModal from "./AddTeamForm";
+import { Tournament } from "@/app/(root)/(user-routes)/home/tournament/page";
 
 interface Props {
   data: Tournament;
@@ -13,14 +14,14 @@ interface Props {
 export default function TournamentCard({ data }: Props) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams.length);
+  const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams);
 
   const handleCardClick = () => {
     router.push(`/tournament/${data._id}`);
   };
 
   const handleTeamJoined = () => {
-    setJoinedTeamsCount((prev) => prev + 1);
+    setJoinedTeamsCount((prev:number) => prev + 1);
   };
 
   const openModal = () => {
