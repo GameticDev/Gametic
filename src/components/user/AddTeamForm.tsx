@@ -158,13 +158,6 @@ interface TeamFormData {
   memberEmails: string[];
 }
 
-interface AxiosErrorResponse {
-  response?: {
-    data?: {
-      message?: string;
-    };
-  };
-}
 
 const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId, onTeamJoined }) => {
   const [formData, setFormData] = useState<TeamFormData>({
