@@ -22,6 +22,13 @@ type Turf = {
   };
 };
 
+type FetchParams = {
+  page: number;
+  limit: number;
+  category?: string;
+  search?: string;
+};
+
 const categories = ["football", "cricket", "tennis", "basketball"];
 const PAGE_SIZE = 6;
 
@@ -40,7 +47,7 @@ const TurfList = () => {
   const fetchTurfs = useCallback(async () => {
     setLoading(true);
     try {
-      const params: any = { page, limit: PAGE_SIZE };
+      const params: FetchParams = { page, limit: PAGE_SIZE };
       if (selectedCategory) params.category = selectedCategory;
       if (searchTerm.trim()) params.search = searchTerm.trim();
 
@@ -54,7 +61,6 @@ const TurfList = () => {
     }
   }, [page, selectedCategory, searchTerm]);
 
-
   const debouncedSearch = useRef(
     debounce((val: string) => {
       setSearchTerm(val);
@@ -62,15 +68,12 @@ const TurfList = () => {
     }, 500)
   ).current;
 
- 
   useEffect(() => {
     debouncedSearch(searchInput);
-    // Cleanup debounce on unmount
     return () => {
       debouncedSearch.cancel();
     };
   }, [searchInput, debouncedSearch]);
-
 
   useEffect(() => {
     fetchTurfs();
@@ -139,7 +142,7 @@ const TurfList = () => {
                   </p>
                   <button
                     className="mt-3 w-full bg-gradient-to-r from-[#00423d] to-[#00524a] text-white py-2 rounded-full hover:scale-105 hover:shadow-lg transition-transform duration-300"
-                    onClick={() => router.push(`facilities/${turf._id}/viewdetails/`)}
+                    onClick={() => router.push(`/facilities/${turf._id}/viewdetails/`)}
                   >
                     View Details
                   </button>

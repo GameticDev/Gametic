@@ -35,7 +35,8 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
   };
 
   return (
-    <nav className={`w-full h-16 ${className}`}>
+    <nav className={`w-full h-16 ${className} bg-white`}>
+
       <div className="w-full h-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
@@ -61,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
               </Link>
 
               <Link
-                href="/venues"
+                href="/home/facilities"
                 className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <MapPin className="h-5 w-5" />

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { User, Lock, Camera, Save, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
+import axios from "axios";
 
 export default function ProfileEdit() {
   const [formData, setFormData] = useState({
@@ -11,10 +12,9 @@ export default function ProfileEdit() {
     newPassword: "",
   });
 
+  const [previewImage, setPreviewImage] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [previewImage, setPreviewImage] = useState(
-    ""
-  );
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +25,7 @@ export default function ProfileEdit() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onload = (event) => {
         setPreviewImage(event.target?.result as string);
@@ -35,10 +36,31 @@ export default function ProfileEdit() {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+
+    const form = new FormData();
+    form.append("username", formData.username);
+    form.append("currentPassword", formData.currentPassword);
+    form.append("newPassword", formData.newPassword);
+    if (imageFile) {
+      form.append("picture", imageFile);
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/updateprofile", form, {
+        withCredentials: true, 
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       alert("Profile updated!");
-    }, 1500);
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+      // alert(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -53,9 +75,8 @@ export default function ProfileEdit() {
         {/* Profile Picture */}
         <div className="flex flex-col items-center">
           <div className="relative group">
-
             <Image
-              src={previewImage}
+              src={previewImage || "/default-profile.png"}
               alt="Profile"
               width={128}
               height={128}
@@ -96,7 +117,6 @@ export default function ProfileEdit() {
         <div className="space-y-4 border-t border-[#DBCBBD] pt-6">
           <h3 className="text-lg font-semibold text-[#2B2B2B]">Change Password</h3>
 
-          {/* New Password */}
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
