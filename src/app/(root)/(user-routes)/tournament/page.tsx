@@ -1,10 +1,8 @@
-
 'use client';
 import AddTournament from '@/components/user/addTournament';
 import TournamentCard from '@/components/user/tournamentCard';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-
 
 export interface Tournament {
   _id: string;
@@ -12,12 +10,12 @@ export interface Tournament {
   subtitle: string;
   location: string;
   distance: string;
-  joinedTeams: number;
+  joinedTeams: string[]; // Already fixed from previous error
   maxPlayers: number;
   dateFrom: string;
   dateTo: string;
-  entryFee: number;
-  prizePool: number;
+  entryFee: string; // Changed from number to string
+  prizePool: string; // Changed from number to string
   status: 'Upcoming' | 'Ongoing' | 'Completed';
   image: string;
   icon: string;
@@ -26,15 +24,14 @@ export interface Tournament {
 function Page() {
   const [data, setData] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
-  const[showModal,setShowmodal]=useState(false)
-
-  function openModal(){
-    setShowmodal(true)
+  function openModal() {
+    setShowModal(true);
   }
 
-  function closeModal(){
-    setShowmodal(false)
+  function closeModal() {
+    setShowModal(false);
   }
 
   useEffect(() => {
@@ -42,7 +39,7 @@ function Page() {
       try {
         const res = await axios.get('http://localhost:8085/api/getAllTournament');
         setData(res.data.post);
-        console.log(res.data.post) 
+        console.log(res.data.post);
       } catch (error) {
         console.log(error);
       } finally {
@@ -53,21 +50,24 @@ function Page() {
   }, []);
 
   if (loading) return <div className="p-10 text-center text-xl">Loading...</div>;
-  // if (!data.length) return <div className="p-10 text-center text-red-600">No tournaments found</div>;
- 
- 
+
   return (
     <>
-    <div className='flex justify-end mt-16'>
-      <button onClick={openModal} style={{ backgroundColor: '#415C41' }} className=' bg- py-2 px-3 rounded-xl font-semibold text-white'>Add Tournament</button>
-    </div>
-    <main className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 min-h-screen">
-      {data?.map((tournament) => (
-        <TournamentCard key={tournament._id} data={tournament} />
-      ))}
-          {showModal && <AddTournament onClose={closeModal}/> }
-
-    </main>
+      <div className="flex justify-end mt-16">
+        <button
+          onClick={openModal}
+          style={{ backgroundColor: '#415C41' }}
+          className="py-2 px-3 rounded-xl font-semibold text-white"
+        >
+          Add Tournament
+        </button>
+      </div>
+      <main className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 min-h-screen">
+        {data?.map((tournament) => (
+          <TournamentCard key={tournament._id} data={tournament} />
+        ))}
+        {showModal && <AddTournament onClose={closeModal} />}
+      </main>
     </>
   );
 }
