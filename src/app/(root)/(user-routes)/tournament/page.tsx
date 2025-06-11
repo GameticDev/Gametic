@@ -1,7 +1,7 @@
 'use client';
 import AddTournament from '@/components/user/addTournament';
 import TournamentCard from '@/components/user/tournamentCard';
-import axios from 'axios';
+import axiosInstance from '@/utils/axiosInstance';
 import React, { useEffect, useState } from 'react';
 
 export interface Tournament {
@@ -37,7 +37,7 @@ function Page() {
   useEffect(() => {
     const fetchTournament = async () => {
       try {
-        const res = await axios.get('http://localhost:8085/api/getAllTournament');
+        const res = await axiosInstance.get('/getAllTournament');
         setData(res.data.post);
         console.log(res.data.post);
       } catch (error) {

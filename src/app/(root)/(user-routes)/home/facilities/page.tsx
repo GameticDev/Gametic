@@ -1,8 +1,11 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import debounce from "lodash.debounce";
 import { useRouter } from "next/navigation";
 import VenueCard from "@/components/user/venue/venueCard";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { fetchAllVenues } from "@/redux/actions/user/venueAction";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { fetchAllVenues } from "@/redux/actions/user/venueAction";
 
@@ -15,6 +18,10 @@ export type Turf = {
   size: string;
   hourlyRate: number;
   images: string[];
+  bookedSlot: {
+    date: string;
+    slots: { start: string; end: string }[];
+  }[];
   bookedSlot: {
     date: string;
     slots: { start: string; end: string }[];
@@ -32,12 +39,18 @@ const categories = ["football", "cricket", "tennis", "basketball"];
 const TurfList = () => {
   const dispatch = useAppDispatch();
   const { venues, loading } = useAppSelector((state) => state.userVeune);
+  const dispatch = useAppDispatch();
+  const { venues, loading } = useAppSelector((state) => state.userVeune);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
   const router = useRouter();
 
+  useEffect(() => {
+    dispatch(fetchAllVenues({ page: 1, limit: 12, search: searchTerm }));
+  }, [dispatch, searchTerm]);
+  console.log(venues)
   useEffect(() => {
     dispatch(fetchAllVenues({ page: 1, limit: 12, search: searchTerm }));
   }, [dispatch, searchTerm]);
@@ -97,6 +110,7 @@ const TurfList = () => {
           Loading turfs...
         </div>
       ) : venues.length === 0 ? (
+      ) : venues.length === 0 ? (
         <p className="text-center text-[#7a7455] col-span-full italic">
           No turfs found matching your criteria.
         </p>
@@ -143,6 +157,7 @@ const TurfList = () => {
           </div>
 
           {/* <div className="sticky bottom-0 bg-white py-5 flex justify-center space-x-6 border-t border-[#98916d]/40 shadow-md z-10 mt-8">
+          {/* <div className="sticky bottom-0 bg-white py-5 flex justify-center space-x-6 border-t border-[#98916d]/40 shadow-md z-10 mt-8">
             <button
               className="px-5 py-2 bg-gradient-to-r from-[#00423d] to-[#00524a] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 hover:shadow-lg transition-transform duration-300"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -160,6 +175,7 @@ const TurfList = () => {
             >
               Next
             </button>
+          </div> */}
           </div> */}
         </>
       )}

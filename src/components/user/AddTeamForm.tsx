@@ -132,6 +132,7 @@
 // export default AddTeamModal;
 "use client";
 
+import axiosErrorManager from "@/utils/axiosErrorManager";
 import axiosInstance from "@/utils/axiosInstance";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -200,10 +201,9 @@ const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId, onTeamJoined }) 
       setCreatedTeamId(teamId);
       setTeamCreated(true);
       toast.success("Team created successfully!");
-    } catch (error: unknown) {
-      const axiosError = error as AxiosErrorResponse;
-      const msg = axiosError.response?.data?.message || "Failed to create team";
-      toast.error(msg);
+    } catch (error) {
+      // const msg = error?.response?.data?.message || "Failed to join tournament";
+      toast.error(axiosErrorManager(error||"Failed to join tournament"));
     } finally {
       setLoading(false);
     }
@@ -217,16 +217,26 @@ const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId, onTeamJoined }) 
 
     setLoading(true);
     try {
-      await axiosInstance.patch(`/tournament/${tournamentId}/join-team`, {
-        teamId: createdTeamId,
-      });
-      toast.success("Team added to tournament!");
-      onTeamJoined();
-      onClose();
-    } catch (error: unknown) {
-      const axiosError = error as AxiosErrorResponse;
-      const msg = axiosError.response?.data?.message || "Failed to join tournament";
-      toast.error(msg);
+      const response = await axiosInstance.patch(
+        `/tournament/${tournamentId}/join-team`,
+        { teamId: createdTeamId }
+      );
+      console.log(response)
+      onTeamJoined(); // ✅ use it here
+    onClose();
+
+
+      // Manually check for expected success condition
+      // if (response.status === 200 || response.status === 201) {
+      //   toast.success("Team added to tournament!");
+      //   onTeamJoined();
+      //   onClose();
+      // } else {
+      //   toast.error("Unexpected response from server.");
+      // }
+    } catch (error) {
+      // const msg = error?.response?.data?.message || "Failed to join tournament";
+      toast.error(axiosErrorManager(error||"Failed to join tournament"));
     } finally {
       setLoading(false);
     }

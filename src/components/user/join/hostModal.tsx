@@ -57,9 +57,15 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
   const [formData, setFormData] = useState<FormData>({
     title: "",
     sports: "football",
+    sports: "football",
     date: "",
     turfId: "",
+    turfId: "",
     timeSlot: "",
+    startTime: "",
+    endTime: "",
+    maxPlayers: "",
+    paymentPerPerson: "",
     startTime: "",
     endTime: "",
     maxPlayers: "",
@@ -178,6 +184,37 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ): void => {
     const { name, value } = e.target;
+
+    if (name === "timeSlot" && value) {
+      const selectedSlot = timeSlotOptions.find((slot) => slot.id === value);
+      if (selectedSlot) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+          startTime: selectedSlot.startTime,
+          endTime: selectedSlot.endTime,
+          paymentPerPerson: calculatePaymentPerPerson(),
+        }));
+        return;
+      }
+    }
+
+    if (name === "date" || name === "turfId") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        timeSlot: "",
+        startTime: "",
+        endTime: "",
+        paymentPerPerson:
+          name === "turfId"
+            ? calculatePaymentPerPerson()
+            : prev.paymentPerPerson,
+      }));
+      return;
+    }
+
+    setFormData((prev) => ({
 
     if (name === "timeSlot" && value) {
       const selectedSlot = timeSlotOptions.find((slot) => slot.id === value);
@@ -404,12 +441,24 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     formData.timeSlot &&
     formData.maxPlayers;
 
+  const availableTimeSlots = getAvailableTimeSlots();
+  const isFormValid =
+    formData.title &&
+    formData.sports &&
+    formData.date &&
+    formData.turfId &&
+    formData.timeSlot &&
+    formData.maxPlayers;
+
   return (
     <dialog id="my_modal_3" className="modal z-50" open={isOpen}>
       <div className="modal-box bg-white max-w-5xl mx-auto shadow-xl rounded-lg h-auto p-0">
         <button
           className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3 hover:bg-gray-100 z-10"
+        <button
+          className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3 hover:bg-gray-100 z-10"
           onClick={onClose}
+          disabled={isProcessingPayment}
           disabled={isProcessingPayment}
         >
           <X className="w-4 h-4" />
@@ -445,6 +494,8 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
               </div>
               <h1 className="text-3xl font-bold mb-4">Host Your Game</h1>
               <p className="text-lg opacity-90 mb-6 leading-relaxed">
+                Bring your community together for an unforgettable sports
+                experience
                 Bring your community together for an unforgettable sports
                 experience
               </p>
@@ -490,6 +541,28 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                   </div>
                 </div>
               )}
+
+              {formData.turfId && formData.maxPlayers && (
+                <div className="mt-8 p-4 bg-white/10 rounded-lg backdrop-blur-sm">
+                  <h3 className="text-lg font-semibold mb-2">
+                    Payment Summary
+                  </h3>
+                  <div className="text-sm space-y-1">
+                    <div className="flex justify-between">
+                      <span>Turf Cost:</span>
+                      <span>₹{getTurfAmount()}/hour</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Per Person:</span>
+                      <span>₹{formData.paymentPerPerson}</span>
+                    </div>
+                    <div className="flex justify-between font-semibold border-t border-white/20 pt-1">
+                      <span>Your Payment:</span>
+                      <span>₹{formData.paymentPerPerson}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -503,11 +576,18 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                 <p className="text-sm text-[#998869]">
                   Fill in the information below
                 </p>
+                <h2 className="text-xl font-bold text-[#415C41] mb-1">
+                  Match Details
+                </h2>
+                <p className="text-sm text-[#998869]">
+                  Fill in the information below
+                </p>
               </div>
 
               <div className="space-y-3 flex-1">
                 <div>
                   <label className="block text-xs font-medium text-[#415C41] mb-1">
+                    Match Title
                     Match Title
                   </label>
                   <input
@@ -519,11 +599,16 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                     className="w-full px-3 py-2 border border-[#98916D] rounded-lg focus:ring-2 focus:ring-[#00423D] focus:border-[#00423D] outline-none transition-colors text-sm"
                     required
                     disabled={isProcessingPayment}
+                    disabled={isProcessingPayment}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
+                    <label
+                      htmlFor="sports"
+                      className="block text-xs font-medium text-[#415C41] mb-1"
+                    >
                     <label
                       htmlFor="sports"
                       className="block text-xs font-medium text-[#415C41] mb-1"
@@ -534,14 +619,20 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                       id="sports"
                       name="sports"
                       value={formData.sports}
+                      id="sports"
+                      name="sports"
+                      value={formData.sports}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-[#98916D] rounded-lg focus:ring-2 focus:ring-[#00423D] focus:border-[#00423D] outline-none transition-colors bg-white text-sm"
                       required
                       disabled={isProcessingPayment}
+                      disabled={isProcessingPayment}
                     >
+                      <option value="">Select a sport</option>
                       <option value="">Select a sport</option>
                       {sportsOptions.map((sport) => (
                         <option key={sport} value={sport}>
+                          {sport.charAt(0).toUpperCase() + sport.slice(1)}
                           {sport.charAt(0).toUpperCase() + sport.slice(1)}
                         </option>
                       ))}
@@ -558,13 +649,35 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                       value={formData.date}
                       onChange={handleInputChange}
                       min={getTodayDate()}
+                      min={getTodayDate()}
                       className="w-full px-3 py-2 border border-[#98916D] rounded-lg focus:ring-2 focus:ring-[#00423D] focus:border-[#00423D] outline-none transition-colors text-sm"
                       required
+                      disabled={isProcessingPayment}
                       disabled={isProcessingPayment}
                     />
                   </div>
                 </div>
 
+                <div>
+                  <label className="block text-xs font-medium text-[#415C41] mb-1">
+                    Select a Turf
+                  </label>
+                  <select
+                    name="turfId"
+                    value={formData.turfId}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-[#98916D] rounded-lg focus:ring-2 focus:ring-[#00423D] focus:border-[#00423D] outline-none transition-colors bg-white text-sm"
+                    required
+                    disabled={isProcessingPayment}
+                  >
+                    <option value="">Choose a turf</option>
+                    {venues?.map((turf) => (
+                      <option key={turf._id} value={turf._id}>
+                        {turf.name} - ₹{turf.hourlyRate}/hour
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <div>
                   <label className="block text-xs font-medium text-[#415C41] mb-1">
                     Select a Turf
@@ -633,9 +746,62 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                     </div>
                   )}
                 </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#415C41] mb-1">
+                    Time Slot
+                  </label>
+                  <select
+                    name="timeSlot"
+                    value={formData.timeSlot}
+                    onChange={handleInputChange}
+                    disabled={
+                      !formData.date || !formData.turfId || isProcessingPayment
+                    }
+                    className="w-full px-3 py-2 border border-[#98916D] rounded-lg focus:ring-2 focus:ring-[#00423D] focus:border-[#00423D] outline-none transition-colors bg-white text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    required
+                  >
+                    <option value="">
+                      {!formData.date || !formData.turfId
+                        ? "Select date and turf first"
+                        : "Select time slot"}
+                    </option>
+                    {availableTimeSlots.map((slot) => (
+                      <option key={slot.id} value={slot.id}>
+                        {slot.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  {formData.date &&
+                    formData.turfId &&
+                    availableTimeSlots.length === 0 && (
+                      <div className="mt-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
+                        <span className="text-sm text-red-600">
+                          No available slots for this date. Please select
+                          another date.
+                        </span>
+                      </div>
+                    )}
+
+                  {formData.timeSlot && (
+                    <div className="mt-2 px-3 py-2 bg-[#00423D]/5 border border-[#00423D]/20 rounded-lg">
+                      <div className="flex items-center justify-center">
+                        <span className="text-sm font-medium text-[#00423D]">
+                          🕖 {getTimeRange()}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
+                    <label
+                      htmlFor="maxPlayers"
+                      className="block text-xs font-medium text-[#415C41] mb-1"
+                    >
+                      Max Players
                     <label
                       htmlFor="maxPlayers"
                       className="block text-xs font-medium text-[#415C41] mb-1"
@@ -644,19 +810,50 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                     </label>
                     <input
                       id="maxPlayers"
+                      id="maxPlayers"
                       type="number"
                       name="maxPlayers"
                       value={formData.maxPlayers}
+                      name="maxPlayers"
+                      value={formData.maxPlayers}
                       onChange={handleInputChange}
+                      min="1"
                       min="1"
                       max="22"
                       placeholder="e.g., 10"
                       className="w-full px-3 py-2 border border-[#98916D] rounded-lg focus:ring-2 focus:ring-[#00423D] focus:border-[#00423D] outline-none transition-colors text-sm"
                       required
                       disabled={isProcessingPayment}
+                      disabled={isProcessingPayment}
                     />
                   </div>
+                  </div>
 
+                  <div>
+                    <label
+                      htmlFor="paymentPerPerson"
+                      className="block text-xs font-medium text-[#415C41] mb-1"
+                    >
+                      Payment Per Person
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="paymentPerPerson"
+                        type="number"
+                        name="paymentPerPerson"
+                        value={formData.paymentPerPerson}
+                        onChange={handleInputChange}
+                        min="0"
+                        placeholder="₹100"
+                        className="w-full px-3 py-2 border border-[#98916D] rounded-lg focus:ring-2 focus:ring-[#00423D] focus:border-[#00423D] outline-none transition-colors text-sm bg-gray-50"
+                        readOnly
+                      />
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <span className="text-xs text-[#998869]">
+                          Auto-calculated
+                        </span>
+                      </div>
+                    </div>
                   <div>
                     <label
                       htmlFor="paymentPerPerson"
@@ -691,7 +888,20 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                   onClick={handleSubmit}
                   disabled={!isFormValid || isProcessingPayment}
                   className="w-full bg-[#00423D] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[#415C41] focus:ring-4 focus:ring-[#00423D]/20 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                  disabled={!isFormValid || isProcessingPayment}
+                  className="w-full bg-[#00423D] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[#415C41] focus:ring-4 focus:ring-[#00423D]/20 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
                 >
+                  {isProcessingPayment ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Processing Payment...
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      Pay ₹{formData.paymentPerPerson} & Host Match
+                    </>
+                  )}
                   {isProcessingPayment ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -705,6 +915,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
                   )}
                 </button>
                 <p className="text-xs text-[#998869] text-center mt-2">
+                  Secure payment powered by Razorpay
                   Secure payment powered by Razorpay
                 </p>
               </div>
