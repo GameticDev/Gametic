@@ -1,4 +1,4 @@
-import { fetchAllVenues } from "@/redux/actions/admin/venuesAction";
+import { fetchAllVenues } from "@/redux/actions/user/venueAction";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface Venue {
@@ -68,8 +68,8 @@ const INITIAL_STATE: VenueState = {
   error: null,
 };
 
-const venueSlice = createSlice({
-  name: "venue",
+const venueSliceUser = createSlice({
+  name: "venuesUser",
   initialState: INITIAL_STATE,
   reducers: {},
   extraReducers: (builder) => {
@@ -91,4 +91,4 @@ const venueSlice = createSlice({
   },
 });
 
-export default venueSlice.reducer;
+export default venueSliceUser.reducer;

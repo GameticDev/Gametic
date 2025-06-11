@@ -1,5 +1,4 @@
 "use client";
-import UserFilter from "@/components/admin/ui/userFilter";
 import VenueFilter from "@/components/admin/ui/venueFilter";
 import VenueList from "@/components/admin/venueList";
 import { fetchAllVenues } from "@/redux/actions/admin/venuesAction";
