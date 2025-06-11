@@ -1,7 +1,9 @@
 import {
+  bookVenue,
   fetchAllVenues,
   fetchVenueById,
 } from "@/redux/actions/user/venueAction";
+import { Booking } from "@/types/turf";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface Venue {
@@ -58,6 +60,7 @@ export interface Venue {
 interface VenueState {
   venues: Venue[];
   totalVenues: number;
+  booking: Booking | null;
   totalActiveVenues: number;
   venue: Venue | null;
   loading: boolean;
@@ -67,6 +70,7 @@ interface VenueState {
 const INITIAL_STATE: VenueState = {
   venues: [],
   venue: null,
+  booking: null,
   totalVenues: 0,
   totalActiveVenues: 0,
   loading: false,
@@ -101,6 +105,17 @@ const venueSliceUser = createSlice({
         state.venue = action.payload.turff;
       })
       .addCase(fetchVenueById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Something wrong";
+      })
+      .addCase(bookVenue.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(bookVenue.fulfilled, (state, action) => {
+        state.loading = false;
+        state.booking = action.payload.booking;
+      })
+      .addCase(bookVenue.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Something wrong";
       });

@@ -75,32 +75,38 @@ const JoinBar = ({
     });
   }, []);
 
-  const createRazorpayOrder = useCallback(async (): Promise<CreateOrderResponse> => {
-    try {
-      if (!matchId || !user?.id || !paymentPerPerson) {
-        throw new Error("Missing required data: matchId, userId, or paymentPerPerson");
+  const createRazorpayOrder =
+    useCallback(async (): Promise<CreateOrderResponse> => {
+      try {
+        if (!matchId || !user?.id || !paymentPerPerson) {
+          throw new Error(
+            "Missing required data: matchId, userId, or paymentPerPerson"
+          );
+        }
+
+        const requestData: CreateOrderRequest = {
+          amount: paymentPerPerson * 1000, // Amount in paise
+          currency: "INR",
+          matchId,
+          userId: user.id,
+        };
+
+        console.log("Sending request to create order:", requestData);
+
+        const response = await axiosInstance.post<CreateOrderResponse>(
+          `/create-join-order/${matchId}`,
+          requestData
+        );
+
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error creating Razorpay order:",
+          JSON.stringify(error, null, 2)
+        );
+        throw error;
       }
-
-      const requestData: CreateOrderRequest = {
-        amount: paymentPerPerson * 100, // Amount in paise
-        currency: "INR",
-        matchId,
-        userId: user.id,
-      };
-
-      console.log("Sending request to create order:", requestData);
-
-      const response = await axiosInstance.post<CreateOrderResponse>(
-        `/create-join-order/${matchId}`,
-        requestData
-      );
-
-      return response.data;
-    } catch (error) {
-      console.error("Error creating Razorpay order:", JSON.stringify(error, null, 2));
-      throw error;
-    }
-  }, [paymentPerPerson, matchId, user?.id]);
+    }, [paymentPerPerson, matchId, user?.id]);
 
   const handlePayment = useCallback(async () => {
     try {
@@ -144,7 +150,9 @@ const JoinBar = ({
             }
           } catch (error) {
             console.error("Error joining match after payment:", error);
-            alert("Payment successful, but failed to join match. Please contact support.");
+            alert(
+              "Payment successful, but failed to join match. Please contact support."
+            );
           }
         },
         modal: {
@@ -157,19 +165,26 @@ const JoinBar = ({
 
       const paymentObject = new window.Razorpay(options);
 
-      paymentObject.on("payment.failed", (response: { error: RazorpayError }) => {
-        console.error("Payment failed:", response.error);
-        if (onPaymentError) {
-          onPaymentError(response.error);
-        } else {
-          alert(`Payment failed: ${response.error.description}`);
+      paymentObject.on(
+        "payment.failed",
+        (response: { error: RazorpayError }) => {
+          console.error("Payment failed:", response.error);
+          if (onPaymentError) {
+            onPaymentError(response.error);
+          } else {
+            alert(`Payment failed: ${response.error.description}`);
+          }
         }
-      });
+      );
 
       paymentObject.open();
     } catch (error) {
-      console.error("Error in payment process:", JSON.stringify(error, null, 2));
-      const errorObj = error instanceof Error ? error : new Error("Unknown error occurred");
+      console.error(
+        "Error in payment process:",
+        JSON.stringify(error, null, 2)
+      );
+      const errorObj =
+        error instanceof Error ? error : new Error("Unknown error occurred");
       if (onPaymentError) {
         onPaymentError(errorObj);
       } else {
@@ -211,7 +226,10 @@ const JoinBar = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1" style={{ color: "#415C41" }}>
+              <div
+                className="flex items-center gap-1"
+                style={{ color: "#415C41" }}
+              >
                 <Users className="w-5 h-5" />
                 <span className="text-lg font-semibold">
                   {joinedPlayers?.length}/{maxPlayers}
@@ -221,7 +239,10 @@ const JoinBar = ({
             </div>
             <div className="hidden sm:flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-[#998869]" />
-              <span className="text-lg font-semibold" style={{ color: "#00423D" }}>
+              <span
+                className="text-lg font-semibold"
+                style={{ color: "#00423D" }}
+              >
                 ${paymentPerPerson}
               </span>
               <span className="text-sm text-gray-500">per player</span>
@@ -239,7 +260,7 @@ const JoinBar = ({
             <button
               onClick={handleJoinClick}
               className={`group relative overflow-hidden px-8 py-3 rounded-xl font-semibold text-white transition-all duration-300 ${
-                isUserJoined
+                isUserJoined || joinedPlayers?.length === maxPlayers
                   ? "bg-[#998869] cursor-not-allowed"
                   : "bg-[#00423D] hover:scale-105 hover:shadow-lg active:scale-95 cursor-pointer"
               }`}
@@ -253,6 +274,8 @@ const JoinBar = ({
                     <UserCheck className="w-4 h-4" />
                     <span>Joined</span>
                   </>
+                ) : joinedPlayers?.length === maxPlayers ? (
+                  <span>Full</span>
                 ) : (
                   <>
                     <User className="w-4 h-4" />
@@ -287,4 +310,3 @@ const JoinBar = ({
 };
 
 export default JoinBar;
-

@@ -11,6 +11,7 @@ import { CiCalendarDate } from "react-icons/ci";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { fetchVenueById } from "@/redux/actions/user/venueAction";
+import BookingModal from "@/components/user/venue/bookingModal";
 
 interface VenueHighlight {
   id: number;
@@ -24,13 +25,20 @@ function Page() {
   const { venue, loading } = useAppSelector((state) => state.userVeune);
 
   const [mainImage, setMainImage] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const handleOpen = () => {
+    setIsOpen(false);
+  };
   useEffect(() => {
     dispatch(fetchVenueById({ turfId }));
   }, [turfId, dispatch]);
 
   const highlights: VenueHighlight[] = [
-    { id: 1, text: "Professional quality turf with optimal playing conditions" },
+    {
+      id: 1,
+      text: "Professional quality turf with optimal playing conditions",
+    },
     { id: 2, text: "Complete sports equipment and changing rooms" },
     { id: 3, text: "Floodlights for evening matches and training" },
     { id: 4, text: "Secure parking facility for all visitors" },
@@ -55,13 +63,21 @@ function Page() {
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
               <div>
-                <h1 className="text-3xl font-bold mb-2" style={{ color: "#00423D" }}>
+                <h1
+                  className="text-3xl font-bold mb-2"
+                  style={{ color: "#00423D" }}
+                >
                   {venue.name}
                 </h1>
-                <div className="flex flex-wrap items-center gap-4 text-sm" style={{ color: "#415C41" }}>
+                <div
+                  className="flex flex-wrap items-center gap-4 text-sm"
+                  style={{ color: "#415C41" }}
+                >
                   <div className="flex items-center gap-2">
                     <FaLocationDot className="text-green-700" />
-                    <span>{venue.city}, {venue.area}</span>
+                    <span>
+                      {venue.city}, {venue.area}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <IoFootball className="text-green-700" />
@@ -74,11 +90,16 @@ function Page() {
                 </div>
               </div>
               <div className="text-right">
-                <div className="flex items-center gap-2 text-2xl font-bold" style={{ color: "#00423D" }}>
+                <div
+                  className="flex items-center gap-2 text-2xl font-bold"
+                  style={{ color: "#00423D" }}
+                >
                   <FaRupeeSign />
                   <span>₹{venue.hourlyRate}</span>
                 </div>
-                <p className="text-sm" style={{ color: "#415C41" }}>per hour</p>
+                <p className="text-sm" style={{ color: "#415C41" }}>
+                  per hour
+                </p>
               </div>
             </div>
           </div>
@@ -89,7 +110,10 @@ function Page() {
             <div className="lg:col-span-3 space-y-6">
               {/* Image Gallery */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "#00423D" }}>
+                <h2
+                  className="text-2xl font-bold mb-4"
+                  style={{ color: "#00423D" }}
+                >
                   Venue Gallery
                 </h2>
                 <div className="space-y-4">
@@ -124,20 +148,29 @@ function Page() {
 
               {/* Venue Overview */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "#00423D" }}>
+                <h2
+                  className="text-2xl font-bold mb-4"
+                  style={{ color: "#00423D" }}
+                >
                   Venue Overview
                 </h2>
                 <p className="leading-relaxed" style={{ color: "#415C41" }}>
-                  Experience premium sports facilities at {venue.name}, located in the heart of {venue.city}. 
-                  Our {venue.turfType} offers the perfect playing surface for competitive matches and training sessions. 
-                  With professional-grade equipment and excellent maintenance standards, this venue provides 
-                  an ideal environment for athletes of all skill levels to showcase their talents and enjoy the game.
+                  Experience premium sports facilities at {venue.name}, located
+                  in the heart of {venue.city}. Our {venue.turfType} offers the
+                  perfect playing surface for competitive matches and training
+                  sessions. With professional-grade equipment and excellent
+                  maintenance standards, this venue provides an ideal
+                  environment for athletes of all skill levels to showcase their
+                  talents and enjoy the game.
                 </p>
               </div>
 
               {/* Venue Features */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-2xl font-bold mb-6" style={{ color: "#00423D" }}>
+                <h2
+                  className="text-2xl font-bold mb-6"
+                  style={{ color: "#00423D" }}
+                >
                   Venue Features
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -159,19 +192,26 @@ function Page() {
             {/* Right Column - Availability & Booking */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-4" style={{ color: "#00423D" }}>
+                <h3
+                  className="text-lg font-bold mb-4"
+                  style={{ color: "#00423D" }}
+                >
                   Availability
                 </h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <IoTimeSharp className="text-green-700 text-lg" />
                     <div>
-                      <p className="text-sm font-medium" style={{ color: "#00423D" }}>
+                      <p
+                        className="text-sm font-medium"
+                        style={{ color: "#00423D" }}
+                      >
                         Operating Hours
                       </p>
                       <p className="text-xs" style={{ color: "#415C41" }}>
-                        {venue.availability.startTime} - {venue.availability.endTime}
+                        {venue.availability.startTime} -{" "}
+                        {venue.availability.endTime}
                       </p>
                     </div>
                   </div>
@@ -179,7 +219,10 @@ function Page() {
                   <div className="flex items-center gap-3">
                     <CiCalendarDate className="text-green-700 text-lg" />
                     <div>
-                      <p className="text-sm font-medium" style={{ color: "#00423D" }}>
+                      <p
+                        className="text-sm font-medium"
+                        style={{ color: "#00423D" }}
+                      >
                         Available Days
                       </p>
                       <p className="text-xs" style={{ color: "#415C41" }}>
@@ -191,7 +234,10 @@ function Page() {
 
                 {venue.availability.timeSlots && (
                   <div className="mt-6">
-                    <h4 className="text-sm font-medium mb-3" style={{ color: "#00423D" }}>
+                    <h4
+                      className="text-sm font-medium mb-3"
+                      style={{ color: "#00423D" }}
+                    >
                       Available Time Slots
                     </h4>
                     <div className="grid grid-cols-2 gap-2">
@@ -199,9 +245,9 @@ function Page() {
                         <span
                           key={idx}
                           className="px-2 py-1 rounded text-xs font-medium text-center"
-                          style={{ 
-                            backgroundColor: "#E5F3FD", 
-                            color: "#00423D" 
+                          style={{
+                            backgroundColor: "#E5F3FD",
+                            color: "#00423D",
                           }}
                         >
                           {slot}
@@ -214,6 +260,7 @@ function Page() {
                 <button
                   className="w-full mt-6 py-3 text-white font-semibold rounded-lg transition-all hover:opacity-90"
                   style={{ backgroundColor: "#00423D" }}
+                  onClick={() => setIsOpen(true)}
                 >
                   Book Now
                 </button>
@@ -221,10 +268,13 @@ function Page() {
 
               {/* Venue Details Card */}
               <div className="bg-white rounded-lg shadow-sm p-6 mt-4">
-                <h3 className="text-lg font-bold mb-4" style={{ color: "#00423D" }}>
+                <h3
+                  className="text-lg font-bold mb-4"
+                  style={{ color: "#00423D" }}
+                >
                   Venue Details
                 </h3>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span style={{ color: "#415C41" }}>Type:</span>
@@ -240,13 +290,16 @@ function Page() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span style={{ color: "#415C41" }}>Rate:</span>
-                    <span style={{ color: "#00423D" }}>₹{venue.hourlyRate}/hr</span>
+                    <span style={{ color: "#00423D" }}>
+                      ₹{venue.hourlyRate}/hr
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <BookingModal isOpen={isOpen} onClose={handleOpen} venue={venue} />
       </div>
     </>
   );

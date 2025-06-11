@@ -1,9 +1,8 @@
 import { Venue } from "@/redux/slices/user/venueSlice";
+import { Booking } from "@/types/turf";
 import axiosErrorManager from "@/utils/axiosErrorManager";
 import axiosInstance from "@/utils/axiosInstance";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
-
 
 export const fetchAllVenues = createAsyncThunk<
   { allVenues: Venue[]; totalVenues: number; totalActiveVenues: number },
@@ -40,3 +39,24 @@ export const fetchVenueById = createAsyncThunk<
     return rejectWithValue(axiosErrorManager(error));
   }
 });
+
+export const bookVenue = createAsyncThunk<
+  { booking: Booking },
+  { date: string; turfId: string; startTime: string; endTime: string },
+  { rejectValue: string }
+>(
+  "venuesUser/bookVenue",
+  async ({ date, turfId, startTime, endTime }, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.post(`/venue-booking`, {
+        date,
+        turfId,
+        startTime,
+        endTime,
+      });
+      return { booking: data.booking };
+    } catch (error) {
+      return rejectWithValue(axiosErrorManager(error));
+    }
+  }
+);
