@@ -9,6 +9,7 @@ import { IoIosResize } from "react-icons/io";
 import { IoTimeSharp } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
 import Image from "next/image";
+
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { fetchVenueById } from "@/redux/actions/user/venueAction";
 import BookingModal from "@/components/user/venue/bookingModal";
@@ -17,6 +18,7 @@ interface VenueHighlight {
   id: number;
   text: string;
 }
+
 
 function Page() {
   const params = useParams();
