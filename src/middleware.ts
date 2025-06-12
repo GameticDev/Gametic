@@ -12,7 +12,7 @@ const publicPath = "/";
 
 async function getUserRole(request: NextRequest): Promise<string | null> {
   const token = request.cookies.get("accessToken")?.value;
-
+console.log("token",token)
   if (!token) {
     return null;
   }
@@ -46,7 +46,7 @@ export async function middleware(request: NextRequest) {
 
   const allowedPath = rolePaths[role as keyof typeof rolePaths];
   if (pathname.startsWith(allowedPath)) {
-    return NextResponse.next();
+    return NextResponse.next(); // Allow access to role-specific path
   }
 
   return NextResponse.redirect(new URL(allowedPath, request.url));
