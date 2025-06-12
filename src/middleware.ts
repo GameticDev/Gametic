@@ -11,17 +11,14 @@ const rolePaths = {
 const publicPath = "/";
 
 async function getUserRole(request: NextRequest): Promise<string | null> {
-  const accessToken = request.cookies.get("accessToken")?.value;
-  console.log(accessToken);
-  const token = localStorage.getItem("accessToken");
+  const token = request.cookies.get("accessToken")?.value;
+
   if (!token) {
     return null;
   }
 
   try {
-    const secret = new TextEncoder().encode(
-      "f6d9b78fc5a897d7aef7bc99b90ad8b6cbab49a4c1a01d2b8531c23a2b034fdc"
-    );
+    const secret = new TextEncoder().encode("f6d9b78fc5a897d7aef7bc99b90ad8b6cbab49a4c1a01d2b8531c23a2b034fdc");
     const { payload } = await jwtVerify(token, secret);
     return payload.role as string | null;
   } catch (error) {
