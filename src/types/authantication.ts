@@ -2,13 +2,13 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  role:"user" | "admin" | "owner"
+  role: "user" | "admin" | "owner";
   picture?: string;
-  phone?:string;
-  location?:string
-  bio?:string
-  businessName?:string
-
+  phone?: string;
+  location?: string;
+  bio?: string;
+  businessName?: string;
+  preferredLocation: string | null;
 }
 
 export interface AuthState {
@@ -74,7 +74,7 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
   isVerified: boolean;
-   isAuth: boolean;
+  isAuth: boolean;
   role: "user" | "admin" | "owner";
 }
 
@@ -83,7 +83,6 @@ export const initialState: AuthState = {
   loading: false,
   error: null,
   isVerified: false,
-   isAuth: false,
+  isAuth: false,
   role: "user",
 };
-
