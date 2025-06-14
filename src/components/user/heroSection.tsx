@@ -1,12 +1,9 @@
 "use client";
 import { useAppSelector } from "@/redux/hook";
-import { MapPin } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
 import CircularText from "../reactbite/page";
 
 const HeroSection = () => {
-  const [location, setLocation] = useState("");
   const { preferredLocation } = useAppSelector((state) => state.auth);
   console.log(preferredLocation);
   return (
@@ -27,20 +24,7 @@ const HeroSection = () => {
 
         <div className="flex flex-col justify-center items-center text-center mb-16 relative">
           <div>
-            <div className="mb-7 max-w-[300px] mx-auto">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <MapPin className="text-gray-500 mb-[2px]" size={20} />
-                </div>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Enter your location"
-                  className="w-full pl-5 pr-4 py-2 bg-white border-2 border-[#998869]/20 rounded-2xl text-gray-700 placeholder-gray-500 focus:outline-none transition-all duration-300 text-center text-sm "
-                />
-              </div>
-            </div>
+
             {/* Enhanced headline */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-[110px] font-bold tracking-wide mb-5">
               <span className="bg-gradient-to-r from-gray-900 to-[#415C41] bg-clip-text text-transparent">
