@@ -6,6 +6,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { logout } from "@/redux/actions/authantication/authanticationAction";
 import { useRouter } from "next/navigation";
 import localFont from "next/font/local";
+import LocationModal from "./locationModal";
 
 const racesport = localFont({
   src: "../../fonts/RaceSport.ttf",
@@ -20,10 +21,17 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [ismodalOpen, setIsModalOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState("Select Location");
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
+  const closeModal = () => setIsModalOpen(false);
+
+  const handleLocationSelect = (location: string) => {
+    setSelectedLocation(location);
+  };
 
   const logoutUser = async () => {
     try {
@@ -35,7 +43,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
   };
 
   return (
-    <nav className={`w-full h-16 ${className} bg-white`}>
+    <nav className={`w-full h-16 ${className} bg-[#FEFFFA]`}>
       <div className="w-full h-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
@@ -47,6 +55,8 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 GAMETIC!
               </span>
             </Link>
+
+            <div className="w-28"></div>
           </div>
 
           {/* Desktop Navigation */}
@@ -80,7 +90,17 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
           {/* Profile Section - Desktop */}
           <div className="hidden md:block">
-            <div className="ml-4 flex items-center md:ml-6">
+            <div className="ml-4 flex items-center md:ml-6 space-x-4">
+              {/* Location Selector */}
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-md font-medium transition-colors duration-200"
+              >
+                <MapPin className="h-5 w-5" />
+                <span className="max-w-32 truncate mt-[2px]">
+                  {"Eranakulam"}
+                </span>
+              </button>
               <div className="relative">
                 <button
                   onClick={toggleProfile}
@@ -120,7 +140,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                     <hr className="my-1 border-[#415C41]" />
                     <li
                       onClick={logoutUser}
-                      className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200"
+                      className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200 cursor-pointer"
                     >
                       Sign Out
                     </li>
@@ -149,6 +169,16 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
         {isOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-[#415C41]">
+              {/* Mobile Location Selector */}
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200 w-full text-left"
+              >
+                <MapPin className="h-5 w-5" />
+                <span className="flex-1 truncate">{selectedLocation}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+
               <Link
                 href="/join"
                 className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
@@ -205,7 +235,10 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                   >
                     Dashboard
                   </Link>
-                  <li className="block px-3 py-2 text-base text-[#98916D] hover:text-[#998869] rounded-md transition-colors duration-200">
+                  <li
+                    onClick={logoutUser}
+                    className="block px-3 py-2 text-base text-[#98916D] hover:text-[#998869] rounded-md transition-colors duration-200 cursor-pointer"
+                  >
                     Sign Out
                   </li>
                 </div>
@@ -214,6 +247,11 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
           </div>
         )}
       </div>
+      <LocationModal
+        isOpen={ismodalOpen}
+        onClose={closeModal}
+        onLocationSelect={handleLocationSelect}
+      />
     </nav>
   );
 };
