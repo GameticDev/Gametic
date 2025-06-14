@@ -18,6 +18,7 @@ interface AuthState {
   error: string | null;
   isVerified: boolean;
   isAuth: boolean;
+  preferredLocation: string | null;
   role: "user" | "admin" | "owner";
 }
 
@@ -25,6 +26,7 @@ const initialState: AuthState = {
   user: null,
   loading: false,
   error: null,
+  preferredLocation: null,
   isVerified: false,
   isAuth: false,
   role: "user",
@@ -38,12 +40,11 @@ const authSlice = createSlice({
       state.error = null;
     },
     updateAuthUser(state, action: PayloadAction<User>) {
-    state.user = {
-    ...state.user, // Keep existing fields
-    ...action.payload // Override with updated fields
-  };
-
-  }
+      state.user = {
+        ...state.user, // Keep existing fields
+        ...action.payload, // Override with updated fields
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -73,6 +74,7 @@ const authSlice = createSlice({
           state.user = action.payload.user;
           state.isAuth = true;
           state.role = action.payload.user.role;
+          state.preferredLocation = action.payload.user.preferredLocation;
         }
       )
       .addCase(
@@ -91,10 +93,10 @@ const authSlice = createSlice({
         (state, action: PayloadAction<AuthResponse>) => {
           state.loading = false;
           state.user = action.payload.user;
-          console.log(action.payload.user);
-          console.log(action.payload.user.id);
           state.isAuth = true;
           state.role = action.payload.user.role;
+          console.log(action.payload)
+          state.preferredLocation = action.payload.user.preferredLocation;
         }
       )
       .addCase(loginUser.rejected, (state, action: PayloadAction<unknown>) => {
@@ -172,8 +174,8 @@ const authSlice = createSlice({
 const persistConfig = {
   key: "auth",
   storage,
-  whitelist: ["user", "isAuth", "role"],
+  whitelist: ["user", "isAuth", "role", "preferredLocation"],
 };
 
-export const { clearError,updateAuthUser  } = authSlice.actions;
+export const { clearError, updateAuthUser } = authSlice.actions;
 export default persistReducer(persistConfig, authSlice.reducer);

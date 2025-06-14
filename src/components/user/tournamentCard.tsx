@@ -1,6 +1,12 @@
 "use client";
 import { useState } from "react";
-import { FaCalendarAlt, FaMapMarkerAlt, FaTicketAlt, FaTrophy, FaUsers } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaTicketAlt,
+  FaTrophy,
+  FaUsers,
+} from "react-icons/fa";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -17,11 +23,11 @@ export default function TournamentCard({ data }: Props) {
   const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams);
 
   const handleCardClick = () => {
-    router.push(`/tournament/${data._id}`);
+    router.push(`/home/tournament/${data._id}`);
   };
 
   const handleTeamJoined = () => {
-    setJoinedTeamsCount((prev:number) => prev + 1);
+    setJoinedTeamsCount((prev: number) => prev + 1);
   };
 
   const openModal = () => {
@@ -33,14 +39,18 @@ export default function TournamentCard({ data }: Props) {
   };
 
   return (
-    <div className="w-[277px] rounded-xl overflow-hidden shadow-md border border-gray-200 bg-white">
-       <Image
-    src={data.image}
-    alt="Stadium"
-    fill
-    className="object-cover rounded"
-    sizes="100vw"
-  />
+    <div
+      className="w-[277px] rounded-xl overflow-hidden shadow-md border border-gray-200 bg-white relative"
+      onClick={handleCardClick}
+    >
+      <Image
+        src={data.image}
+        alt="Stadium"
+        width={20}
+        height={20}
+        className=" h-[100px] w-[277px] object-cover rounded"
+        sizes="100vw"
+      />
       <div className="flex justify-center -mt-6">
         <div className="bg-green-800 rounded-full p-4 border-2 border-gray-200">
           <button
@@ -54,12 +64,9 @@ export default function TournamentCard({ data }: Props) {
       </div>
 
       <div className="px-4 pb-4 pt-2 text-center">
-       <span
-  onClick={handleCardClick}
-  className="text-sm text-white bg-green-400 rounded-full px-2 py-0.5 font-medium cursor-pointer"
->
-  {data.status}
-</span>
+        <span className="text-sm text-white bg-green-400 rounded-full px-2 py-0.5 font-medium cursor-pointer">
+          {data.status}
+        </span>
 
         <h2 className="text-xl font-semibold mt-1">{data.title}</h2>
         <p className="text-sm text-gray-500">{data.subtitle}</p>
