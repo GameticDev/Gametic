@@ -100,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-[#00423D] rounded-md shadow-lg py-1 z-50 border border-[#415C41] list-none">
                     <Link
-                      href="/profile"
+                      href="/home/profile"
                       className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200"
                     >
                       View Profile
