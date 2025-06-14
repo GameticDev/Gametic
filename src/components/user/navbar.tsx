@@ -36,7 +36,6 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
   return (
     <nav className={`w-full h-16 ${className} bg-white`}>
-
       <div className="w-full h-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
@@ -70,7 +69,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
               </Link>
 
               <Link
-                href="/tournaments"
+                href="/home/tournament"
                 className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
               >
                 <Calendar className="h-4 w-4" />
@@ -101,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-[#00423D] rounded-md shadow-lg py-1 z-50 border border-[#415C41] list-none">
                     <Link
-                      href="/profile"
+                      href="/home/profile"
                       className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200"
                     >
                       View Profile

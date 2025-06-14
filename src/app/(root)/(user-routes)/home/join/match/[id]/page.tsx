@@ -37,6 +37,25 @@ const formatDate = (dateInput: unknown): string => {
     day: "numeric",
   });
 };
+
+// Helper function to get initials from username
+const getInitials = (username: string): string => {
+  return username
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase())
+    .join('')
+    .substring(0, 2);
+};
+
+// Helper function to generate consistent background color based on username
+const getPlayerColor = (username: string, isHost: boolean = false): string => {
+  if (isHost) return "#00423D";
+  
+  const colors = ["#415C41", "#98916D", "#6B7280", "#059669", "#7C3AED"];
+  const index = username.charCodeAt(0) % colors.length;
+  return colors[index];
+};
+
 const SportsMatchPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const params = useParams();
@@ -64,6 +83,39 @@ const SportsMatchPage: React.FC = () => {
 
   const matchDate = formatDate(match?.date);
 
+  // Create a list of all players with the host first
+  const getAllPlayers = () => {
+    const players = [];
+    
+    // Add host first
+    if (match?.userId?.username) {
+      players.push({
+        _id: match.userId._id,
+        username: match.userId.username,
+        isHost: true
+      });
+    }
+    
+    // Add joined players (excluding host if they're already in joinedPlayers)
+    if (match?.joinedPlayers) {
+      const joinedPlayersExcludingHost = match.joinedPlayers.filter(
+        player => player._id !== match.userId?._id
+      );
+      
+      joinedPlayersExcludingHost.forEach(player => {
+        players.push({
+          _id: player._id,
+          username: player.username,
+          isHost: false
+        });
+      });
+    }
+    
+    return players;
+  };
+
+  const allPlayers = getAllPlayers();
+
   return (
     <>
       <div className="min-h-screen bg-gray-50 py-8 px-4 pt-20 mb-20">
@@ -71,7 +123,15 @@ const SportsMatchPage: React.FC = () => {
           {/* Header */}
           <JoinHeader
             title={match?.title || ""}
-            turf={match?.turfId || { _id: "", name: "", city: "", area: "", location: "" }}
+            turf={
+              match?.turfId || {
+                _id: "",
+                name: "",
+                city: "",
+                area: "",
+                location: "",
+              }
+            }
             userId={match?.userId || { _id: "", username: "Unknown Host" }}
             sports={match?.sports || ""}
             date={matchDate || ""}
@@ -97,10 +157,10 @@ const SportsMatchPage: React.FC = () => {
                   competitive teams from across the region. This professionally
                   organized match includes expert coaching, complete equipment,
                   and a chance to showcase your skills in a tournament-style
-                  competition. Whether you're a seasoned player or looking to
-                  improve your game, this match offers the perfect opportunity
-                  to compete at a high level while building lasting connections
-                  with fellow athletes.
+                  competition. Whether you&apos;re a seasoned player or looking
+                  to improve your game, this match offers the perfect
+                  opportunity to compete at a high level while building lasting
+                  connections with fellow athletes.
                 </p>
               </div>
 
@@ -110,7 +170,7 @@ const SportsMatchPage: React.FC = () => {
                   className="text-2xl font-bold mb-6"
                   style={{ color: "#00423D" }}
                 >
-                  What's Included
+                  What&apos;s Included
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {highlights.map((highlight) => (
@@ -140,131 +200,45 @@ const SportsMatchPage: React.FC = () => {
                   Joined Players
                 </h3>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                      style={{ backgroundColor: "#415C41" }}
-                    >
-                      A
-                    </div>
-                    <div>
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: "#00423D" }}
-                      >
-                        Alex Johnson
-                      </p>
-                      <p className="text-xs" style={{ color: "#998869" }}>
-                        Host
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                      style={{ backgroundColor: "#415C41" }}
-                    >
-                      M
-                    </div>
-                    <div>
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: "#00423D" }}
-                      >
-                        Mike Chen
-                      </p>
-                      <p className="text-xs" style={{ color: "#998869" }}>
-                        Player
+                  {allPlayers.length > 0 ? (
+                    allPlayers.map((player) => (
+                      <div key={player._id} className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
+                          style={{ 
+                            backgroundColor: getPlayerColor(player.username, player.isHost) 
+                          }}
+                        >
+                          {getInitials(player.username)}
+                        </div>
+                        <div>
+                          <p
+                            className="text-sm font-medium"
+                            style={{ color: "#00423D" }}
+                          >
+                            {player.username}
+                          </p>
+                          <p className="text-xs" style={{ color: "#998869" }}>
+                            {player.isHost ? "Host" : "Player"}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-sm" style={{ color: "#415C41" }}>
+                        No players joined yet
                       </p>
                     </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                      style={{ backgroundColor: "#98916D" }}
-                    >
-                      S
-                    </div>
-                    <div>
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: "#00423D" }}
-                      >
-                        Sarah Wilson
-                      </p>
-                      <p className="text-xs" style={{ color: "#998869" }}>
-                        Player
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                      style={{ backgroundColor: "#415C41" }}
-                    >
-                      D
-                    </div>
-                    <div>
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: "#00423D" }}
-                      >
-                        David Rodriguez
-                      </p>
-                      <p className="text-xs" style={{ color: "#998869" }}>
-                        Player
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                      style={{ backgroundColor: "#00423D" }}
-                    >
-                      L
-                    </div>
-                    <div>
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: "#00423D" }}
-                      >
-                        Lisa Park
-                      </p>
-                      <p className="text-xs" style={{ color: "#998869" }}>
-                        Player
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                      style={{ backgroundColor: "#98916D" }}
-                    >
-                      J
-                    </div>
-                    <div>
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: "#00423D" }}
-                      >
-                        James Brown
-                      </p>
-                      <p className="text-xs" style={{ color: "#998869" }}>
-                        Player
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <div className="flex justify-between text-sm">
                     <span style={{ color: "#415C41" }}>Players:</span>
-                    <span style={{ color: "#00423D" }}>6/11</span>
+                    <span style={{ color: "#00423D" }}>
+                      {allPlayers.length}/{match?.maxPlayers || 0}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -272,7 +246,14 @@ const SportsMatchPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <JoinBar />
+      <JoinBar
+        maxPlayers={match?.maxPlayers}
+        title={match?.title}
+        date={matchDate}
+        joinedPlayers={match?.joinedPlayers}
+        paymentPerPerson={match?.paymentPerPerson}
+        matchId={matchId}
+      />
     </>
   );
 };

@@ -1,8 +1,13 @@
-import { fetchAllVenues } from "@/redux/actions/admin/venuesAction";
+import {
+  bookVenue,
+  fetchAllVenues,
+  fetchVenueById,
+} from "@/redux/actions/user/venueAction";
+import { Booking } from "@/types/turf";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface Venue {
- _id: string;
+  _id: string;
   ownerId: string;
   name: string;
   city: string;
@@ -55,28 +60,32 @@ export interface Venue {
 interface VenueState {
   venues: Venue[];
   totalVenues: number;
+  booking: Booking | null;
   totalActiveVenues: number;
+  venue: Venue | null;
   loading: boolean;
   error: string | null;
 }
 
 const INITIAL_STATE: VenueState = {
   venues: [],
+  venue: null,
+  booking: null,
   totalVenues: 0,
   totalActiveVenues: 0,
   loading: false,
   error: null,
 };
 
-const venueSlice = createSlice({
-  name: "venue",
+const venueSliceUser = createSlice({
+  name: "venuesUser",
   initialState: INITIAL_STATE,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllVenues.pending, (state) => {
         state.loading = true;
-        console.log(state.loading)
+        console.log(state.loading);
       })
       .addCase(fetchAllVenues.fulfilled, (state, action) => {
         state.loading = false;
@@ -87,8 +96,30 @@ const venueSlice = createSlice({
       .addCase(fetchAllVenues.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Something wrong";
+      })
+      .addCase(fetchVenueById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchVenueById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.venue = action.payload.turff;
+      })
+      .addCase(fetchVenueById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Something wrong";
+      })
+      .addCase(bookVenue.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(bookVenue.fulfilled, (state, action) => {
+        state.loading = false;
+        state.booking = action.payload.booking;
+      })
+      .addCase(bookVenue.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Something wrong";
       });
   },
 });
 
-export default venueSlice.reducer;
+export default venueSliceUser.reducer;

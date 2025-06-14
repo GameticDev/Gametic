@@ -40,7 +40,11 @@ function Page() {
   useEffect(() => {
     const fetchTournament = async () => {
       try {
+<<<<<<< HEAD:src/app/(root)/(user-routes)/tournament/page.tsx
         const res = await axiosInstance.get('/getAllTournament');
+=======
+        const res = await axios.get('http://localhost:5000/api/getAllTournament');
+>>>>>>> upstream/dev:src/app/(root)/(user-routes)/home/tournament/page.tsx
         setData(res.data.post);
         console.log(res.data.post) 
       } catch (error) {

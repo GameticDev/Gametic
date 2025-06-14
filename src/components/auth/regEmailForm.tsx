@@ -247,7 +247,6 @@ const EmailForm = ({ openOtp, onEmailSubmit }: EmailFormProps) => {
                 : "border-gray-300 focus:ring-[#00423D] focus:border-transparent"
             }`}
             placeholder="you@example.com"
-            required
             aria-invalid={errors.email ? "true" : "false"}
             aria-describedby={errors.email ? "email-error" : undefined}
           />
