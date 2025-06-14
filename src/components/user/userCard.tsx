@@ -65,7 +65,7 @@ const ActivityCard: React.FC<Match> = ({
           </div>
           <div>
             <p className="text-base font-bold text-gray-800">
-              {userId.username}
+              {userId?.username}
             </p>
             <p className="text-xs text-gray-500 font-medium">Host</p>
           </div>
@@ -113,10 +113,10 @@ const ActivityCard: React.FC<Match> = ({
             <FaMapMarkerAlt className="text-white text-xs" />
           </div>
           <div>
-            <span className="font-semibold truncate block">
-              {turfId.city},{turfId.area},{turfId.location}
+            <span className="font-semibold truncate block">{turfId.name}</span>
+            <span className="text-xs text-gray-500">
+              {turfId.city},{turfId.area},{turfId.location} away
             </span>
-            <span className="text-xs text-gray-500">{"0.10 kms"} away</span>
           </div>
         </div>
 
@@ -179,7 +179,6 @@ const ActivityCard: React.FC<Match> = ({
           </div>
         </div>
       </div>
-
     </div>
   );
 };

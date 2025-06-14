@@ -1,5 +1,4 @@
 "use client";
-import UserFilter from "@/components/admin/ui/userFilter";
 import VenueFilter from "@/components/admin/ui/venueFilter";
 import VenueList from "@/components/admin/venueList";
 import { fetchAllVenues } from "@/redux/actions/admin/venuesAction";
@@ -11,17 +10,16 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("");
   const [venueType, setType] = useState("");
-  const { venues, totalVenues, totalActiveVenues } = useAppSelector(
+  const { totalVenues, totalActiveVenues } = useAppSelector(
     (state) => state.adminVenues
   );
 
-  
+  console.log(location, venueType);
 
   useEffect(() => {
     dispatch(fetchAllVenues({ page: 1, limit: 5, search: searchTerm }));
-    console.log(searchTerm)
-  }, [dispatch,searchTerm]);
-
+    console.log(searchTerm);
+  }, [dispatch, searchTerm]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -140,8 +138,8 @@ const Page = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-100">
           <VenueFilter
             onSearch={(term) => setSearchTerm(term)}
-            getLocation={(term)=>setLocation(term)}
-            getType={(term)=>setType(term)}
+            getLocation={(term) => setLocation(term)}
+            getType={(term) => setType(term)}
           />
           <div className="w-full">
             <VenueList search="" />

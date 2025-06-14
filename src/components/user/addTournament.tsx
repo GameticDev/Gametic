@@ -13,7 +13,7 @@ interface TournamentFormData {
   entryFee: number;
   prizePool: number;
   status: "upcoming" | "ongoing" | "completed";
-  image: file | null;
+  image: File | null;
 }
 
 interface Props {
@@ -30,9 +30,9 @@ const AddTournament: React.FC<Props> = ({ onClose }) => {
     location: "",
     dateFrom: "",
     dateTo: "",
-    maxTeams: "",
-    entryFee: "",
-    prizePool: "",
+    maxTeams: 0,
+    entryFee: 0,
+    prizePool: 0,
     status: "upcoming",
     image: null,
   });
