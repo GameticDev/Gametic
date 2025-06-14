@@ -35,7 +35,7 @@ const HeroSection = () => {
                 {"Game Partner".split("").map((char, idx) => (
                   <span
                     key={idx}
-                    className="inline-block transition-transform duration-300 hover:-translate-y-2 hover:scale-125 hover:animate-bounce"
+                    className="inline-block transition-transform duration-50 hover:-translate-y-2 hover:scale-205 hover:animate-bounce"
                   >
                     {char}
                   </span>
@@ -62,9 +62,9 @@ const HeroSection = () => {
             </p>
 
 <CircularText
-  text="WELCOME TO GAMETIC"
+  text="WELCOME TO GAMETIC "
   spinDuration={10}
-  onHover="speedUp" // Options: slowDown | speedUp | pause | goBonkers
+  onHover="pause" // Options: slowDown | speedUp | pause | goBonkers
 />
 
           </div>
