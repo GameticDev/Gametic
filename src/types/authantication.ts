@@ -17,6 +17,7 @@ export interface AuthState {
   error: string | null;
   isVerified: boolean;
   isAuth: boolean;
+  
 }
 
 // export const initialState: AuthState = {

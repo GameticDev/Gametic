@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAppDispatch } from "@/redux/hooks";
 import { loginUser } from "@/redux/actions/authantication/authanticationAction";
+// import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const route = useRouter();
@@ -27,6 +28,8 @@ const LoginForm = () => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  console.log(isSubmitting ,"r");
+  
   const validateEmail = (email: string): string | undefined => {
     if (!email) {
       return "Email is required";
@@ -114,13 +117,21 @@ const LoginForm = () => {
       return;
     }
 
+    
     setIsSubmitting(true);
+    console.log(isSubmitting,"asdfghj");
 
     try {
       const res = await dispatch(loginUser(data)).unwrap();
 
+      // console.log(res.message ,"res");
+      // toast.success(res.message)
       const role = res.user.role;
+      console.log(role,"wer");
+      
       if (role === "user") {
+        console.log("1234567");
+        
         route.push("/home");
       } else {
         route.push("/owner");

@@ -5,7 +5,7 @@ interface AxiosErrorManager {
 }
 
 const axiosErrorManager: AxiosErrorManager = (err): string => {
-  console.log(err)
+  // console.log(err)
   if (axios.isAxiosError(err)) {
     if (err.response) {
       return (
