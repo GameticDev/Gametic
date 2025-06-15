@@ -1,10 +1,9 @@
-"use client";
-import { useAppSelector } from "@/redux/hook";
+
 import Image from "next/image";
+import CircularText from "../reactbite/page";
 
 const HeroSection = () => {
-  const { preferredLocation } = useAppSelector((state) => state.auth);
-  console.log(preferredLocation);
+
   return (
     <div className="w-full flex items-center justify-center min-h-[600px] lg:min-h-[700px] xl:min-h-[750px] px-4 md:px-20 md:pt-20">
       <div className="absolute w-full h-full  pointer-events-none">
@@ -23,7 +22,6 @@ const HeroSection = () => {
 
         <div className="flex flex-col justify-center items-center text-center mb-16 relative">
           <div>
-            
             {/* Enhanced headline */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-[110px] font-bold tracking-wide mb-5">
               <span className="bg-gradient-to-r from-gray-900 to-[#415C41] bg-clip-text text-transparent">
@@ -31,18 +29,38 @@ const HeroSection = () => {
               </span>
               <br />
               <span className="bg-gradient-to-r from-[#415C41] to-[#98916D] bg-clip-text text-transparent">
-                Game Partner
+                {"Game Partner".split("").map((char, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-block transition-transform duration-50 hover:-translate-y-2 hover:scale-205 hover:animate-bounce"
+                  >
+                    {char}
+                  </span>
+                ))}
               </span>
             </h1>
 
             <p className="text-base md:text-[17px] max-w-full md:max-w-[850px] mb-8 text-gray-700 leading-relaxed mx-auto">
               Connect with athletes in your area for{" "}
               <span className="font-semibold text-[#415C41]">
-                football, basketball, tennis
+                {"football, basketball, tennis".split("").map((char, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-block transition-transform duration-300 hover:-translate-y-1 hover:scale-110"
+                  >
+                    {char}
+                  </span>
+                ))}
               </span>{" "}
               and more. Join local tournaments, discover amazing venues, and
               build your sports community - all in one place.
             </p>
+
+            <CircularText
+              text="WELCOME TO GAMETIC "
+              spinDuration={10}
+              onHover="pause" // Options: slowDown | speedUp | pause | goBonkers
+            />
           </div>
         </div>
       </div>

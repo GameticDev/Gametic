@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import { MapPin, X } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { fetchLocations } from "@/redux/actions/user/locationActions";
 
 interface LocationModalProps {
   onLocationSelect: (location: string) => void;
@@ -12,35 +15,13 @@ const LocationModal: React.FC<LocationModalProps> = ({
   onClose,
   onLocationSelect,
 }) => {
+  const dispatch = useAppDispatch();
+  const { locations } = useAppSelector((state) => state.location);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Sample locations - replace with your actual data
-  const locations = [
-    "New York, NY",
-    "Los Angeles, CA",
-    "Chicago, IL",
-    "Houston, TX",
-    "Phoenix, AZ",
-    "Philadelphia, PA",
-    "San Antonio, TX",
-    "San Diego, CA",
-    "Dallas, TX",
-    "San Jose, CA",
-    "Austin, TX",
-    "Jacksonville, FL",
-    "Fort Worth, TX",
-    "Columbus, OH",
-    "Charlotte, NC",
-    "San Francisco, CA",
-    "Indianapolis, IN",
-    "Seattle, WA",
-    "Denver, CO",
-    "Washington, DC",
-  ];
-
-  const filteredLocations = locations.filter((location) =>
-    location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    dispatch(fetchLocations({ search: searchTerm }));
+  }, [dispatch, searchTerm]);
 
   const handleLocationSelect = (location: string) => {
     onLocationSelect(location);
@@ -80,20 +61,25 @@ const LocationModal: React.FC<LocationModalProps> = ({
 
         {/* Location List */}
         <div className="max-h-80 overflow-y-auto">
-          {filteredLocations.length > 0 ? (
+          {locations.length > 0 ? (
             <ul className="space-y-2">
-              {filteredLocations.map((location, index) => (
+              {locations.map((location, index) => (
                 <li key={index}>
                   <button
-                    onClick={() => handleLocationSelect(location)}
+                    onClick={() => handleLocationSelect(location.name)}
                     className="w-full text-left p-3 rounded-lg hover:bg-[#f5f5f5] transition-colors duration-200 flex items-center space-x-2"
                   >
                     <MapPin className="h-4 w-4 text-[#00423d]" />
-                    <span className="text-[#00423d]">{location}</span>
+                    <span className="text-[#00423d]">{location.name}</span>
                   </button>
                 </li>
               ))}
             </ul>
+          ) : searchTerm === "" ? (
+            <div className="text-center py-8 text-gray-500">
+              <MapPin className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <p>Search your location</p>
+            </div>
           ) : (
             <div className="text-center py-8 text-gray-500">
               <MapPin className="h-12 w-12 mx-auto mb-2 opacity-50" />

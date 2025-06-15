@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Menu, X, MapPin, Calendar, User } from "lucide-react";
 import { useAppDispatch } from "@/redux/hooks";
@@ -7,6 +7,8 @@ import { logout } from "@/redux/actions/authantication/authanticationAction";
 import { useRouter } from "next/navigation";
 import localFont from "next/font/local";
 import LocationModal from "./locationModal";
+import { useAppSelector } from "@/redux/hook";
+import { currentUser } from "@/redux/actions/user/userAction";
 
 const racesport = localFont({
   src: "../../fonts/RaceSport.ttf",
@@ -32,6 +34,12 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
   const handleLocationSelect = (location: string) => {
     setSelectedLocation(location);
   };
+
+  const { user } = useAppSelector((state) => state.user);
+  console.log(user);
+  useEffect(() => {
+    dispatch(currentUser());
+  }, [dispatch]);
 
   const logoutUser = async () => {
     try {
@@ -98,7 +106,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
               >
                 <MapPin className="h-5 w-5" />
                 <span className="max-w-32 truncate mt-[2px]">
-                  {"Eranakulam"}
+                  {user?.user.preferredLocation}
                 </span>
               </button>
               <div className="relative">
