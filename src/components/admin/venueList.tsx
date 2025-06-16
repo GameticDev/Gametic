@@ -25,7 +25,6 @@ const VenueList: React.FC<VenuesListProps> = ({ search }) => {
   const { loading, venues, totalVenues } = useAppSelector(
     (state) => state.adminVenues
   );
-  
 
   useEffect(() => {
     dispatch(fetchAllVenues({ page: currentPage, limit: 5, search }));
@@ -99,7 +98,8 @@ const VenueList: React.FC<VenuesListProps> = ({ search }) => {
           {loading ? (
             <ListSkeleton />
           ) : (
-            venues && venues.length > 0 && (
+            venues &&
+            venues.length > 0 && (
               <tbody className="divide-y divide-gray-100">
                 {venues.map((item) => (
                   <tr
@@ -109,9 +109,9 @@ const VenueList: React.FC<VenuesListProps> = ({ search }) => {
                     <td className="p-4">
                       <div className="flex items-center">
                         <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 relative">
-                          {item?.image?.[0] ? (
+                          {item?.images?.[0] ? (
                             <Image
-                              src={item.image[0]}
+                              src={item.images[0]}
                               fill
                               alt={item.name}
                               className="object-cover"
@@ -127,7 +127,7 @@ const VenueList: React.FC<VenuesListProps> = ({ search }) => {
                             {item?.name}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {item?.address}
+                            {item?.location},{item.city}
                           </div>
                         </div>
                       </div>

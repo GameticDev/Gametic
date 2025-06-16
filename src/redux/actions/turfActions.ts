@@ -1,4 +1,3 @@
-
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '@/utils/axiosInstance';
 // import { Turf } from '@/types/turf';
@@ -10,6 +9,8 @@ export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: strin
   'turf/addTurf',
   async (formData, { rejectWithValue }) => {
     console.log(",,,,,,,,",formData)
+
+
 
 
     try {
@@ -72,7 +73,6 @@ export const updateTurf = createAsyncThunk<TurfData, { id: string; formData: For
   async ({ id, formData }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.patch(`/owner/editTurf/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
       });
       // return response.data;
       return response.data.turf;
@@ -82,6 +82,7 @@ export const updateTurf = createAsyncThunk<TurfData, { id: string; formData: For
     }
   }
 );
+
 
 
 export const deleteTurf = createAsyncThunk(
@@ -109,3 +110,4 @@ export const fetchTurfById = createAsyncThunk<TurfData, string, { rejectValue: s
     }
   }
 );
+

@@ -2,24 +2,54 @@ import { fetchAllVenues } from "@/redux/actions/admin/venuesAction";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface Venue {
-  _id?: string;
+ _id: string;
+  ownerId: string;
   name: string;
   city: string;
   area: string;
-  address: string;
+  location: string;
   turfType: string;
   size: string;
-  image: string[];
+  images: string[];
   hourlyRate: number;
   status: string;
-  availability: string;
+  availability: {
+    days: string[];
+    startTime: string;
+    endTime: string;
+    timeSlots: string[];
+  };
   isDelete: boolean;
   averageRating: number;
-  ratings: any[];
-  bookings: any[];
-  createdAt: { $date: string };
-  updatedAt: { $date: string };
+  ratings: {
+    userId: string;
+    rating: number;
+    comment?: string;
+    createdAt: string;
+  }[];
+  bookings: {
+    _id: string;
+    userId: string;
+    date: string;
+    slot: {
+      start: string;
+      end: string;
+    };
+    status: string;
+    createdAt: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
   __v: number;
+  bookedSlot: {
+    date: string;
+    slots: {
+      start: string;
+      end: string;
+      _id: string;
+    }[];
+    _id: string;
+  }[];
 }
 
 interface VenueState {

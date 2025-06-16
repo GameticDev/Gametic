@@ -18,7 +18,9 @@ console.log("token",token)
   }
 
   try {
-    const secret = new TextEncoder().encode("f6d9b78fc5a897d7aef7bc99b90ad8b6cbab49a4c1a01d2b8531c23a2b034fdc");
+    const secret = new TextEncoder().encode(
+      "f6d9b78fc5a897d7aef7bc99b90ad8b6cbab49a4c1a01d2b8531c23a2b034fdc"
+    );
     const { payload } = await jwtVerify(token, secret);
     return payload.role as string | null;
   } catch (error) {
@@ -46,7 +48,7 @@ export async function middleware(request: NextRequest) {
 
   const allowedPath = rolePaths[role as keyof typeof rolePaths];
   if (pathname.startsWith(allowedPath)) {
-    return NextResponse.next(); // Allow access to role-specific path
+    return NextResponse.next();
   }
 
   return NextResponse.redirect(new URL(allowedPath, request.url));

@@ -677,6 +677,7 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
 
   // const validateCurrentStep = async () => {
     // let fieldsToValidate: string[] = [];
+    // let fieldsToValidate: string[] = [];
   const validateCurrentStep = async (): Promise<boolean> => {
 
 type TurfFormField = 
@@ -713,6 +714,10 @@ let fieldsToValidate: TurfFormField[] = [];
     }
 
   try {
+    // const isValid = await trigger(fieldsToValidate as any);
+    const isValid = await trigger(fieldsToValidate);
+
+
     // const isValid = await trigger(fieldsToValidate as any);
     const isValid = await trigger(fieldsToValidate);
 
