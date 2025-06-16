@@ -36,9 +36,9 @@ const RatingModal: React.FC<RatingModalProps> = ({ turfId, onClose, onSuccess })
       // await submitRating(turfId, { rating, review });
       onSuccess();
       onClose();
-    } catch (err) {
-      setError('Failed to submit rating');
-    } finally {
+    }catch {
+  setError('Failed to submit rating');
+} finally {
       setLoading(false);
     }
   };

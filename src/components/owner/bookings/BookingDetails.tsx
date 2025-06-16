@@ -94,7 +94,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
-import { Calendar, Clock, DollarSign, Phone, User } from "lucide-react";
+import { Calendar, Clock, Phone, User } from "lucide-react";
 import { TableCell, TableRow } from "@/components/owner/ui/table";
 import { Booking } from "@/types/turf";
 
@@ -110,11 +110,17 @@ export const BookingDetails = ({ booking }: BookingDetailsProps) => {
       );
     }
 
-    return (
+    if (typeof booking.userId === 'string') {
+      return (
+        <div className="text-gray-400 italic">Customer ID: {booking.userId}</div>
+      );
+    }
+
+   return (
       <>
         <div className="flex items-center">
           <User className="h-4 w-4 mr-2 text-gray-500" />
-          <span>{booking.userId.name}</span>
+          <span>{booking.userId.username || 'Unknown User'}</span>
         </div>
         {booking.userId.phone && (
           <div className="flex items-center mt-1">
@@ -124,7 +130,7 @@ export const BookingDetails = ({ booking }: BookingDetailsProps) => {
         )}
         <div className="flex items-center mt-1">
           <span className="w-4 mr-2"></span>
-          <span>{booking.userId.email}</span>
+          <span>{booking.userId.email || 'No email available'}</span>
         </div>
       </>
     );
@@ -147,9 +153,15 @@ export const BookingDetails = ({ booking }: BookingDetailsProps) => {
               <span>
                 {booking.startTime} - {booking.endTime} ({booking.duration} hours)
               </span>
+              {/* <span>
+  {booking.startTime} - {booking.endTime} ({booking.duration ?? "N/A"} hours)
+</span> */}
+
             </div>
             <div className="flex items-center">
-              <DollarSign className="h-4 w-4 mr-2 text-gray-500" />
+              {/* <DollarSign className="h-4 w-4 mr-2 text-gray-500" /> */}
+              <span className="h-4 w-4 mr-2 text-gray-500">₹</span>
+
               <span>Amount: {booking.amount}</span>
             </div>
             <div className="flex items-center">

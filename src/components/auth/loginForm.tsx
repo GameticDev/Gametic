@@ -117,12 +117,17 @@ const LoginForm = () => {
     setIsSubmitting(true);
 
     try {
+      
       const res = await dispatch(loginUser(data)).unwrap();
 
       const role = res.user.role;
+console.log("Login success:", res);
+console.log("Role is:", role)
       if (role === "user") {
+          console.log("Redirecting to /home");
         route.push("/home");
       } else {
+          console.log("Redirecting to /owner");
         route.push("/owner");
       }
     } catch (err: unknown) {

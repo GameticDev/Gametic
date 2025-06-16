@@ -21,7 +21,6 @@ import {
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    auth: authReducer,
     turf: turfReducer,
     profile: profileReducer,
     booking: bookingReducer,

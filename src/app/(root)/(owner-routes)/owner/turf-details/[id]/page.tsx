@@ -8,7 +8,7 @@ import { fetchTurfById } from '@/redux/actions/turfActions';
 import TurfImagesSlider from '@/components/owner/turfDetails/TurfImageSlider';
 import TurfBasicInfo from '@/components/owner/turfDetails/TurfBasicInfo';
 import TurfDescription from '@/components/owner/turfDetails/TurfDescription';
-import TurfAvailability from '@/components/owner/turfDetails/TurfAvailability';
+import TurfBookingAvailability from '@/components/owner/turfDetails/TurfBookingAvailability';
 import TurfBookings from '@/components/owner/turfDetails/TurfBookings';
 import TurfActions from '@/components/owner/turfDetails/TurfActions';
 import BreadcrumbNav from '@/components/owner/turfDetails/BreadcrumbNav';
@@ -93,7 +93,7 @@ const TurfDetailsPage: React.FC = () => {
 
           <TurfDescription description={selectedTurf.description} />
           
-          <TurfAvailability availability={selectedTurf.availability} />
+          <TurfBookingAvailability availability={selectedTurf.availability} />
           
           <TurfBookings 
             bookings={selectedTurf.bookings || []} 
