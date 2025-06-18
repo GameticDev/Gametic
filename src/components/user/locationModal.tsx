@@ -2,10 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { MapPin, X } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import { fetchLocations } from "@/redux/actions/user/locationActions";
+import {
+  fetchLocations,
+  updateUserLocation,
+} from "@/redux/actions/user/locationActions";
+import { currentUser } from "@/redux/actions/user/userAction";
 
 interface LocationModalProps {
-  onLocationSelect: (location: string) => void;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -13,7 +16,6 @@ interface LocationModalProps {
 const LocationModal: React.FC<LocationModalProps> = ({
   isOpen,
   onClose,
-  onLocationSelect,
 }) => {
   const dispatch = useAppDispatch();
   const { locations } = useAppSelector((state) => state.location);
@@ -23,9 +25,18 @@ const LocationModal: React.FC<LocationModalProps> = ({
     dispatch(fetchLocations({ search: searchTerm }));
   }, [dispatch, searchTerm]);
 
-  const handleLocationSelect = (location: string) => {
-    onLocationSelect(location);
+  const handleLocationSelect = async (location: string) => {
+    try {
+      const res = await dispatch(
+        updateUserLocation({ preferredLocation: location })
+      );
+      console.log(res);
+      dispatch(currentUser());
+    } catch (error) {
+      alert(error);
+    }
     setSearchTerm("");
+    onClose();
   };
 
   const handleModalClose = () => {

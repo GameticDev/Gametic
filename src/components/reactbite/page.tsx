@@ -54,7 +54,7 @@ const CircularText = ({
 
   return (
     <motion.div
-     className="fixed top-20 right-4 w-[140px] h-[140px] rounded-full"
+     className="absolute top-14 left-7 w-[140px] h-[140px] rounded-full"
 
 
       style={{ rotate: rotation }}
@@ -74,7 +74,7 @@ const CircularText = ({
           return (
             <span
               key={i}
-              className="absolute text-[14px] font-semibold bg-gradient-to-r from-[#7ca971] to-[#a69b71] bg-clip-text text-transparent"
+              className="absolute text-[14px] font-semibold bg-gradient-to-r from-gray-900 to-[#415C41] bg-clip-text text-transparent"
               style={{
                 left: `${x}px`,
                 top: `${y}px`,

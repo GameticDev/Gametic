@@ -36,23 +36,63 @@ export interface Match {
   __v: number;
 }
 
+export interface Booking {
+  _id: string;
+  userId: string;
+  date: Date;
+  startTime: string;
+  endTime: string;
+  status: "pending" | "confirmed" | "cancelled" | "completed";
+  paymentStatus: "pending" | "paid" | "refunded";
+  amount: number;
+  createdAt: Date;
+  bookingType: "normal" | "host";
+  turf: {
+    _id: string;
+    name: string;
+    city: string;
+    area: string;
+    location: string;
+    turfType:
+      | "football"
+      | "cricket"
+      | "multi-sport"
+      | "swimming"
+      | "basketball"
+      | "badminton"
+      | "tennis"
+      | "volleyball"
+      | "hockey";
+  };
+}
+
 export interface UserResponse {
-  user: {
+  user: User;
+  hostedMatches: Match[];
+  joinedOnlyMatches: Match[];
+  preferredLocation: string;
+}
+
+export const currentUser = createAsyncThunk<
+  {
     user: User;
     hostedMatches: Match[];
     joinedOnlyMatches: Match[];
     preferredLocation: string;
-  };
-}
-
-export const currentUser = createAsyncThunk<
-  { user: UserResponse },
+    bookings: Booking[];
+  },
   void,
   { rejectValue: string }
 >("user/currentUser", async (_, { rejectWithValue }) => {
   try {
     const { data } = await axiosInstance.get("/user");
-    return { user: data.user };
+    return {
+      user: data.user.user,
+      hostedMatches: data.user.hostedMatches,
+      joinedOnlyMatches: data.user.joinedOnlyMatches,
+      preferredLocation: data.user.preferredLocation,
+      bookings: data.user.bookings,
+    };
   } catch (error) {
     return rejectWithValue(axiosErrorManager(error));
   }

@@ -3,7 +3,7 @@ import HeroSection from "@/components/user/heroSection";
 const Page = () => {
 
   return (
-    <div className="min-h-screen">
+    <div className="h-full">
       <HeroSection />
     </div>
   );

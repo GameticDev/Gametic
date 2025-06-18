@@ -36,6 +36,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={outfit.className}
       data-theme="light"
+      
     >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
