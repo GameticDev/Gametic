@@ -288,6 +288,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { RootState, AppDispatch } from '@/redux/store';
 import { updateUserProfile } from '@/redux/actions/profileActions';
+import { toast } from 'react-toastify';
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -357,10 +358,12 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ isOpen, onClose }) 
       const res = await dispatch(updateUserProfile(payload));
       
       if (updateUserProfile.fulfilled.match(res)) {
+        toast.success("Profile updated successfully");
         onClose();
       }
     } catch (error) {
       console.error('Error updating profile:', error);
+      toast.error("Failed to update profile");
     }
   };
 

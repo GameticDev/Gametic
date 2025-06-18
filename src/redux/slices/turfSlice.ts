@@ -10,7 +10,6 @@ interface TurfState {
   error: string | null;
   success: boolean;
   totalCount: number;
-  totalCount: number;
 }
 
 const initialState: TurfState = {
@@ -18,7 +17,6 @@ const initialState: TurfState = {
   loading: false,
   error: null,
   success: false,
-  totalCount: 0,
   totalCount: 0,
 };
 
@@ -52,9 +50,7 @@ const turfSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string || 'Failed to add turf';
       })
-        state.loading = false;
-        state.error = action.payload as string || 'Failed to add turf';
-      })
+        
       .addCase(fetchTurfs.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -72,14 +68,8 @@ const turfSlice = createSlice({
         state.turfs = action.payload.turfs;
         state.totalCount = action.payload.totalCount;
       })
-
-
-      .addCase(fetchTurfs.rejected, (state, action) => {
-
-
       .addCase(fetchTurfs.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string || 'Failed to fetch turfs';
         state.error = action.payload as string || 'Failed to fetch turfs';
       })
 
@@ -110,7 +100,6 @@ const turfSlice = createSlice({
         }
       })
       .addCase(updateTurf.rejected, (state, action) => {
-      .addCase(updateTurf.rejected, (state, action) => {
         state.loading = false;
         // state.error = action.payload ?? 'Failed to update turf';
         state.error = action.payload as string || 'Failed to update turf';
@@ -118,15 +107,12 @@ const turfSlice = createSlice({
         state.error = action.payload as string || 'Failed to update turf';
       })
 
-
-
       .addCase(deleteTurf.pending, (state) => {
         state.loading = true;
         state.error = null;
         state.success = false;
         state.success = false;
       })
-      // .addCase(deleteTurf.fulfilled, (state, action) => {
       // .addCase(deleteTurf.fulfilled, (state, action) => {
       .addCase(deleteTurf.fulfilled, (state, action: PayloadAction<string>) => {
         console.log('shanu deleteTurf.fulfilled payload:', action.payload);
@@ -138,10 +124,7 @@ const turfSlice = createSlice({
         state.totalCount = Math.max(0, state.totalCount - 1);
       })
       .addCase(deleteTurf.rejected, (state, action) => {
-      .addCase(deleteTurf.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string || 'Failed to delete turf';
-      })
         state.error = action.payload as string || 'Failed to delete turf';
       })
   },

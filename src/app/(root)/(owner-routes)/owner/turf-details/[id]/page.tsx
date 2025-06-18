@@ -33,30 +33,30 @@ const TurfDetailsPage: React.FC = () => {
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
     </div>
   );
-  
+
   if (error) return (
     <div className="text-center mt-10">
       <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative max-w-md mx-auto">
         <strong className="font-bold">Error!</strong>
         <span className="block sm:inline"> {error}</span>
       </div>
-      <button 
-        onClick={() => router.push('/owner/turfs')} 
+      <button
+        onClick={() => router.push('/owner/turfs')}
         className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
       >
         Back to My Turfs
       </button>
     </div>
   );
-  
+
   if (!selectedTurf) return (
     <div className="text-center mt-10">
       <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative max-w-md mx-auto">
         <strong className="font-bold">Not Found!</strong>
         <span className="block sm:inline"> Turf not found.</span>
       </div>
-      <button 
-        onClick={() => router.push('/owner/turfs')} 
+      <button
+        onClick={() => router.push('/owner/turfs')}
         className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
       >
         Back to My Turfs
@@ -67,20 +67,17 @@ const TurfDetailsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* <BreadcrumbNav username={user?.username} turfName={selectedTurf.name} /> */}
-  
-<div className="sticky top-0 z-10 bg-transparent px-4 pt-2 pb-4">
-  <div className="w-fit bg-white text-blue-700 px-4 py-1 rounded shadow-sm border border-gray-200 text-center">
-    <BreadcrumbNav username={user?.username} turfName={selectedTurf.name} />
-  </div>
-</div>
 
-
-
+      <div className="sticky top-0 z-10 bg-transparent px-4 pt-2 pb-4">
+        <div className="w-fit bg-white text-blue-700 px-4 py-1 rounded shadow-sm border border-gray-200 text-center">
+          <BreadcrumbNav username={user?.username} turfName={selectedTurf.name} />
+        </div>
+      </div>
       <div className="flex flex-col lg:flex-row gap-8">
         <TurfImagesSlider images={selectedTurf.images} />
-        
+
         <div className="lg:w-1/2">
-          <TurfBasicInfo 
+          <TurfBasicInfo
             name={selectedTurf.name}
             city={selectedTurf.city}
             area={selectedTurf.area}
@@ -92,12 +89,12 @@ const TurfDetailsPage: React.FC = () => {
           />
 
           <TurfDescription description={selectedTurf.description} />
-          
+
           <TurfBookingAvailability availability={selectedTurf.availability} />
-          
-          <TurfBookings 
-            bookings={selectedTurf.bookings || []} 
-            turfId={selectedTurf._id} 
+
+          <TurfBookings
+            bookings={selectedTurf.bookings || []}
+            turfId={selectedTurf._id}
           />
 
           <TurfActions turfId={selectedTurf._id} />

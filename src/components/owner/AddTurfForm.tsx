@@ -537,6 +537,11 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
     const newFiles = Array.from(e.target.files);
     const newPreviewUrls = newFiles.map((file) => URL.createObjectURL(file));
 
+    if (files.length + newFiles.length > 5) {
+  toast.error('You can upload a maximum of 5 images.');
+  return;
+}
+
     setPreviewImages((prev) => [...prev, ...newPreviewUrls]);
     setFiles((prev) => [...prev, ...newFiles]);
     setValue('images', [...files, ...newFiles]);
@@ -563,6 +568,10 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
     const updatedPreview = [...previewImages];
     updatedPreview.splice(index, 1);
     setPreviewImages(updatedPreview);
+
+    if (updatedPreview.length === 0) {
+    toast.warn('At least one image is required');
+  }
   };
 
   const nextStep = async () => {
@@ -587,6 +596,7 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
   }
 
     setIsSubmitting(true);
+     toast.info(turfToEdit ? 'Updating turf...' : 'Adding turf...');
     // if (!user?._id) {
     //   toast.error('User information is missing - please login again');
     //   return;
@@ -716,12 +726,6 @@ let fieldsToValidate: TurfFormField[] = [];
   try {
     // const isValid = await trigger(fieldsToValidate as any);
     const isValid = await trigger(fieldsToValidate);
-
-
-    // const isValid = await trigger(fieldsToValidate as any);
-    const isValid = await trigger(fieldsToValidate);
-
-
 
     if (!isValid) {
       toast.error('Please fill all required fields correctly');

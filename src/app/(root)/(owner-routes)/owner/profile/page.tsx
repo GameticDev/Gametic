@@ -17,6 +17,7 @@ import StatsCard from '@/components/owner/Profile/StatsCard';
 import QuickActions from '@/components/owner/Profile/QuickActions';
 import { RootState, AppDispatch } from '@/redux/store';
 import { fetchTurfs } from '@/redux/actions/turfActions';
+import { toast } from 'react-toastify';
 
 interface OwnerStats {
   totalTurfs: number;
@@ -38,14 +39,12 @@ const Profile: React.FC = () => {
     activeBookings: 0
   });
 
-  // useEffect(() => {
-  //   console.log("hi habeeee")
-  //   if (user?.id) {
-  //     console.log(user.id,"user.id")
-  //     dispatch(fetchTurfs(user?.id));
-  //   }
-  // }, [dispatch, user?.id]);
-
+   useEffect(() => {
+    if (turfs && turfs.length === 0) {
+      toast.info('No turfs found. Start by adding your turfs!');
+    }
+  }, [turfs]);
+  
   useEffect(() => {
   const loadTurfs = async () => {
     try {
@@ -53,8 +52,8 @@ const Profile: React.FC = () => {
         await dispatch(fetchTurfs({ ownerId: user.id }));
       }
     } catch (error) {
-      console.error("Failed to fetch turfs:", error);//toast 
-    }
+  toast.error(`Failed to fetch turfs: ${String(error)}`);
+}
   };
   loadTurfs();
 }, [dispatch, user?.id]);
@@ -230,7 +229,10 @@ const Profile: React.FC = () => {
                          booking.status === 'pending' ? 'New Booking Request' : 'Booking Updated'}
                       </p>
                       <p className="text-gray-600 text-sm">
-                        {turf.name} - {booking.userId?.name} - ₹{booking.amount}
+                        {/* {turf.name} - {booking.userId?.usename} - ₹{booking.amount} */}
+                        {turf.name} - {typeof booking.userId === 'object' && booking.userId !== null 
+  ? booking.userId.username 
+  : `User #${booking.userId}`} - ₹{booking.amount}
                       </p>
                       <p className="text-gray-400 text-xs mt-1">
                         {new Date(booking.createdAt).toLocaleDateString()}

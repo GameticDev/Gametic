@@ -221,6 +221,7 @@ import { BookingRow } from "@/components/owner/bookings/BookingRow";
 import { Booking } from "@/types/turf";
 import { updateBookingStatus } from "@/redux/actions/bookingActions";
 import { Button } from "@/components/owner/ui/Button";
+import { toast } from "react-toastify";
 
 const BookingsPage = () => {
   const dispatch = useAppDispatch();
@@ -248,7 +249,7 @@ const BookingsPage = () => {
         }
       } catch (error) {
         console.error("Failed to fetch turfs:", error);
-        // toast.error("Failed to fetch turfs");
+        toast.error("Failed to fetch turfs");
       }
     };
     loadTurfs();
@@ -266,10 +267,19 @@ const BookingsPage = () => {
   );
 
   const filteredBookings = allBookings.filter((booking) => {
-    const matchesSearch =
-      (booking.userId?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ?? false) ||
-      booking.turfName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (booking.userId?.phone?.includes(searchTerm) ?? false);
+  // Handle the case where userId might be a string or null
+  const userName = typeof booking.userId === 'object' && booking.userId !== null 
+    ? booking.userId.username || ''
+    : '';
+  
+  const userPhone = typeof booking.userId === 'object' && booking.userId !== null 
+    ? booking.userId.phone || ''
+    : '';
+
+  const matchesSearch =
+    userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.turfName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    userPhone.includes(searchTerm);
 
     const matchesStatus = statusFilter === "all" || booking.status === statusFilter;
     const matchesDate = !dateFilter || 
@@ -295,7 +305,7 @@ const BookingsPage = () => {
       }
     } catch (error) {
       console.error("Failed to update booking status:", error);
-      // toast.error("Failed to update booking status");
+      toast.error("Failed to update booking status");
     }
   };
 
@@ -319,17 +329,7 @@ const BookingsPage = () => {
           </div>
           <div className="bg-primary/10 px-4 py-2 rounded-lg">
             <span className="text-sm font-medium text-primary">
-     <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex flex-col space-y-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Bookings Management</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage and track all your turf bookings in one place
-            </p>
-          </div>
-          <div className="bg-primary/10 px-4 py-2 rounded-lg">
-            <span className="text-sm font-medium text-primary">
+   
               {sortedBookings.length} {sortedBookings.length === 1 ? "booking" : "bookings"} found
             </span>
           </div>
@@ -352,35 +352,11 @@ const BookingsPage = () => {
         <Card className="border shadow-sm rounded-xl overflow-hidden">
           <CardHeader className="bg-gray-50 border-b">
             <CardTitle className="text-lg font-semibold text-gray-800">Recent Bookings</CardTitle>
-        <Card className="border shadow-sm rounded-xl overflow-hidden">
-          <CardHeader className="bg-gray-50 border-b">
-            <CardTitle className="text-lg font-semibold text-gray-800">Recent Bookings</CardTitle>
+       
           </CardHeader>
           <CardContent className="p-0">
-          <CardContent className="p-0">
             {sortedBookings.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="mx-auto flex flex-col items-center justify-center">
-                  <svg
-                    className="h-12 w-12 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      vectorEffect="non-scaling-stroke"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-                    />
-                  </svg>
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">No bookings found</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Try adjusting your search or filter criteria
-                  </p>
-                </div>
+                
               <div className="text-center py-16">
                 <div className="mx-auto flex flex-col items-center justify-center">
                   <svg
@@ -450,51 +426,7 @@ const BookingsPage = () => {
                   </TableBody>
                 </Table>
               </div>
-              <div className="overflow-x-auto">
-                <Table className="min-w-full divide-y divide-gray-200">
-                  <TableHeader className="bg-gray-50">
-                    <TableRow>
-                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Customer
-                      </TableHead>
-                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Turf
-                      </TableHead>
-                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date & Time
-                      </TableHead>
-                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Duration
-                      </TableHead>
-                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amount
-                      </TableHead>
-                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </TableHead>
-                      <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Payment
-                      </TableHead>
-                      <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody className="bg-white divide-y divide-gray-200">
-                    {sortedBookings.map((booking) => (
-                      <BookingRow
-                        key={booking._id}
-                        booking={booking}
-                        expanded={expandedBooking === booking._id}
-                        onToggleExpand={() => 
-                          setExpandedBooking(expandedBooking === booking._id ? null : booking._id)
-                        }
-                        onStatusChange={(status) => handleStatusChange(booking._id, status)}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+              
             )}
           </CardContent>
         </Card>

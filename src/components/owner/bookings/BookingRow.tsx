@@ -189,7 +189,7 @@ export const BookingRow = ({
         onClick={onToggleExpand}
       >
         <TableCell className="font-medium">
-          {/* <div className="flex items-center">
+          <div className="flex items-center">
             <User className="h-4 w-4 mr-2 text-gray-500" />
             {renderUserInfo()}
           </div>
@@ -204,13 +204,9 @@ export const BookingRow = ({
           </div>
         </TableCell>
         <TableCell>{duration} hours</TableCell>
-        {/* <TableCell>{booking.duration ?? "N/A"} hours</TableCell> */}
-
         <TableCell>
           <div className="flex items-center">
-            {/* <DollarSign className="h-4 w-4 mr-1 text-gray-500" /> */}
             <span className="h-4 w-4 mr-2 text-gray-500">₹</span>
-
             {booking.amount}
           </div>
         </TableCell>
