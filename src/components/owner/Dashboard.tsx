@@ -16,7 +16,6 @@ import Image from 'next/image';
 import Pagination from './ui/Pagination';
 
 const Dashboard: React.FC = () => {
-  console.log("dashboard,habeeeeba......")
   const [showForm, setShowForm] = useState(false);
   const [editingTurf, setEditingTurf] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,10 +25,8 @@ const Dashboard: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const { success, loading, error, turfs, totalCount } = useSelector((state: RootState) => state.turf);
 
-console.log('Redux State in dashboard after pagination:', { turfs, totalCount, loading, error });
-
   const convertTurfDataToFormInputs = (turf?: TurfData): TurfFormInputs | undefined => {
-   
+
     if (!turf) return undefined;
     return {
       _id: turf._id,
@@ -52,7 +49,6 @@ console.log('Redux State in dashboard after pagination:', { turfs, totalCount, l
 
   useEffect(() => {
     if (user?.id) {
-      console.log("user?._id........here,,,,,",user?.id)
       dispatch(fetchTurfs({ ownerId: user.id, page: currentPage, limit: itemsPerPage }));
     }
   }, [dispatch, user?.id, currentPage, itemsPerPage]);
@@ -80,7 +76,7 @@ console.log('Redux State in dashboard after pagination:', { turfs, totalCount, l
         },
         {
           label: 'No',
-          onClick: () => {}
+          onClick: () => { }
         }
       ]
     });
@@ -92,13 +88,6 @@ console.log('Redux State in dashboard after pagination:', { turfs, totalCount, l
   };
 
   const totalPages = Math.ceil((totalCount || 0) / itemsPerPage);
-console.log('Total Pages:', totalPages); 
-console.log({
-  turfsLength: turfs.length,
-  totalCount,
-  itemsPerPage,
-  calculatedPages: Math.ceil(totalCount / itemsPerPage)
-});
 
   if (!user) {
     return (
@@ -111,10 +100,9 @@ console.log({
     );
   }
 
-  
-  
+
   if (!user.id) {
-    console.log("user in dash :",user)
+    console.log("user in dash :", user)
     console.log(user.id)
     console.log(user.id)
     return (
@@ -127,12 +115,12 @@ console.log({
     );
   }
 
-if (turfs && turfs.length === 0) {
+  if (turfs && turfs.length === 0) {
     return (
       <div className="relative min-h-screen w-full overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/no-turf back.webp" 
+            src="/no-turf back.webp"
             alt="Empty turf background"
             fill
             className="object-cover"
@@ -157,7 +145,7 @@ if (turfs && turfs.length === 0) {
               Ready to List Your Turf?
             </h1>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              Your dashboard is currently empty. Add your first turf to start managing bookings, 
+              Your dashboard is currently empty. Add your first turf to start managing bookings,
               availability, and connect with sports enthusiasts in your area.
             </p>
             <button

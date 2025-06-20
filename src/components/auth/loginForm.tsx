@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { loginUser } from "@/redux/actions/authantication/authanticationAction";
 // import { toast } from "react-toastify";
 

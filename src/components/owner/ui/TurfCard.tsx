@@ -1,11 +1,9 @@
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { FiEdit2, FiTrash2, FiMapPin, FiDollarSign, FiCalendar, FiStar } from 'react-icons/fi';
-// import { Turf } from '@/types/turf';
 import { TurfData } from '@/types/turf';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-
 
 
 interface TurfCardProps {
@@ -34,7 +32,7 @@ const TurfCard = ({
     <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
       onClick={handleCardClick}
     >
-      {/* Image Gallery */}
+
       <div className="relative h-48 w-full">
         {turf.images && turf.images.length > 0 ? (
           <Carousel
@@ -57,23 +55,15 @@ const TurfCard = ({
             )}
           >
             {turf.images.map((img: string, idx: number) => (
-              // <div key={idx} className="h-48">
-              //   <img
-              //     src={img}
-              //     alt={`${turf.name} image ${idx + 1}`}
-              //     className="w-full h-full object-cover"
-              //   />
-              // </div>
               <div key={idx} className="relative h-48 w-full">
-  <Image
-    src={img}
-    alt={`${turf.name} image ${idx + 1}`}
-    fill
-    className="object-cover"
-    // sizes="100vw"
-    sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
-  />
-</div>
+                <Image
+                  src={img}
+                  alt={`${turf.name} image ${idx + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                />
+              </div>
             ))}
           </Carousel>
         ) : (
@@ -91,14 +81,14 @@ const TurfCard = ({
             <div className="flex items-center bg-white/90 px-2 py-1 rounded-full">
               <FiStar className="text-yellow-400 mr-1" />
               <span className="text-sm font-medium">
-                {turf.averageRating.toFixed(1)} ★ ({turf.ratings?.length || 0} reviews)
+                {turf.averageRating.toFixed(1)}
               </span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Turf Details */}
+
       <div className="p-5">
         <div className="flex justify-between items-start mb-3">
           <h3 className="text-xl font-bold text-gray-800">{turf.name}</h3>
@@ -133,16 +123,10 @@ const TurfCard = ({
           </div>
         </div>
 
-        {/* Action Buttons for Owner */}
+
         <div className="flex justify-between mt-3 border-t pt-4">
-          {/* <button
-        onClick={() => onBook(turf._id)}
-        className="px-3 py-1 text-sm text-green-600 hover:text-green-800 transition-colors"
-      >
-        Book
-      </button> */}
+
           <button
-            // onClick={() => onRate(turf._id, 5)} 
             onClick={(e) => {
               e.stopPropagation();
               onRate(turf._id, 5);
@@ -152,7 +136,6 @@ const TurfCard = ({
             Rate 5 ★
           </button>
           <button
-            // onClick={() => onEdit(turf._id)}
             onClick={(e) => {
               e.stopPropagation();
               onEdit(turf._id);
@@ -162,7 +145,6 @@ const TurfCard = ({
             <FiEdit2 className="mr-1" /> Edit
           </button>
           <button
-            // onClick={() => onDelete(turf._id)}
             onClick={(e) => {
               e.stopPropagation();
               onDelete(turf._id);

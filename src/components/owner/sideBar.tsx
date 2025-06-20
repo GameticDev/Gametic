@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from "react";
@@ -12,13 +11,11 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// Load custom font
 const racesport = localFont({
   src: "../../fonts/RaceSport.ttf",
   variable: "--font-RaceSport",
 });
 
-// Interfaces
 interface NavItemType {
   label: string;
   icon: React.ReactNode;
@@ -31,7 +28,6 @@ interface NavSectionType {
   items: NavItemType[];
 }
 
-// SectionHeader component
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
   <div className="px-4 py-2 mt-4 mb-1">
     <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
@@ -40,7 +36,6 @@ const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
   </div>
 );
 
-// NavItem component
 const NavItem: React.FC<{
   icon: React.ReactNode;
   label: string;
@@ -48,15 +43,13 @@ const NavItem: React.FC<{
   isActive?: boolean;
 }> = ({ icon, label, hasSubmenu = false, isActive = false }) => (
   <div
-    className={`flex items-center px-4 py-3 rounded-lg cursor-pointer ${
-      isActive ? "bg-blue-50" : "hover:bg-gray-100"
-    }`}
+    className={`flex items-center px-4 py-3 rounded-lg cursor-pointer ${isActive ? "bg-blue-50" : "hover:bg-gray-100"
+      }`}
   >
     <div className="mr-3">{icon}</div>
     <span
-      className={`flex-grow font-semibold ${
-        isActive ? "text-blue-600 font-medium" : "text-gray-600"
-      }`}
+      className={`flex-grow font-semibold ${isActive ? "text-blue-600 font-medium" : "text-gray-600"
+        }`}
     >
       {label}
     </span>
@@ -64,7 +57,6 @@ const NavItem: React.FC<{
   </div>
 );
 
-// Navigation sections with titles
 const navSections: NavSectionType[] = [
   {
     title: "Management",
@@ -101,7 +93,6 @@ const navSections: NavSectionType[] = [
   },
 ];
 
-// Sidebar component
 const SideBar: React.FC = () => {
   const pathname = usePathname();
 

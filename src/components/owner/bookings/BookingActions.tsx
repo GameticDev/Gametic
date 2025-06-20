@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -32,9 +31,9 @@ export const BookingActions = ({
   onStatusChange,
   onToggleExpand,
 }: BookingActionsProps) => {
+
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
-  // Example condition: allow cancel only if status is not already cancelled or confirmed
   const canCancel = booking.status !== "cancelled" && booking.status !== "confirmed";
 
   const handleCancel = (e: React.MouseEvent) => {
@@ -86,7 +85,6 @@ export const BookingActions = ({
         </DropdownMenu>
       </div>
 
-      {/* Cancel Confirmation Modal */}
       <Dialog open={showCancelConfirm} onClose={() => setShowCancelConfirm(false)} className="fixed inset-0 z-50 flex items-center justify-center">
         <div className="bg-black bg-opacity-30 fixed inset-0" />
         <div className="bg-white p-6 rounded-md z-50 max-w-sm w-full relative">

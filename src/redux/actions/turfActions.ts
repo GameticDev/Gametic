@@ -1,17 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '@/utils/axiosInstance';
-// import { Turf } from '@/types/turf';
 import { TurfData } from '@/types/turf';
 import axiosErrorManager from '@/utils/axiosErrorManager';
-// import { User } from '@/types/authantication';
 
 export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: string }>(
   'turf/addTurf',
   async (formData, { rejectWithValue }) => {
-    console.log(",,,,,,,,",formData)
-
-
-
+    console.log(",,,,,,,,", formData)
 
     try {
       const response = await axiosInstance.post('/owner/addTurf', formData, {
@@ -20,7 +15,7 @@ export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: strin
       console.log(response.data)
       return response.data.Turf;
     } catch (error) {
-       console.error('Detailed error:', error);
+      console.error('Detailed error:', error);
       return rejectWithValue(axiosErrorManager(error));
     }
   }
@@ -29,18 +24,18 @@ export const addTurf = createAsyncThunk<TurfData, FormData, { rejectValue: strin
 export const fetchTurfs = createAsyncThunk(
   'turf/fetchTurfs',
   async (
-    params: { 
+    params: {
       ownerId: string;
       page?: number;
       limit?: number;
-    }, 
+    },
     { rejectWithValue }
   ) => {
     try {
-      // Set default values if not provided
-      const page = params.page || 1;
+
+      const page = params.page || 1;       //  if not provided Set default values
       const limit = params.limit || 6;
-      
+
       const response = await axiosInstance.get(`/getAllturf`, {
         params: {
           ownerId: params.ownerId,
@@ -49,14 +44,9 @@ export const fetchTurfs = createAsyncThunk(
         }
       });
 
-      // Handle different response structures
       const turfs = response.data.turf || response.data.allTurf || response.data.data || [];
       const totalCount = response.data.total || response.data.totalCount || 0;
-console.log('API Response from action......:', {
-  data: response.data,
-  extractedTurfs: turfs,
-  extractedTotal: totalCount
-});
+
       return {
         turfs,
         totalCount
@@ -74,7 +64,6 @@ export const updateTurf = createAsyncThunk<TurfData, { id: string; formData: For
     try {
       const response = await axiosInstance.patch(`/owner/editTurf/${id}`, formData, {
       });
-      // return response.data;
       return response.data.turf;
 
     } catch (error) {
@@ -83,15 +72,13 @@ export const updateTurf = createAsyncThunk<TurfData, { id: string; formData: For
   }
 );
 
-
-
 export const deleteTurf = createAsyncThunk(
   'turf/deleteTurf',
   async (turfId: string, { rejectWithValue }) => {
-    console.log("shanu,,,,,,,",turfId)
+    console.log("shanu,,,,,,,", turfId)
     try {
       await axiosInstance.delete(`/owner/turfs/${turfId}`);
-      console.log("turfeeeeee...",turfId)
+      console.log("turfeeeeee...", turfId)
       return turfId;
     } catch (error) {
       return rejectWithValue(axiosErrorManager(error));

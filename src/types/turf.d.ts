@@ -416,7 +416,7 @@ import { Availability } from './turf.d';
 import { UseFormRegister, FieldErrors, Control, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
 export interface BookingSlot {
-  date: string; // ISO format date (YYYY-MM-DD)
+  date: string; 
   startTime: string;
   endTime: string;
   reason?: string; // 'maintenance' | 'holiday' | 'offline-booking'
@@ -424,19 +424,18 @@ export interface BookingSlot {
 
 export interface Availability {
   regular: {
-    days: string[]; // ['Mon', 'Tue', etc.]
+    days: string[]; 
     startTime: string;
     endTime: string;
-    unavailableSlots?: string[]; // For recurring weekly unavailability
+    unavailableSlots?: string[]; 
   };
-  exceptions?: BookingSlot[]; // For date-specific unavailability
+  exceptions?: BookingSlot[];
   isUnderMaintenance?: boolean;
   maintenanceMessage?: string;
 }
 
 export interface Booking {
   _id: string;
-  // userId: User;
   userId: {
     _id: string;
     username: string;

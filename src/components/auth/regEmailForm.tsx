@@ -1,5 +1,5 @@
 "use client";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { useState } from "react";
 import { emailCheck } from "../../redux/actions/authantication/authanticationAction";
 

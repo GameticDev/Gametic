@@ -12,10 +12,10 @@ interface TurfDetailsProps {
 
 
 const TurfDetails: React.FC<TurfDetailsProps> = ({ register, errors }) => {
-   const [hourlyRate, setHourlyRate] = useState('');
+  const [hourlyRate, setHourlyRate] = useState('');
   const [size, setSize] = useState('');
 
-  // Allow only numbers, max 6 digits for hourlyRate
+  // Allow max 6 digits for hourlyRate
   const handleHourlyRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (/^\d{0,6}$/.test(value)) {
@@ -32,7 +32,7 @@ const TurfDetails: React.FC<TurfDetailsProps> = ({ register, errors }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Turf Type */}
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Turf Type <span className="text-red-500">*</span>
@@ -57,7 +57,7 @@ const TurfDetails: React.FC<TurfDetailsProps> = ({ register, errors }) => {
         )}
       </div>
 
-      {/* Size */}
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Size (optional)
@@ -73,14 +73,14 @@ const TurfDetails: React.FC<TurfDetailsProps> = ({ register, errors }) => {
         />
       </div>
 
-      {/* Hourly Rate */}
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Hourly Rate (₹) <span className="text-red-500">*</span>
         </label>
         <input
           type="number"
-          {...register('hourlyRate', { 
+          {...register('hourlyRate', {
             required: 'Hourly rate is required',
             min: { value: 1, message: 'Rate must be positive' }
           })}

@@ -1,5 +1,3 @@
-
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { addTurf, fetchTurfs, updateTurf, deleteTurf } from '../actions/turfActions';
 import { TurfData } from '@/types/turf';
@@ -28,7 +26,7 @@ const turfSlice = createSlice({
       state.success = false;
       state.error = null;
     },
- 
+
   },
   extraReducers: (builder) => {
     builder
@@ -37,6 +35,7 @@ const turfSlice = createSlice({
         state.error = null;
         state.success = false;
       })
+
       .addCase(addTurf.fulfilled, (state, action: PayloadAction<TurfData>) => {
         state.loading = false;
         state.success = true;
@@ -46,28 +45,28 @@ const turfSlice = createSlice({
           state.totalCount += 1;
         }
       })
+
       .addCase(addTurf.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string || 'Failed to add turf';
       })
-        
+
       .addCase(fetchTurfs.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchTurfs.fulfilled, (state, action) => {
 
-         console.log('Received turf data:', {
-    firstBooking: action.payload.turfs[0]?.bookings?.[0],
-    userData: action.payload.turfs[0]?.bookings?.[0]?.userId
-  });
-  
+      .addCase(fetchTurfs.fulfilled, (state, action) => {
+        console.log('Received turf data:', {
+          firstBooking: action.payload.turfs[0]?.bookings?.[0],
+          userData: action.payload.turfs[0]?.bookings?.[0]?.userId
+        });
+
         state.loading = false;
         state.turfs = action.payload.turfs;
         state.totalCount = action.payload.totalCount;
-        state.turfs = action.payload.turfs;
-        state.totalCount = action.payload.totalCount;
       })
+
       .addCase(fetchTurfs.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string || 'Failed to fetch turfs';
@@ -77,17 +76,11 @@ const turfSlice = createSlice({
         state.loading = true;
         state.error = null;
         state.success = false;
-        state.success = false;
       })
+
       .addCase(updateTurf.fulfilled, (state, action: PayloadAction<TurfData>) => {
         state.loading = false;
         state.success = true;
-
-        if (!action.payload?._id) {
-          console.error('UpdateTurf payload missing _id:', action.payload);
-          return;
-        }
-
 
         if (!action.payload?._id) {
           console.error('UpdateTurf payload missing _id:', action.payload);
@@ -99,11 +92,9 @@ const turfSlice = createSlice({
           state.turfs[index] = action.payload;
         }
       })
+
       .addCase(updateTurf.rejected, (state, action) => {
         state.loading = false;
-        // state.error = action.payload ?? 'Failed to update turf';
-        state.error = action.payload as string || 'Failed to update turf';
-        // state.error = action.payload ?? 'Failed to update turf';
         state.error = action.payload as string || 'Failed to update turf';
       })
 
@@ -111,18 +102,15 @@ const turfSlice = createSlice({
         state.loading = true;
         state.error = null;
         state.success = false;
-        state.success = false;
       })
-      // .addCase(deleteTurf.fulfilled, (state, action) => {
+
       .addCase(deleteTurf.fulfilled, (state, action: PayloadAction<string>) => {
-        console.log('shanu deleteTurf.fulfilled payload:', action.payload);
-        console.log('shanu deleteTurf.fulfilled payload:', action.payload);
         state.loading = false;
         state.success = true;
         state.turfs = state.turfs.filter(t => t._id !== action.payload);
         state.totalCount = Math.max(0, state.totalCount - 1);
-        state.totalCount = Math.max(0, state.totalCount - 1);
       })
+
       .addCase(deleteTurf.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string || 'Failed to delete turf';

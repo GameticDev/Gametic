@@ -18,20 +18,46 @@ const TurfImagesSlider: React.FC<TurfImagesSliderProps> = ({ images }) => {
     },
     loop: true,
     mode: 'free-snap',
-    slides: { 
+    slides: {
       perView: 1,
       origin: 'center'
     },
   });
 
-  return (
-    <div className="lg:w-1/2">
-      <div className="relative group">
-        <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden shadow-lg">
+  // return (
+  //   <div className="lg:w-1/2">
+  //     <div className="relative group">
+  //       <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden shadow-lg">
+  //         {images.length > 0 ? (
+  //           images.map((img, idx) => (
+  //             <div key={idx} className="keen-slider__slide flex items-center justify-center">
+  //               <div className="w-full h-96 sm:h-[500px] relative">
+  //                 <Image
+  //                   src={img}
+  //                   alt={`Turf Image ${idx + 1}`}
+  //                   fill
+  //                   className="object-cover"
+  //                   priority={idx === 0}
+  //                   sizes="(max-width: 768px) 100vw, 50vw"
+  //                 />
+  //               </div>
+  //             </div>
+  //           ))
+  //         ) : (
+  //           <div className="keen-slider__slide bg-gray-200 flex items-center justify-center h-96 sm:h-[500px]">
+  //             <span className="text-gray-500 text-lg">No images available</span>
+  //           </div>
+  //         )}
+  //       </div>
+
+   return (
+    <div className="h-full flex flex-col">
+      <div className="relative group flex-grow">
+        <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden h-full">
           {images.length > 0 ? (
             images.map((img, idx) => (
-              <div key={idx} className="keen-slider__slide flex items-center justify-center">
-                <div className="w-full h-96 sm:h-[500px] relative">
+              <div key={idx} className="keen-slider__slide h-full">
+                <div className="w-full h-full relative">
                   <Image
                     src={img}
                     alt={`Turf Image ${idx + 1}`}
@@ -44,7 +70,7 @@ const TurfImagesSlider: React.FC<TurfImagesSliderProps> = ({ images }) => {
               </div>
             ))
           ) : (
-            <div className="keen-slider__slide bg-gray-200 flex items-center justify-center h-96 sm:h-[500px]">
+            <div className="keen-slider__slide bg-gray-200 flex items-center justify-center h-full">
               <span className="text-gray-500 text-lg">No images available</span>
             </div>
           )}
@@ -76,9 +102,8 @@ const TurfImagesSlider: React.FC<TurfImagesSliderProps> = ({ images }) => {
             <button
               key={idx}
               onClick={() => slider.current?.moveToIdx(idx)}
-              className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition ${
-                currentSlide === idx ? 'border-blue-500 scale-105' : 'border-transparent'
-              }`}
+              className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition ${currentSlide === idx ? 'border-blue-500 scale-105' : 'border-transparent'
+                }`}
               aria-label={`View image ${idx + 1}`}
             >
               <div className="w-full h-full relative">

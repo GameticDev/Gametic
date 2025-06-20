@@ -46,7 +46,7 @@ const profileSlice = createSlice({
 const persistConfig = {
   key: 'profile',
   storage,
-  whitelist: ['success'], // Only persist success state if needed
+  whitelist: ['success'],
 };
 
 export const { resetProfileState } = profileSlice.actions;

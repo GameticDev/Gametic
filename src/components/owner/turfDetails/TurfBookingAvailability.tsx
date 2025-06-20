@@ -368,9 +368,9 @@ const predefinedTimeSlots = [
   '07:00 PM - 08:00 PM',
 ];
 
-const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({ 
+const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
   availability,
-  bookedSlot = [] 
+  bookedSlot = []
 }) => {
   if (!availability) {
     return (
@@ -394,7 +394,7 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
     );
   }
 
-  // Check if under maintenance
+
   if (availability.isUnderMaintenance) {
     return (
       <div className="mb-8">
@@ -412,7 +412,7 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
     );
   }
 
-  // Access the regular availability data
+
   const regularAvailability = availability.regular || {};
   const days = regularAvailability.days || [];
   const startTime = regularAvailability.startTime || 'Not specified';
@@ -420,17 +420,17 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
   const unavailableSlots = regularAvailability.unavailableSlots || [];
   const exceptions = availability.exceptions || [];
 
-  // Calculate available slots
-  const availableSlots = predefinedTimeSlots.filter(slot => 
+
+  const availableSlots = predefinedTimeSlots.filter(slot =>
     !unavailableSlots.includes(slot)
   );
 
-  // Format time for display (convert 24h to 12h format if needed)
+
   const formatTime = (time: string) => {
     if (!time) return 'Not specified';
     if (time.includes('AM') || time.includes('PM')) return time;
-    
-    // Convert 24h format to 12h format
+
+
     const [hours, minutes] = time.split(':');
     const hourNum = parseInt(hours, 10);
     const period = hourNum >= 12 ? 'PM' : 'AM';
@@ -438,7 +438,7 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
     return `${displayHour}:${minutes} ${period}`;
   };
 
-  // Format a time slot range
+
   const formatTimeSlot = (slot: { start: string; end: string }) => {
     return `${formatTime(slot.start)} - ${formatTime(slot.end)}`;
   };
@@ -446,8 +446,8 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
   return (
     <div className="mb-8">
       <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Availability</h2>
-      
-      {/* Days of Week */}
+
+
       <div className="mb-5">
         <h3 className="text-md font-medium mb-3 text-gray-700 flex items-center">
           <FaCalendarAlt className="mr-2 text-blue-500" />
@@ -457,11 +457,10 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
           {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
             <div
               key={day}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                days.includes(day)
+              className={`px-4 py-2 rounded-lg text-sm font-medium ${days.includes(day)
                   ? 'bg-green-100 text-green-800 border border-green-300'
                   : 'bg-gray-100 text-gray-500 border border-gray-200'
-              }`}
+                }`}
             >
               {day}
             </div>
@@ -469,7 +468,7 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
         </div>
       </div>
 
-      {/* Operating Hours */}
+
       <div className="mb-5">
         <h3 className="text-md font-medium mb-3 text-gray-700 flex items-center">
           <FaClock className="mr-2 text-blue-500" />
@@ -485,7 +484,7 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
         </div>
       </div>
 
-      {/* Available Time Slots */}
+
       <div className="bg-green-50 p-4 rounded-lg border border-green-100">
         <h3 className="text-md font-medium mb-2 text-gray-700 flex items-center">
           <FaInfoCircle className="mr-2 text-green-500" />
@@ -504,7 +503,7 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
         )}
       </div>
 
-      {/* Unavailable Time Slots (if any) */}
+
       {unavailableSlots.length > 0 && (
         <div className="bg-red-50 p-4 rounded-lg border border-red-100 mt-4">
           <h3 className="text-md font-medium mb-2 text-gray-700 flex items-center">
@@ -522,7 +521,7 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
         </div>
       )}
 
-      {/* Date-Specific Exceptions (if any) */}
+
       {exceptions.length > 0 && (
         <div className="bg-orange-50 p-4 rounded-lg border border-orange-100 mt-4">
           <h3 className="text-md font-medium mb-2 text-gray-700 flex items-center">
@@ -546,7 +545,7 @@ const TurfBookingAvailability: React.FC<TurfAvailabilityProps> = ({
         </div>
       )}
 
-      {/* Booked Slots Display */}
+
       {bookedSlot.length > 0 && (
         <div className="bg-purple-50 p-4 rounded-lg border border-purple-100 mt-4">
           <h3 className="text-md font-medium mb-2 text-gray-700 flex items-center">

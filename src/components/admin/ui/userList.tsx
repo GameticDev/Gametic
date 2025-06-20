@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { blockUser, fetchAllUser } from "@/redux/actions/admin/userActions";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { User } from "@/redux/slices/admin/userSlice";
 import {
   ChevronLeft,

@@ -3,9 +3,10 @@ import { FiLogOut, FiUser, FiMessageSquare } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { logout } from "@/redux/actions/authantication/authanticationAction";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 interface OwnerStaggeredDropDownProps {
   userInitials: string;
@@ -14,11 +15,11 @@ interface OwnerStaggeredDropDownProps {
   userImage?: string;
 }
 
-const OwnerStaggeredDropDown = ({ 
-  userInitials, 
+const OwnerStaggeredDropDown = ({
+  userInitials,
   userName,
   userEmail,
-  userImage 
+  userImage
 }: OwnerStaggeredDropDownProps) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -26,10 +27,13 @@ const OwnerStaggeredDropDown = ({
 
   const handleLogout = async () => {
     try {
+      console.log("Clicked logout");
       await dispatch(logout()).unwrap();
       router.push("/");
+      setOpen(false);
     } catch (error) {
       console.error("Logout failed:", error);
+      toast.error("Logout failed. Try again.");
     }
   };
 
@@ -78,7 +82,7 @@ const OwnerStaggeredDropDown = ({
           variants={wrapperVariants}
           className="absolute right-0 top-14 w-64 bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-gray-100"
         >
-          {/* User info section */}
+
           <div className="p-4 border-b border-gray-100">
             <p className="font-medium text-gray-900 truncate">{userName}</p>
             {userEmail && (
@@ -89,7 +93,7 @@ const OwnerStaggeredDropDown = ({
             </p>
           </div>
 
-          {/* Menu items */}
+
           <ul className="py-1">
             {menuItems.map((item, index) => (
               <motion.li
@@ -113,7 +117,7 @@ const OwnerStaggeredDropDown = ({
   );
 };
 
-// Animation variants
+
 const wrapperVariants = {
   open: {
     scaleY: 1,

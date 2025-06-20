@@ -1,10 +1,8 @@
-
 'use client';
 import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { fetchTurfById } from '@/redux/actions/turfActions';
-// import { TurfData } from '@/types/turf';
 import TurfImagesSlider from '@/components/owner/turfDetails/TurfImageSlider';
 import TurfBasicInfo from '@/components/owner/turfDetails/TurfBasicInfo';
 import TurfDescription from '@/components/owner/turfDetails/TurfDescription';
@@ -64,19 +62,62 @@ const TurfDetailsPage: React.FC = () => {
     </div>
   );
 
+  // return (
+  //   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+  //     <div className="sticky top-0 z-10 bg-transparent px-4 pt-2 pb-4">
+  //       <div className="w-fit bg-white text-blue-700 px-4 py-1 rounded shadow-sm border border-gray-200 text-center">
+  //         <BreadcrumbNav username={user?.username} turfName={selectedTurf.name} />
+  //       </div>
+  //     </div>
+  //     <div className="flex flex-col lg:flex-row gap-8">
+  //       <TurfImagesSlider images={selectedTurf.images} />
+
+  //       <div className="lg:w-1/2">
+  //         <TurfBasicInfo
+  //           name={selectedTurf.name}
+  //           city={selectedTurf.city}
+  //           area={selectedTurf.area}
+  //           turfType={selectedTurf.turfType}
+  //           size={selectedTurf.size}
+  //           hourlyRate={selectedTurf.hourlyRate}
+  //           averageRating={selectedTurf.averageRating}
+  //           status={selectedTurf.status}
+  //         />
+
+  //         <TurfDescription description={selectedTurf.description} />
+
+  //         <TurfBookingAvailability availability={selectedTurf.availability} />
+
+  //         <TurfBookings
+  //           bookings={selectedTurf.bookings || []}
+  //           turfId={selectedTurf._id}
+  //         />
+
+  //         <TurfActions turfId={selectedTurf._id} />
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* <BreadcrumbNav username={user?.username} turfName={selectedTurf.name} /> */}
-
-      <div className="sticky top-0 z-10 bg-transparent px-4 pt-2 pb-4">
-        <div className="w-fit bg-white text-blue-700 px-4 py-1 rounded shadow-sm border border-gray-200 text-center">
-          <BreadcrumbNav username={user?.username} turfName={selectedTurf.name} />
-        </div>
+  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="sticky top-0 z-10 bg-transparent px-4 pt-2 pb-4">
+      <div className="w-fit bg-white text-blue-700 px-4 py-1 rounded shadow-sm border border-gray-200 text-center">
+        <BreadcrumbNav username={user?.username} turfName={selectedTurf.name} />
       </div>
-      <div className="flex flex-col lg:flex-row gap-8">
+    </div>
+    
+    {/* Modified layout container */}
+    <div className="flex flex-col lg:flex-row gap-8">
+      {/* Left side - Fixed position */}
+      <div className="lg:w-1/2 lg:sticky lg:top-24 lg:self-start lg:h-[calc(100vh-6rem)]">
         <TurfImagesSlider images={selectedTurf.images} />
-
-        <div className="lg:w-1/2">
+      </div>
+      
+      {/* Right side - Scrollable content (no visible scrollbar) */}
+      <div className="lg:w-1/2 lg:overflow-y-auto lg:max-h-[calc(100vh-6rem)] lg:pr-4 scroll-smooth hide-scrollbar">
+        <div className="space-y-6 pb-6">
           <TurfBasicInfo
             name={selectedTurf.name}
             city={selectedTurf.city}
@@ -101,7 +142,8 @@ const TurfDetailsPage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default TurfDetailsPage;
