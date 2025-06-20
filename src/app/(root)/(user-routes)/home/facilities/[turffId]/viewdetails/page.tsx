@@ -228,7 +228,7 @@ function Page() {
                         Available Days
                       </p>
                       <p className="text-xs" style={{ color: "#415C41" }}>
-                        {venue.availability.days.join(", ")}
+                        {/* {venue.availability.days.join(", ")} */}
                       </p>
                     </div>
                   </div>
