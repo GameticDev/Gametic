@@ -5,7 +5,9 @@
 @plugin "daisyui" {
   themes: --default;
 }
-
+html {
+  scrollbar-width: none;
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

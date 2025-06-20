@@ -11,227 +11,157 @@ import Image from "next/image";
 import { Edit } from "lucide-react";
 import { useAppSelector } from "@/redux/hook";
 
-// Mock data - replace with real data from your backend
-const mockUser = {
-  id: 1,
-  name: "John Doe",
-  email: "john.doe@example.com",
-  phone: "+91 9876543210",
-  location: "Kozhikode, Kerala",
-  joinedDate: "January 2024",
-  profileImage:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-  totalBookings: 25,
-  totalMatches: 18,
-  totalHosted: 5,
-};
-
-const mockBookings = [
-  {
-    id: 1,
-    venueName: "Green Valley Sports Complex",
-    date: "2024-06-15",
-    time: "18:00 - 20:00",
-    amount: 2000,
-    status: "Confirmed",
-    location: "Kozhikode",
-  },
-  {
-    id: 2,
-    venueName: "Champions Turf",
-    date: "2024-06-20",
-    time: "16:00 - 17:00",
-    amount: 1500,
-    status: "Pending",
-    location: "Malappuram",
-  },
-  {
-    id: 3,
-    venueName: "Elite Football Ground",
-    date: "2024-06-08",
-    time: "19:00 - 21:00",
-    amount: 3000,
-    status: "Completed",
-    location: "Kochi",
-  },
-];
-
-const mockHostedMatches = [
-  {
-    id: 1,
-    title: "Friday Night Football",
-    venue: "Green Valley Sports Complex",
-    date: "2024-06-14",
-    time: "19:00 - 21:00",
-    participants: 12,
-    maxParticipants: 16,
-    status: "Active",
-  },
-  {
-    id: 2,
-    title: "Weekend Warriors Cup",
-    venue: "Champions Turf",
-    date: "2024-06-22",
-    time: "17:00 - 19:00",
-    participants: 8,
-    maxParticipants: 12,
-    status: "Recruiting",
-  },
-];
-
-const mockJoinedMatches = [
-  {
-    id: 1,
-    title: "Sunday League Match",
-    host: "Alex Kumar",
-    venue: "Elite Football Ground",
-    date: "2024-06-16",
-    time: "16:00 - 18:00",
-    participants: 10,
-    maxParticipants: 14,
-    status: "Confirmed",
-  },
-  {
-    id: 2,
-    title: "Midweek Training Session",
-    host: "Rahul Sharma",
-    venue: "City Sports Arena",
-    date: "2024-06-19",
-    time: "18:30 - 20:00",
-    participants: 6,
-    maxParticipants: 10,
-    status: "Confirmed",
-  },
-];
 
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("bookings");
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, bookings, hostedMatches, joinedOnlyMatches } = useAppSelector(
+    (state) => state.user
+  );
 
   const renderBookings = () => (
     <div className="space-y-3">
-      {mockBookings.map((booking) => (
-        <div key={booking.id} className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex justify-between items-center">
-            <div className="flex-1">
-              <h3
-                className="text-lg font-semibold mb-1"
-                style={{ color: "#00423D" }}
-              >
-                {booking.venueName}
-              </h3>
-              <div
-                className="flex items-center gap-4 text-sm"
-                style={{ color: "#415C41" }}
-              >
-                <div className="flex items-center gap-1">
-                  <CiCalendarDate className="text-green-700" />
-                  <span>{booking.date}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <IoTimeSharp className="text-green-700" />
-                  <span>{booking.time}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <FaRupeeSign className="text-green-700" />
-                  <span>₹{booking.amount}</span>
+      {bookings === null || bookings?.length <= 0 ? (
+        <>
+          <p>no booking found</p>
+        </>
+      ) : (
+        bookings.map((booking) => (
+          <div key={booking._id} className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex justify-between items-center">
+              <div className="flex-1">
+                <h3
+                  className="text-lg font-semibold mb-1"
+                  style={{ color: "#00423D" }}
+                >
+                  {booking.turf.name}
+                </h3>
+                <div
+                  className="flex items-center gap-4 text-sm"
+                  style={{ color: "#415C41" }}
+                >
+                  <div className="flex items-center gap-1">
+                    <CiCalendarDate className="text-green-700" />
+                    <span>{booking.date.toString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <IoTimeSharp className="text-green-700" />
+                    <span>
+                      {booking.startTime}-{booking.endTime}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaRupeeSign className="text-green-700" />
+                    <span>₹{booking.amount}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="text-right">
-              <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
-                Cancel
-              </button>
+              <div className="text-right">
+                <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 
   const renderHostedMatches = () => (
     <div className="space-y-3">
-      {mockHostedMatches.map((match) => (
-        <div key={match.id} className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex justify-between items-center">
-            <div className="flex-1">
-              <h3
-                className="text-lg font-semibold mb-1"
-                style={{ color: "#00423D" }}
-              >
-                {match.title}
-              </h3>
-              <div
-                className="flex items-center gap-4 text-sm"
-                style={{ color: "#415C41" }}
-              >
-                <div className="flex items-center gap-1">
-                  <IoFootball className="text-green-700" />
-                  <span>{match.venue}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <CiCalendarDate className="text-green-700" />
-                  <span>{match.date}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MdSportsScore className="text-green-700" />
-                  <span>
-                    {match.participants}/{match.maxParticipants}
-                  </span>
+      {hostedMatches === null || hostedMatches.length <= 0 ? (
+        <>
+          <p>no hosted matches</p>
+        </>
+      ) : (
+        hostedMatches.map((match) => (
+          <div key={match._id} className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex justify-between items-center">
+              <div className="flex-1">
+                <h3
+                  className="text-lg font-semibold mb-1"
+                  style={{ color: "#00423D" }}
+                >
+                  {match.title}
+                </h3>
+                <div
+                  className="flex items-center gap-4 text-sm"
+                  style={{ color: "#415C41" }}
+                >
+                  <div className="flex items-center gap-1">
+                    <IoFootball className="text-green-700" />
+                    <span>{match.turfId}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CiCalendarDate className="text-green-700" />
+                    <span>{match.date}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MdSportsScore className="text-green-700" />
+                    <span>
+                      {match.joinedPlayers.length}/{match.maxPlayers}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="text-right">
-              <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
-                Cancel
-              </button>
+              <div className="text-right">
+                <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 
   const renderJoinedMatches = () => (
     <div className="space-y-3">
-      {mockJoinedMatches.map((match) => (
-        <div key={match.id} className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex justify-between items-center">
-            <div className="flex-1">
-              <h3
-                className="text-lg font-semibold mb-1"
-                style={{ color: "#00423D" }}
-              >
-                {match.title}
-              </h3>
-              <div
-                className="flex items-center gap-4 text-sm"
-                style={{ color: "#415C41" }}
-              >
-                <div className="flex items-center gap-1">
-                  <IoFootball className="text-green-700" />
-                  <span>{match.venue}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <CiCalendarDate className="text-green-700" />
-                  <span>{match.date}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MdSportsScore className="text-green-700" />
-                  <span>
-                    {match.participants}/{match.maxParticipants}
-                  </span>
+      {joinedOnlyMatches === null || joinedOnlyMatches.length < 0 ? (
+        <>
+          <p>no joined mathces</p>
+        </>
+      ) : (
+        joinedOnlyMatches.map((match) => (
+          <div key={match._id} className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex justify-between items-center">
+              <div className="flex-1">
+                <h3
+                  className="text-lg font-semibold mb-1"
+                  style={{ color: "#00423D" }}
+                >
+                  {match.title}
+                </h3>
+                <div
+                  className="flex items-center gap-4 text-sm"
+                  style={{ color: "#415C41" }}
+                >
+                  <div className="flex items-center gap-1">
+                    <IoFootball className="text-green-700" />
+                    <span>{match.turfId}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CiCalendarDate className="text-green-700" />
+                    <span>{match.date}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MdSportsScore className="text-green-700" />
+                    <span>
+                      {match.joinedPlayers.length}/{match.maxPlayers}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="text-right">
-              <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
-                Cancel
-              </button>
+              <div className="text-right">
+                <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 
@@ -278,11 +208,11 @@ function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <MdPhone className="text-green-700" />
-                  <span>{user?.phone || "+91 00000 00000" }</span>
+                  <span>{"+91 00000 00000"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FaLocationDot className="text-green-700" />
-                  <span>{user?.location || "Not specified"}</span>
+                  <span>{user?.preferredLocation || "Not specified"}</span>
                 </div>
               </div>
               <p className="text-sm" style={{ color: "#415C41" }}>
@@ -306,7 +236,7 @@ function ProfilePage() {
               <FaCalendarCheck className="text-3xl text-green-700" />
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
-              {mockUser.totalBookings}
+              {bookings?.length}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>
               Total Bookings
@@ -318,7 +248,7 @@ function ProfilePage() {
               <MdSportsScore className="text-3xl text-green-700" />
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
-              {mockUser.totalMatches}
+              {joinedOnlyMatches?.length}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>
               Matches Played
@@ -330,7 +260,7 @@ function ProfilePage() {
               <BiTrophy className="text-3xl text-green-700" />
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
-              {mockUser.totalHosted}
+              {hostedMatches?.length}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>
               Matches Hosted
