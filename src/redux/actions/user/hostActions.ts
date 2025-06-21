@@ -7,6 +7,8 @@ interface FetchMatchesArgs {
   page: number;
   limit: number;
   search: string;
+  sport: string;
+  location: string;
 }
 
 interface FetchMatchesResponse {
@@ -29,10 +31,10 @@ export const fetchAllMatches = createAsyncThunk<
   { rejectValue: string }
 >(
   "host/fetchAllMatches",
-  async ({ page, limit, search }, { rejectWithValue }) => {
+  async ({ page, limit, search, sport, location }, { rejectWithValue }) => {
     try {
       const { data } = await axiosInstance.get(
-        `/all-matches?page=${page}&limit=${limit}&search=${search}`
+        `/all-matches?page=${page}&limit=${limit}&search=${search}&sport=${sport}&location=${location}`
       );
       const matches: Match[] = data.matches;
       return { matches };
@@ -72,7 +74,7 @@ export const joinGame = createAsyncThunk<
   { match: Match },
   { matchId: string | undefined },
   { rejectValue: string }
->("joinGame/host", async ({matchId}, { rejectWithValue }) => {
+>("joinGame/host", async ({ matchId }, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.post(`join-match/${matchId}`);
     return response.data.match;
