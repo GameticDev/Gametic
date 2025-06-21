@@ -11,9 +11,9 @@ const rolePaths = {
 const publicPath = "/";
 
 async function getUserRole(request: NextRequest): Promise<string | null> {
-  const accessToken = request.cookies.get("accessToken")?.value;
-  console.log(accessToken);
-  const token = localStorage.getItem("accessToken");
+  const token = request.cookies.get("accessToken")?.value;
+  console.log(token,'llllll');
+  // const token = localStorage.getItem("accessToken");
   if (!token) {
     return null;
   }

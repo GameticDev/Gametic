@@ -1,16 +1,5 @@
 "use client";
 
-<<<<<<< HEAD:src/app/(root)/(user-routes)/tournament/[id]/page.tsx
-
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import moment from 'moment';
-import { FaMapMarkerAlt, FaCalendarAlt, FaTrophy, FaTicketAlt, FaUsers, FaFootballBall } from 'react-icons/fa';
-import axiosInstance from '@/utils/axiosInstance';
-import Image from 'next/image';
-=======
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import moment from "moment";
@@ -24,7 +13,6 @@ import {
 } from "react-icons/fa";
 import axiosInstance from "@/utils/axiosInstance";
 import Image from "next/image";
->>>>>>> upstream/dev:src/app/(root)/(user-routes)/home/tournament/[id]/page.tsx
 
 interface Team {
   name: string;
@@ -120,29 +108,16 @@ export default function TournamentDetailPage() {
     //   </div>
     // </div>
     <div className="px-6 py-10 max-w-6xl mx-auto mt-16">
-<<<<<<< HEAD:src/app/(root)/(user-routes)/tournament/[id]/page.tsx
-  {/* Main content: Image and details side by side */}
-  <div className="flex flex-col md:flex-row gap-10 items-start">
-    {/* Left Side - Image */}
-    <Image
-    src={tournament.image}
-    alt={tournament.title}
-    fill
-    className="object-cover rounded-2xl shadow-lg"
-    sizes="(min-width: 768px) 50vw, 100vw"
-  />
-=======
       {/* Main content: Image and details side by side */}
       <div className="flex flex-col md:flex-row gap-10 items-start">
         {/* Left Side - Image */}
         <Image
           src={tournament.image}
           alt={tournament.title}
-          height={20}
-          width={20}
+          height={400}
+          width={400}
           className="w-full md:w-1/2 h-96 object-cover rounded-2xl shadow-lg"
         />
->>>>>>> upstream/dev:src/app/(root)/(user-routes)/home/tournament/[id]/page.tsx
 
         {/* Right Side - Tournament Details */}
         <div className="flex-1 space-y-4 mt-18">

@@ -20,7 +20,7 @@ interface Props {
 export default function TournamentCard({ data }: Props) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams);
+  const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams.length);
 
   const handleCardClick = () => {
     router.push(`/home/tournament/${data._id}`);
@@ -41,14 +41,14 @@ export default function TournamentCard({ data }: Props) {
   return (
     <div
       className="w-[277px] rounded-xl overflow-hidden shadow-md border border-gray-200 bg-white relative"
-      onClick={handleCardClick}
+
     >
       <Image
         src={data.image}
         alt="Stadium"
         width={20}
         height={20}
-        className=" h-[100px] w-[277px] object-cover rounded"
+        className=" h-[150px] w-[277px] object-cover rounded"
         sizes="100vw"
       />
       <div className="flex justify-center -mt-6">
@@ -64,7 +64,7 @@ export default function TournamentCard({ data }: Props) {
       </div>
 
       <div className="px-4 pb-4 pt-2 text-center">
-        <span className="text-sm text-white bg-green-400 rounded-full px-2 py-0.5 font-medium cursor-pointer">
+        <span onClick={handleCardClick} className="text-sm text-white bg-green-400 rounded-full px-2 py-0.5 font-medium cursor-pointer">
           {data.status}
         </span>
 

@@ -215,6 +215,7 @@ const AddTeamModal: React.FC<Props> = ({ onClose, tournamentId, onTeamJoined }) 
         { teamId: createdTeamId }
       );
       console.log(response)
+      toast.success("Team added to tournament successfully")
       onTeamJoined(); // ✅ use it here
     onClose();
 

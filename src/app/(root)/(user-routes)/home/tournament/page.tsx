@@ -5,14 +5,21 @@ import TournamentCard from '@/components/user/tournamentCard';
 import axiosInstance from '@/utils/axiosInstance';
 import React, { useEffect, useState } from 'react';
 
-
+interface Team {
+  name: string;
+  sport: string;
+  teamManager: {
+    username: string;
+    email: string;
+  };
+}
 export interface Tournament {
   _id: string;
   title: string;
   subtitle: string;
   location: string;
   distance: string;
-  joinedTeams: number;
+  joinedTeams: Team[];
   maxPlayers: number;
   dateFrom: string;
   dateTo: string;
@@ -40,11 +47,7 @@ function Page() {
   useEffect(() => {
     const fetchTournament = async () => {
       try {
-<<<<<<< HEAD:src/app/(root)/(user-routes)/tournament/page.tsx
         const res = await axiosInstance.get('/getAllTournament');
-=======
-        const res = await axios.get('http://localhost:5000/api/getAllTournament');
->>>>>>> upstream/dev:src/app/(root)/(user-routes)/home/tournament/page.tsx
         setData(res.data.post);
         console.log(res.data.post) 
       } catch (error) {
