@@ -8,6 +8,9 @@
 html {
   scrollbar-width: none;
 }
+html {
+  scrollbar-width: none;
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

@@ -2,7 +2,7 @@
 import VenueFilter from "@/components/admin/ui/venueFilter";
 import VenueList from "@/components/admin/venueList";
 import { fetchAllVenues } from "@/redux/actions/admin/venuesAction";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { useEffect, useState } from "react";
 
 const Page = () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { fetchTurfs } from "@/redux/actions/turfActions";
 import { format, parseISO } from "date-fns";
 import { Loader2 } from "lucide-react";
@@ -11,42 +11,44 @@ import { BookingFilters } from "@/components/owner/bookings/BookingFilters";
 import { BookingRow } from "@/components/owner/bookings/BookingRow";
 import { Booking } from "@/types/turf";
 import { updateBookingStatus } from "@/redux/actions/bookingActions";
+import { Button } from "@/components/owner/ui/Button";
+import { toast } from "react-toastify";
 
 const BookingsPage = () => {
   const dispatch = useAppDispatch();
-  const { turfs, loading } = useAppSelector((state) => state.turf);
-  // const { userInfo } = useAppSelector((state) => state.auth);
+  const { turfs, loading, totalCount } = useAppSelector((state) => state.turf);
   const user = useAppSelector(state => state.auth.user);
-  
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<Booking['status'] | "all">("all");
   const [dateFilter, setDateFilter] = useState<Date | null>(null);
   const [turfFilter, setTurfFilter] = useState<string>("all");
   const [expandedBooking, setExpandedBooking] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const limit = 6;
 
-  // useEffect(() => {
-  //   if (user?.id) {
-  //     dispatch(fetchTurfs(user.id));
-  //   }
-  // }, [dispatch, user]);
-
-
-    useEffect(() => {
+  useEffect(() => {
     const loadTurfs = async () => {
       try {
         if (user?.id) {
-          await dispatch(fetchTurfs({ ownerId: user.id }));
+          await dispatch(fetchTurfs({
+            ownerId: user.id,
+            page: currentPage,
+            limit
+          }));
         }
       } catch (error) {
-        console.error("Failed to fetch turfs:", error);//toast 
+        console.error("Failed to fetch turfs:", error);
+        toast.error("Failed to fetch turfs");
       }
     };
     loadTurfs();
-  }, [dispatch, user?.id]);
-  
-  
-  // Extract all bookings from all turfs
-  const allBookings = turfs.flatMap((turf) => 
+  }, [dispatch, user?.id, currentPage]);
+
+
+  const totalPages = Math.ceil(totalCount / limit);
+
+  const allBookings = turfs.flatMap((turf) =>
     turf.bookings?.map(booking => ({
       ...booking,
       turfName: turf.name,
@@ -54,38 +56,48 @@ const BookingsPage = () => {
     })) || []
   );
 
-  // Filter bookings based on search and filters
   const filteredBookings = allBookings.filter((booking) => {
+
+    const userName = typeof booking.userId === 'object' && booking.userId !== null
+      ? booking.userId.username || ''
+      : '';
+
+    const userPhone = typeof booking.userId === 'object' && booking.userId !== null
+      ? booking.userId.phone || ''
+      : '';
+
     const matchesSearch =
-  (booking.userId?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ?? false) ||
-  booking.turfName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  (booking.userId?.phone?.includes(searchTerm) ?? false);
+      userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.turfName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      userPhone.includes(searchTerm);
 
     const matchesStatus = statusFilter === "all" || booking.status === statusFilter;
-    const matchesDate = !dateFilter || 
+    const matchesDate = !dateFilter ||
       format(parseISO(booking.date.toString()), "yyyy-MM-dd") === format(dateFilter, "yyyy-MM-dd");
     const matchesTurf = turfFilter === "all" || booking.turfId === turfFilter;
-    
+
     return matchesSearch && matchesStatus && matchesDate && matchesTurf;
   });
 
-  // Sort bookings by date (newest first)
-  const sortedBookings = [...filteredBookings].sort((a, b) => 
+  const sortedBookings = [...filteredBookings].sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
- const handleStatusChange = async (bookingId: string, newStatus: Booking['status']) => {
-  try {
-    await dispatch(updateBookingStatus({ bookingId, status: newStatus }));
-    if (user?.id) {
-      console.log(user.id,"user?.id......")
-      dispatch(fetchTurfs({ ownerId: user.id }));
+  const handleStatusChange = async (bookingId: string, newStatus: Booking['status']) => {
+    try {
+      await dispatch(updateBookingStatus({ bookingId, status: newStatus }));
+      if (user?.id) {
+        await dispatch(fetchTurfs({
+          ownerId: user.id,
+          page: currentPage,
+          limit
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to update booking status:", error);
+      toast.error("Failed to update booking status");
     }
-    console.log(`Updating booking ${bookingId} to status ${newStatus}`);
-  } catch (error) {
-    console.error("Failed to update booking status:", error);
-  }
-};
+  };
 
   if (loading) {
     return (
@@ -96,7 +108,7 @@ const BookingsPage = () => {
   }
 
   return (
-     <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -107,11 +119,11 @@ const BookingsPage = () => {
           </div>
           <div className="bg-primary/10 px-4 py-2 rounded-lg">
             <span className="text-sm font-medium text-primary">
+
               {sortedBookings.length} {sortedBookings.length === 1 ? "booking" : "bookings"} found
             </span>
           </div>
         </div>
-
 
         <BookingFilters
           searchTerm={searchTerm}
@@ -128,9 +140,11 @@ const BookingsPage = () => {
         <Card className="border shadow-sm rounded-xl overflow-hidden">
           <CardHeader className="bg-gray-50 border-b">
             <CardTitle className="text-lg font-semibold text-gray-800">Recent Bookings</CardTitle>
+
           </CardHeader>
           <CardContent className="p-0">
             {sortedBookings.length === 0 ? (
+
               <div className="text-center py-16">
                 <div className="mx-auto flex flex-col items-center justify-center">
                   <svg
@@ -191,7 +205,7 @@ const BookingsPage = () => {
                         key={booking._id}
                         booking={booking}
                         expanded={expandedBooking === booking._id}
-                        onToggleExpand={() => 
+                        onToggleExpand={() =>
                           setExpandedBooking(expandedBooking === booking._id ? null : booking._id)
                         }
                         onStatusChange={(status) => handleStatusChange(booking._id, status)}
@@ -204,10 +218,29 @@ const BookingsPage = () => {
           </CardContent>
         </Card>
 
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4">
+            <Button
+              variant="outline"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            >
+              Previous
+            </Button>
+            <span className="text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage(prev => prev + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
-
 export default BookingsPage;
-

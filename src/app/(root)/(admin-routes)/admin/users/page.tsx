@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { fetchAllUser } from "@/redux/actions/admin/userActions";
 import UserList from "@/components/admin/userList";
 import UserFilter from "@/components/admin/ui/userFilter";

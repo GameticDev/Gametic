@@ -1,6 +1,6 @@
 "use client";
 import { fetchAllVenues } from "@/redux/actions/admin/venuesAction";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import {
   ArrowUpDown,
   Ban,
