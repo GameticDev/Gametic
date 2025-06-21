@@ -4,7 +4,7 @@ import {
   deleteUser,
   fetchAllUser,
 } from "@/redux/actions/admin/userActions";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import {
   Ban,
   ChevronLeft,

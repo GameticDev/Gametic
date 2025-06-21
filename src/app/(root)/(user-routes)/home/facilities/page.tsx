@@ -28,6 +28,13 @@ export type Turf = {
   };
 };
 
+type FetchParams = {
+  page: number;
+  limit: number;
+  category?: string;
+  search?: string;
+};
+
 const categories = ["football", "cricket", "tennis", "basketball"];
 
 const TurfList = () => {

@@ -13,11 +13,9 @@ interface BookingFiltersProps {
   statusFilter: string;
   dateFilter: Date | null;
   turfFilter: string;
-//   turfs: any[];
-turfs: TurfData[];
+  turfs: TurfData[];
   onSearchChange: (value: string) => void;
-//   onStatusChange: (value: string) => void;
-onStatusChange: (value: Booking["status"] | "all") => void;
+  onStatusChange: (value: Booking["status"] | "all") => void;
 
   onDateChange: (date: Date | null) => void;
   onTurfChange: (value: string) => void;
@@ -42,7 +40,7 @@ export const BookingFilters = ({
     <Card>
       <CardContent className="pt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Search Input */}
+
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
@@ -53,9 +51,8 @@ export const BookingFilters = ({
             />
           </div>
 
-          {/* Status Filter */}
+
           <Select value={statusFilter} onValueChange={onStatusChange}>
-            {/* <SelectTrigger className="w-full"> */}
             <SelectTrigger className="w-full bg-white border border-gray-300 shadow-sm rounded-md">
 
               <div className="flex items-center">
@@ -72,8 +69,7 @@ export const BookingFilters = ({
             </SelectContent>
           </Select>
 
-          {/* Date Filter */}
-                    <div className="relative">
+          <div className="relative">
             <DatePicker
               selected={dateFilter || undefined}
               onChange={handleDateChange}
@@ -92,10 +88,7 @@ export const BookingFilters = ({
             />
           </div>
 
-
-          {/* Turf Filter */}
           <Select value={turfFilter} onValueChange={onTurfChange}>
-            {/* <SelectTrigger className="w-full"> */}
             <SelectTrigger className="w-full bg-white border border-gray-300 shadow-sm rounded-md">
 
               <div className="flex items-center">

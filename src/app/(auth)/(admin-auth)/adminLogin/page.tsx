@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { loginAdmin } from "@/redux/actions/admin/auth";
 
 

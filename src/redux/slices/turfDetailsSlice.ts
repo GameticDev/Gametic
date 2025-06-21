@@ -1,9 +1,6 @@
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TurfData } from '@/types/turf';
 import { fetchTurfById } from '../actions/turfActions';
-
-
 
 interface TurfDetailsState {
   selectedTurf: TurfData | null;
