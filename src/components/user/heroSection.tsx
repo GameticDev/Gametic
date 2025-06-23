@@ -64,7 +64,7 @@ const HeroSection = () => {
 <CircularText
   text="WELCOME TO GAMETIC "
   spinDuration={10}
-  onHover="pause" // Options: slowDown | speedUp | pause | goBonkers
+  onHover="goBonkers" // Options: slowDown | speedUp | pause | goBonkers
 />
 
           </div>
