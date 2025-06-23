@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { loginUser } from "@/redux/actions/authantication/authanticationAction";
 // import { toast } from "react-toastify";
 
@@ -122,6 +122,7 @@ const LoginForm = () => {
     console.log(isSubmitting,"asdfghj");
 
     try {
+      
       const res = await dispatch(loginUser(data)).unwrap();
 
       // console.log(res.message ,"res");
@@ -134,6 +135,7 @@ const LoginForm = () => {
         
         route.push("/home");
       } else {
+          console.log("Redirecting to /owner");
         route.push("/owner");
       }
     } catch (err: unknown) {

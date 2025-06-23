@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -19,11 +18,16 @@ interface AddTurfFormProps {
   turfToEdit?: TurfFormInputs | null;
 }
 
-  const DEFAULT_AVAILABILITY: Availability = {
+const DEFAULT_AVAILABILITY: Availability = {
+  regular: {
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     startTime: '06:00',
     endTime: '20:00',
-  };
+    unavailableSlots: [],
+  },
+  exceptions: [],
+  isUnderMaintenance: false,
+};
 
 const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
   console.log("Turf data passed to AddTurfForm:", turfToEdit);
@@ -33,6 +37,8 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
   const [step, setStep] = useState(1);
   const [previewImages, setPreviewImages] = useState<(string | File)[]>([]);
   const [existingImages, setExistingImages] = useState<(string | File)[]>([]);
+
+  const [locations, setLocations] = useState<{ _id: string; name: string; state: string }[]>([]);
 
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,7 +50,7 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
     reset,
     setValue,
     control,
-    // watch,
+    watch,
     trigger,
   } = useForm<TurfFormInputs>({
     mode: 'onChange',
@@ -54,6 +60,24 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
     },
   });
 
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/locations`);
+        const data = await response.json();
+        console.log("Fetched locations,,,,:", data);
+        setLocations(data);
+      } catch (error) {
+        console.error('Error fetching locations:', error);
+        toast.error('Failed to load locations');
+      }
+    };
+
+    fetchLocations();
+  }, []);
+
+
   useEffect(() => {
     if (turfToEdit) {
       console.log('turfToEdit.location:', turfToEdit.location);
@@ -61,10 +85,11 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
     }
   }, [turfToEdit]);
 
+
   useEffect(() => {
     if (turfToEdit) {
       console.log('turfToEdit:', turfToEdit);
-    
+
       const fields: (keyof TurfFormInputs)[] = [
         'name',
         'city',
@@ -81,7 +106,6 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
         setValue(field, value);
       });
 
-      // Handle availability
       let availability: Availability;
       if (typeof turfToEdit.availability === 'string') {
         try {
@@ -95,13 +119,12 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
       }
       setValue('availability', availability);
 
-      // Handle images
+
       if (turfToEdit.images && Array.isArray(turfToEdit.images)) {
         setExistingImages(turfToEdit.images);
         setPreviewImages(turfToEdit.images);
       }
     } else {
-      // Reset form for new turf
       reset({
         availability: DEFAULT_AVAILABILITY,
         images: [],
@@ -116,6 +139,11 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
     const newFiles = Array.from(e.target.files);
     const newPreviewUrls = newFiles.map((file) => URL.createObjectURL(file));
 
+    if (files.length + newFiles.length > 5) {
+      toast.error('You can upload a maximum of 5 images.');
+      return;
+    }
+
     setPreviewImages((prev) => [...prev, ...newPreviewUrls]);
     setFiles((prev) => [...prev, ...newFiles]);
     setValue('images', [...files, ...newFiles]);
@@ -125,12 +153,12 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
     const isExistingImage = index < existingImages.length;
 
     if (isExistingImage) {
-      // Remove from existing images
+
       const updatedExisting = [...existingImages];
       updatedExisting.splice(index, 1);
       setExistingImages(updatedExisting);
     } else {
-      // Remove from new files
+
       const adjustedIndex = index - existingImages.length;
       const updatedFiles = [...files];
       updatedFiles.splice(adjustedIndex, 1);
@@ -138,55 +166,47 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
       setValue('images', updatedFiles);
     }
 
-    // Remove from preview
     const updatedPreview = [...previewImages];
     updatedPreview.splice(index, 1);
     setPreviewImages(updatedPreview);
+
+    if (updatedPreview.length === 0) {
+      toast.warn('At least one image is required');
+    }
   };
 
   const nextStep = async () => {
-  const isValid = await validateCurrentStep();
-  if (!isValid) return;
+    const isValid = await validateCurrentStep();
+    if (!isValid) return;
 
-  // For all cases, just move to next step
-  // We'll handle image validation only during final submission
-  setStep((prev) => Math.min(prev + 1, 4));
-};
+    setStep((prev) => Math.min(prev + 1, 4));
+  };
 
   const onSubmit: SubmitHandler<TurfFormInputs> = async (data) => {
-  // Only validate images on final submission
-  if (!turfToEdit && files.length === 0 && existingImages.length === 0) {
-    // toast.error('Please upload at least one image');
-    return;
-  }
 
-  if (turfToEdit && files.length === 0 && existingImages.length === 0) {
-    toast.error('Please keep or upload at least one image');
-    return;
-  }
+    if (!turfToEdit && files.length === 0 && existingImages.length === 0) {
+      // toast.error('Please upload at least one image');
+      return;
+    }
+
+    if (turfToEdit && files.length === 0 && existingImages.length === 0) {
+      toast.error('Please keep or upload at least one image');
+      return;
+    }
 
     setIsSubmitting(true);
-    // if (!user?._id) {
-    //   toast.error('User information is missing - please login again');
-    //   return;
-    // }
+    toast.info(turfToEdit ? 'Updating turf...' : 'Adding turf...');
 
-      if (!user?.id) {
+
+    if (!user?.id) {
       toast.error('User information is missing - please login again');
       setIsSubmitting(false);
       return;
     }
 
-    // const id = "682ec3f4c961fa99b0555143";
-    // if (!id) {
-    //   toast.error('User information is missing');
-    //   return;
-    // }
-
     try {
       const formData = new FormData();
       formData.append('ownerId', user.id);
-      // formData.append('ownerId', id);
       formData.append('name', data.name);
       formData.append('city', data.city);
       formData.append('area', data.area);
@@ -196,20 +216,30 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
       formData.append('hourlyRate', data.hourlyRate.toString());
       formData.append('status', 'active');
 
-      const availability = data.availability || DEFAULT_AVAILABILITY;
+      const availability = {
+        regular: {
+          days: data.availability.regular.days,
+          startTime: data.availability.regular.startTime,
+          endTime: data.availability.regular.endTime,
+          unavailableSlots: data.availability.regular.unavailableSlots || [],
+        },
+        exceptions: data.availability.exceptions || [],
+        isUnderMaintenance: data.availability.isUnderMaintenance || false,
+        maintenanceMessage: data.availability.maintenanceMessage || '',
+      };
       formData.append('availability', JSON.stringify(availability));
 
-      // Add new files
+
       files.forEach((file) => {
         formData.append('images', file);
       });
 
-      // For editing, include existing images that haven't been removed
+
       if (turfToEdit && existingImages.length > 0) {
         existingImages.forEach((image) => {
-            if (typeof image === 'string') {
-          formData.append('existingImages', image);
-            }
+          if (typeof image === 'string') {
+            formData.append('existingImages', image);
+          }
         });
       }
 
@@ -222,39 +252,28 @@ const AddTurfForm: React.FC<AddTurfFormProps> = ({ onClose, turfToEdit }) => {
       }
       onClose();
 
-    }catch (error) {
-    if (error instanceof Error) {
-    toast.error(error.message || 'Failed to save turf');
-  } else {
-    toast.error('Failed to save turf');
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to save turf');
+      } else {
+        toast.error('Failed to save turf');
+      }
+    }
   }
-}
-  }
-
-//   } catch (error: any) {
-  //     console.error('Submission error:', error);
-  //     toast.error(error.message || 'Failed to save turf');
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
 
   const prevStep = () => {
     setStep((prev) => Math.max(prev - 1, 1));
   };
-
-  // const validateCurrentStep = async () => {
-    // let fieldsToValidate: string[] = [];
   const validateCurrentStep = async (): Promise<boolean> => {
-// let fieldsToValidate: string[] = [];
-type TurfFormField =
-  | keyof TurfFormInputs
-  | 'availability.days'
-  | 'availability.startTime'
-  | 'availability.endTime';
 
-let fieldsToValidate: TurfFormField[] = [];
+    type TurfFormField =
+      | keyof TurfFormInputs
+      | `availability.${keyof Availability}`
+      | `availability.regular.${keyof Availability['regular']}`
+      | 'availability.maintenanceMessage';
+
+    let fieldsToValidate: TurfFormField[] = [];
+
 
     switch (step) {
       case 1:
@@ -264,7 +283,14 @@ let fieldsToValidate: TurfFormField[] = [];
         fieldsToValidate = ['turfType', 'size', 'hourlyRate'];
         break;
       case 3:
-        fieldsToValidate = ['availability.days', 'availability.startTime', 'availability.endTime'];
+        fieldsToValidate = [
+          'availability.regular.days',
+          'availability.regular.startTime',
+          'availability.regular.endTime'
+        ];
+        if (watch('availability.isUnderMaintenance')) {
+          fieldsToValidate.push('availability.maintenanceMessage');
+        }
 
         break;
       case 4:
@@ -273,24 +299,21 @@ let fieldsToValidate: TurfFormField[] = [];
         return true;
     }
 
-  try {
-    // const isValid = await trigger(fieldsToValidate as any);
-    const isValid = await trigger(fieldsToValidate);
+    try {
+      const isValid = await trigger(fieldsToValidate);
 
-
-
-    if (!isValid) {
-      toast.error('Please fill all required fields correctly');
+      if (!isValid) {
+        toast.error('Please fill all required fields correctly');
+      }
+      return isValid;
+    } catch (error) {
+      console.error('Validation error:', error);
+      toast.error('Validation failed');
+      return false;
     }
-    return isValid;
-  } catch (error) {
-    console.error('Validation error:', error);
-    toast.error('Validation failed');
-    return false;
-  }
-};
+  };
 
- return (
+  return (
     <div className="relative bg-white rounded-lg p-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold">
@@ -324,8 +347,10 @@ let fieldsToValidate: TurfFormField[] = [];
           <TurfBasicInfo
             register={register}
             errors={errors}
-            // control={control}
-             />
+            control={control}
+            locations={locations}
+            setValue={setValue}
+          />
         )}
 
         {step === 2 && (
@@ -339,7 +364,10 @@ let fieldsToValidate: TurfFormField[] = [];
           <TurfAvailability
             register={register}
             errors={errors}
-            control={control} />
+            control={control}
+            setValue={setValue}
+            watch={watch}
+          />
         )}
 
         {step === 4 && (

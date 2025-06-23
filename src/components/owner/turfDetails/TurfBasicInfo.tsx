@@ -60,7 +60,7 @@ const TurfBasicInfo: React.FC<TurfBasicInfoProps> = ({
         </div>
       </div>
 
-      {/* Pricing */}
+     
       <div className="bg-gray-50 p-4 rounded-lg mb-6">
         <h3 className="text-lg font-semibold mb-2 text-gray-900">Pricing</h3>
         <div className="flex items-baseline gap-2">
@@ -72,7 +72,7 @@ const TurfBasicInfo: React.FC<TurfBasicInfoProps> = ({
         </div>
       </div>
 
-      {/* Turf Details */}
+
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-2 text-gray-900">Turf Details</h3>
         <ul className="space-y-2">
@@ -95,3 +95,4 @@ const TurfBasicInfo: React.FC<TurfBasicInfoProps> = ({
 };
 
 export default TurfBasicInfo;
+

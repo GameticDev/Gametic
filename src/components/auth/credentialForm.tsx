@@ -1,6 +1,6 @@
 "use client";
 import { registerUser } from "@/redux/actions/authantication/authanticationAction";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 

@@ -3,9 +3,8 @@ import { motion } from "framer-motion";
 import { Dispatch, SetStateAction, useState } from "react";
 import { IconType } from "react-icons";
 import { useRouter } from "next/navigation";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { logout } from "@/redux/actions/authantication/authanticationAction";
-// Update this path
 
 
 const StaggeredDropDown = () => {
@@ -23,7 +22,7 @@ const StaggeredDropDown = () => {
     }
   };
 
-
+ 
   return (
     <div className="flex items-center justify-center">
       <motion.div animate={open ? "open" : "closed"} className="relative">

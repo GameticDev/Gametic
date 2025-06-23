@@ -1,5 +1,3 @@
-
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -31,7 +29,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 Avatar.displayName = "Avatar";
 
 interface AvatarImageProps extends React.ComponentPropsWithoutRef<typeof Image> {
-  alt: string; // Make alt text required
+  alt: string;
 }
 
 const AvatarImage = React.forwardRef<HTMLImageElement, AvatarImageProps>(

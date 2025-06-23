@@ -1,14 +1,11 @@
-
 import { TurfFormInputs } from '@/types/turf';
 import React from 'react';
 import { UseFormRegister, FieldError } from 'react-hook-form';
 
 interface FileUploadProps {
   label: string;
-  // name: string;
-  // register: UseFormRegister<any>;
-   name: keyof TurfFormInputs;
-    register: UseFormRegister<TurfFormInputs>;
+  name: keyof TurfFormInputs;
+  register: UseFormRegister<TurfFormInputs>;
   error?: FieldError;
   required?: boolean;
   multiple?: boolean;
@@ -35,27 +32,18 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         multiple={multiple}
         {...register(name, {
           required: required && `${label} is required`,
-          // validate: {
-          //   fileType: (files: FileList) => {
-          //     if (!files || files.length === 0) return true;
-          //     return Array.from(files).every(file => file.type.startsWith('image/')) || 
-          //       'Only image files are allowed';
-          //   },
-          // },
-     validate: {
-  fileType: (files) => {
-    if (!files) return true;
-    if (files instanceof FileList) {
-      return (
-        Array.from(files).every(file => file.type.startsWith('image/')) ||
-        'Only image files are allowed'
-      );
-    }
-    return 'Invalid file input';
-  },
-},
-
-
+          validate: {
+            fileType: (files) => {
+              if (!files) return true;
+              if (files instanceof FileList) {
+                return (
+                  Array.from(files).every(file => file.type.startsWith('image/')) ||
+                  'Only image files are allowed'
+                );
+              }
+              return 'Invalid file input';
+            },
+          },
         })}
         className={`w-full px-3 py-2 border rounded-md ${error ? 'border-red-500' : 'border-gray-300'}`}
       />

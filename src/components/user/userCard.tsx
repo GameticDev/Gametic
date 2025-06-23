@@ -43,6 +43,7 @@ const ActivityCard: React.FC<Match> = ({
   paymentPerPerson,
 }) => {
   const matchDate = formatDate(date);
+  console.log(turfId)
   return (
     <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 p-5 w-full max-w-sm relative overflow-hidden group">
       {/* Background Pattern */}
@@ -113,9 +114,9 @@ const ActivityCard: React.FC<Match> = ({
             <FaMapMarkerAlt className="text-white text-xs" />
           </div>
           <div>
-            <span className="font-semibold truncate block">{turfId.name}</span>
+            <span className="font-semibold truncate block">{turfId?.name}</span>
             <span className="text-xs text-gray-500">
-              {turfId.city},{turfId.area},{turfId.location} away
+              {turfId?.city},{turfId?.area},{turfId?.location} away
             </span>
           </div>
         </div>

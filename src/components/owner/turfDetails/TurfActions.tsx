@@ -5,13 +5,13 @@ interface TurfActionsProps {
   turfId: string;
 }
 
-const TurfActions: React.FC<TurfActionsProps> = ({ turfId }) => {
+const TurfActions: React.FC<TurfActionsProps> = ({ }) => {
   const router = useRouter();
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 mt-6">
       <button
-        onClick={() => router.push(`/owner/edit-turf/${turfId}`)}
+         onClick={() => router.push(`/owner`)}
         className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition flex-1 flex items-center justify-center gap-2"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -19,8 +19,8 @@ const TurfActions: React.FC<TurfActionsProps> = ({ turfId }) => {
         </svg>
         Edit Turf
       </button>
-      <button
-        onClick={() => router.push(`/owner/bookings/${turfId}`)}
+      <button 
+        onClick={() => router.push(`/owner/bookings`)}
         className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md transition flex-1 flex items-center justify-center gap-2"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

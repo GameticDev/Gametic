@@ -20,14 +20,14 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const getPageNumbers = () => {
     const pages = [];
-    const maxVisiblePages = 5; // Show up to 5 page numbers
+    const maxVisiblePages = 5; 
 
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Always show first page
+     
       pages.push(1);
 
       let start = Math.max(2, currentPage - 1);
@@ -51,7 +51,7 @@ const Pagination: React.FC<PaginationProps> = ({
         pages.push('...');
       }
 
-      // Always show last page
+     
       pages.push(totalPages);
     }
 

@@ -8,6 +8,8 @@ import adminVenueReducer from "./slices/admin/venueSlice";
 import turfDetailsReducer from "./slices/turfDetailsSlice";
 import hostReducer from "./slices/user/hostSlice";
 import userVenueReducer from "./slices/user/venueSlice";
+import userReducer from "./slices/user/userSlice";
+import locationReducer from "./slices/user/locationSlice";
 import {
   persistStore,
   FLUSH,
@@ -17,6 +19,7 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
+
 
 export const store = configureStore({
   reducer: {
@@ -29,6 +32,8 @@ export const store = configureStore({
     host: hostReducer,
     turfDetails: turfDetailsReducer,
     userVeune: userVenueReducer,
+    user: userReducer,
+    location: locationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

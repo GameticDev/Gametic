@@ -18,37 +18,59 @@ const TurfImagesSlider: React.FC<TurfImagesSliderProps> = ({ images }) => {
     },
     loop: true,
     mode: 'free-snap',
-    slides: { perView: 1 },
+    slides: {
+      perView: 1,
+      origin: 'center'
+    },
   });
 
-  return (
-    <div className="lg:w-1/2">
-      <div className="relative group">
-        <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden shadow-lg">
+  // return (
+  //   <div className="lg:w-1/2">
+  //     <div className="relative group">
+  //       <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden shadow-lg">
+  //         {images.length > 0 ? (
+  //           images.map((img, idx) => (
+  //             <div key={idx} className="keen-slider__slide flex items-center justify-center">
+  //               <div className="w-full h-96 sm:h-[500px] relative">
+  //                 <Image
+  //                   src={img}
+  //                   alt={`Turf Image ${idx + 1}`}
+  //                   fill
+  //                   className="object-cover"
+  //                   priority={idx === 0}
+  //                   sizes="(max-width: 768px) 100vw, 50vw"
+  //                 />
+  //               </div>
+  //             </div>
+  //           ))
+  //         ) : (
+  //           <div className="keen-slider__slide bg-gray-200 flex items-center justify-center h-96 sm:h-[500px]">
+  //             <span className="text-gray-500 text-lg">No images available</span>
+  //           </div>
+  //         )}
+  //       </div>
+
+   return (
+    <div className="h-full flex flex-col">
+      <div className="relative group flex-grow">
+        <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden h-full">
           {images.length > 0 ? (
             images.map((img, idx) => (
-              <div key={idx} className="keen-slider__slide">
-                {/* <img
-                  src={img}
-                  alt={`Turf Image ${idx + 1}`}
-                  className="w-full h-96 sm:h-[500px] object-cover"
-                  loading="lazy"
-                /> */}
-                <Image
-                  src={img}
-                  alt={`Turf Image ${idx + 1}`}
-                  width={800}
-                  height={500}
-                  className="w-full h-96 sm:h-[500px] object-cover"
-                  style={{ objectFit: 'cover' }}
-                  loading="lazy"
-                />
-
-
+              <div key={idx} className="keen-slider__slide h-full">
+                <div className="w-full h-full relative">
+                  <Image
+                    src={img}
+                    alt={`Turf Image ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    priority={idx === 0}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               </div>
             ))
           ) : (
-            <div className="keen-slider__slide bg-gray-200 flex items-center justify-center h-96 sm:h-[500px]">
+            <div className="keen-slider__slide bg-gray-200 flex items-center justify-center h-full">
               <span className="text-gray-500 text-lg">No images available</span>
             </div>
           )}
@@ -59,12 +81,14 @@ const TurfImagesSlider: React.FC<TurfImagesSliderProps> = ({ images }) => {
             <button
               onClick={() => slider.current?.prev()}
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition opacity-0 group-hover:opacity-100"
+              aria-label="Previous image"
             >
               <FaChevronLeft />
             </button>
             <button
               onClick={() => slider.current?.next()}
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition opacity-0 group-hover:opacity-100"
+              aria-label="Next image"
             >
               <FaChevronRight />
             </button>
@@ -78,21 +102,19 @@ const TurfImagesSlider: React.FC<TurfImagesSliderProps> = ({ images }) => {
             <button
               key={idx}
               onClick={() => slider.current?.moveToIdx(idx)}
-              className={`w-16 h-16 rounded-md overflow-hidden border-2 ${currentSlide === idx ? 'border-blue-500' : 'border-transparent'}`}
+              className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition ${currentSlide === idx ? 'border-blue-500 scale-105' : 'border-transparent'
+                }`}
+              aria-label={`View image ${idx + 1}`}
             >
-              {/* <img
-                src={img}
-                alt={`Thumbnail ${idx + 1}`}
-                className="w-full h-full object-cover"
-              /> */}
-              <Image
-                src={img}
-                alt={`Thumbnail ${idx + 1}`}
-                width={64}
-                height={64}
-                className="w-full h-full object-cover"
-              />
-
+              <div className="w-full h-full relative">
+                <Image
+                  src={img}
+                  alt={`Thumbnail ${idx + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="64px"
+                />
+              </div>
             </button>
           ))}
         </div>

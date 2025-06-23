@@ -6,7 +6,7 @@ import EmailForm from "./regEmailForm";
 import CredentialsForm from "./credentialForm";
 
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { googleLogin } from "@/redux/actions/authantication/authanticationAction";
 import { useRouter } from "next/navigation";
 
