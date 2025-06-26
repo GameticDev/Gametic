@@ -10,6 +10,7 @@ import hostReducer from "./slices/user/hostSlice";
 import userVenueReducer from "./slices/user/venueSlice";
 import userReducer from "./slices/user/userSlice";
 import locationReducer from "./slices/user/locationSlice";
+import tournamentReducer from "./slices/user/tournamentSlice";
 import {
   persistStore,
   FLUSH,
@@ -19,7 +20,6 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +34,7 @@ export const store = configureStore({
     userVeune: userVenueReducer,
     user: userReducer,
     location: locationReducer,
+    tournament: tournamentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

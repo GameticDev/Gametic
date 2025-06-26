@@ -1,5 +1,4 @@
 "use client";
-
 import {
   fetchAllMatches,
   fetchVenueBySport,
@@ -14,6 +13,7 @@ import type {
   RazorpayError,
   RazorpayOptions,
 } from "@/types/razorpay";
+import { toast } from "sonner";
 
 interface HostModalProp {
   isOpen: boolean;
@@ -369,7 +369,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
     for (const field of requiredFields) {
       if (!formData[field]) {
-        alert(
+        toast(
           `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}`
         );
         return false;
@@ -380,7 +380,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
       parseInt(formData.maxPlayers) < 1 ||
       parseInt(formData.maxPlayers) > 22
     ) {
-      alert("Max players should be between 1 and 22");
+      toast("Max players should be between 1 and 22");
       return false;
     }
 
@@ -393,7 +393,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
     }
 
     if (!window.Razorpay) {
-      alert("Payment gateway is not loaded. Please try again.");
+      toast("Payment gateway is not loaded. Please try again.");
       return;
     }
 
@@ -410,7 +410,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
         description: `Hosting fee for ${formData.title}`,
         order_id: orderData.id,
         handler: async (response: RazorpayResponse) => {
-          alert("Payment successful! Your match has been hosted successfully.");
+          toast("Payment successful! Your match has been hosted successfully.");
           console.log(response);
           const hostData = {
             title: formData.title,
@@ -423,7 +423,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
             paymentPerPerson: Number(formData.paymentPerPerson),
           };
           await dispatch(hostGame({ hostData }));
-          dispatch(fetchAllMatches({ page: 1, limit: 12, search: "" }));
+          dispatch(fetchAllMatches({ page: 1, limit: 12, search: "" ,location:"",sport:""}));
 
           setFormData({
             title: "",
@@ -463,7 +463,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
 
       const razorpay = new window.Razorpay(options);
       razorpay.on("payment.failed", (response: { error: RazorpayError }) => {
-        alert(
+        toast(
           `Payment failed: ${response.error.description}. Please try again.`
         );
         setIsProcessingPayment(false);
@@ -471,7 +471,7 @@ const HostModal = ({ isOpen, onClose }: HostModalProp) => {
       razorpay.open();
     } catch (error) {
       console.error("Error during payment process:", error);
-      alert("Failed to initiate payment. Please try again.");
+      toast("Failed to initiate payment. Please try again.");
       setIsProcessingPayment(false);
     }
   };

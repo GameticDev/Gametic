@@ -37,7 +37,7 @@ const VenueCard: React.FC<VenueCardProp> = ({ turf }) => {
               {5.00} ({100})
             </span>
           </div>
-          <span className="text-sm text-gray-500">{turf.availability.startTime}-{turf.availability.endTime}</span>
+          <span className="text-sm text-gray-500">{turf?.availability?.startTime}-{turf?.availability?.endTime}</span>
         </div>
 
         {/* Title */}

@@ -38,7 +38,6 @@ const formatDate = (dateInput: unknown): string => {
   });
 };
 
-// Helper function to get initials from username
 const getInitials = (username: string): string => {
   return username
     .split(' ')
@@ -47,7 +46,6 @@ const getInitials = (username: string): string => {
     .substring(0, 2);
 };
 
-// Helper function to generate consistent background color based on username
 const getPlayerColor = (username: string, isHost: boolean = false): string => {
   if (isHost) return "#00423D";
   
@@ -66,7 +64,6 @@ const SportsMatchPage: React.FC = () => {
     dispatch(fetchMatchById({ matchId }));
   }, [dispatch, matchId]);
 
-  console.log(match);
 
   const highlights: MatchHighlight[] = [
     { id: 1, text: "Professional coaching and skill development sessions" },
@@ -83,11 +80,9 @@ const SportsMatchPage: React.FC = () => {
 
   const matchDate = formatDate(match?.date);
 
-  // Create a list of all players with the host first
   const getAllPlayers = () => {
     const players = [];
     
-    // Add host first
     if (match?.userId?.username) {
       players.push({
         _id: match.userId._id,
@@ -96,7 +91,6 @@ const SportsMatchPage: React.FC = () => {
       });
     }
     
-    // Add joined players (excluding host if they're already in joinedPlayers)
     if (match?.joinedPlayers) {
       const joinedPlayersExcludingHost = match.joinedPlayers.filter(
         player => player._id !== match.userId?._id
@@ -140,7 +134,6 @@ const SportsMatchPage: React.FC = () => {
             endTime={match?.endTime || ""}
           />
 
-          {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left Column - Main Content */}
             <div className="lg:col-span-3 space-y-6">
