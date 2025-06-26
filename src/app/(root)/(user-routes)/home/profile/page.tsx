@@ -10,13 +10,18 @@ import { BsCalendar2Event } from "react-icons/bs";
 import Image from "next/image";
 import { Edit } from "lucide-react";
 import { useAppSelector } from "@/redux/hook";
-
+import EditProfileModal from "@/components/user/editProfileModal"; 
 
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("bookings");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  
   const { user, bookings, hostedMatches, joinedOnlyMatches } = useAppSelector(
     (state) => state.user
   );
+
+  // Handle profile update callback
+
 
   const renderBookings = () => (
     <div className="space-y-3">
@@ -118,9 +123,9 @@ function ProfilePage() {
 
   const renderJoinedMatches = () => (
     <div className="space-y-3">
-      {joinedOnlyMatches === null || joinedOnlyMatches.length < 0 ? (
+      {joinedOnlyMatches === null || joinedOnlyMatches.length <= 0 ? (
         <>
-          <p>no joined mathces</p>
+          <p>no joined matches</p>
         </>
       ) : (
         joinedOnlyMatches.map((match) => (
@@ -184,7 +189,8 @@ function ProfilePage() {
                 style={{ borderColor: "#00423D" }}
               />
               <button
-                className="absolute bottom-0 right-0 p-2 rounded-full text-white"
+                onClick={() => setIsEditModalOpen(true)}
+                className="absolute bottom-0 right-0 p-2 rounded-full text-white hover:opacity-80 transition-opacity"
                 style={{ backgroundColor: "#00423D" }}
               >
                 <Edit className="w-3 h-3" />
@@ -208,7 +214,7 @@ function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <MdPhone className="text-green-700" />
-                  <span>{"+91 00000 00000"}</span>
+                  <span>+91 {user?.phone || "00000 00000"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FaLocationDot className="text-green-700" />
@@ -221,6 +227,7 @@ function ProfilePage() {
             </div>
 
             <button
+              onClick={() => setIsEditModalOpen(true)}
               className="px-6 py-3 text-white font-semibold rounded-lg transition-all hover:opacity-90"
               style={{ backgroundColor: "#00423D" }}
             >
@@ -236,7 +243,7 @@ function ProfilePage() {
               <FaCalendarCheck className="text-3xl text-green-700" />
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
-              {bookings?.length}
+              {bookings?.length || 0}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>
               Total Bookings
@@ -248,7 +255,7 @@ function ProfilePage() {
               <MdSportsScore className="text-3xl text-green-700" />
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
-              {joinedOnlyMatches?.length}
+              {joinedOnlyMatches?.length || 0}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>
               Matches Played
@@ -260,7 +267,7 @@ function ProfilePage() {
               <BiTrophy className="text-3xl text-green-700" />
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
-              {hostedMatches?.length}
+              {hostedMatches?.length || 0}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>
               Matches Hosted
@@ -339,6 +346,13 @@ function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        user={user}
+      />
     </div>
   );
 }

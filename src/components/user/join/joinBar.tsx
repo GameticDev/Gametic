@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { User, Users, DollarSign, UserCheck } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import axiosInstance from "@/utils/axiosInstance";
+import { toast } from "sonner"
 import type {
   RazorpayResponse,
   RazorpayError,
@@ -113,7 +114,7 @@ const JoinBar = ({
       // Load Razorpay script
       const isScriptLoaded = await loadRazorpayScript();
       if (!isScriptLoaded) {
-        alert("Failed to load Razorpay. Please try again.");
+        toast("Failed to load Razorpay. Please try again.");
         return;
       }
 
@@ -140,7 +141,7 @@ const JoinBar = ({
           try {
             await dispatch(joinGame({ matchId }));
             await dispatch(fetchMatchById({ matchId }));
-            alert("Joined successfully");
+            toast("joined Successfully")
             if (onPaymentSuccess) {
               onPaymentSuccess({
                 ...response,
@@ -150,7 +151,7 @@ const JoinBar = ({
             }
           } catch (error) {
             console.error("Error joining match after payment:", error);
-            alert(
+            toast(
               "Payment successful, but failed to join match. Please contact support."
             );
           }
@@ -158,7 +159,7 @@ const JoinBar = ({
         modal: {
           ondismiss: () => {
             console.log("Payment cancelled by user");
-            alert("Payment was cancelled. You have not joined the match.");
+            toast("Payment was cancelled. You have not joined the match.");
           },
         },
       };
@@ -172,7 +173,7 @@ const JoinBar = ({
           if (onPaymentError) {
             onPaymentError(response.error);
           } else {
-            alert(`Payment failed: ${response.error.description}`);
+            toast(`Payment failed: ${response.error.description}`);
           }
         }
       );
@@ -188,7 +189,7 @@ const JoinBar = ({
       if (onPaymentError) {
         onPaymentError(errorObj);
       } else {
-        alert(`Payment initialization failed: ${errorObj.message}`);
+        toast(`Payment initialization failed: ${errorObj.message}`);
       }
     }
   }, [
@@ -204,7 +205,7 @@ const JoinBar = ({
 
   const handleJoinClick = useCallback(() => {
     if (!user) {
-      alert("Please login to join the match");
+      toast("Please login to join the match");
       return;
     }
 
@@ -213,7 +214,7 @@ const JoinBar = ({
     }
 
     if (joinedPlayers && maxPlayers && joinedPlayers.length >= maxPlayers) {
-      alert("Match is full");
+      toast("Match is full");
       return;
     }
 

@@ -64,7 +64,6 @@ const SportsMatchPage: React.FC = () => {
     dispatch(fetchMatchById({ matchId }));
   }, [dispatch, matchId]);
 
-  console.log(match);
 
   const highlights: MatchHighlight[] = [
     { id: 1, text: "Professional coaching and skill development sessions" },

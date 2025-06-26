@@ -1,114 +1,134 @@
 "use client";
-import { useState } from "react";
-import {
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaTicketAlt,
-  FaTrophy,
-  FaUsers,
-} from "react-icons/fa";
+import { FaCalendarAlt, FaMapMarkerAlt, FaTrophy } from "react-icons/fa";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import AddTeamModal from "./AddTeamForm";
-import { Tournament } from "@/app/(root)/(user-routes)/home/tournament/page";
+import { TournamentDetail } from "@/app/(root)/(user-routes)/home/tournament/[id]/page";
 
 interface Props {
-  data: Tournament;
+  data: TournamentDetail;
 }
 
 export default function TournamentCard({ data }: Props) {
   const router = useRouter();
-  const [showModal, setShowModal] = useState(false);
-  const [joinedTeamsCount, setJoinedTeamsCount] = useState(data.joinedTeams);
 
   const handleCardClick = () => {
     router.push(`/home/tournament/${data._id}`);
   };
 
-  const handleTeamJoined = () => {
-    setJoinedTeamsCount((prev: number) => prev + 1);
-  };
-
-  const openModal = () => {
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
   return (
     <div
-      className="w-[277px] rounded-xl overflow-hidden shadow-md border border-gray-200 bg-white relative"
+      className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 w-full max-w-sm relative overflow-hidden group cursor-pointer"
       onClick={handleCardClick}
     >
-      <Image
-        src={data.image}
-        alt="Stadium"
-        width={20}
-        height={20}
-        className=" h-[100px] w-[277px] object-cover rounded"
-        sizes="100vw"
-      />
-      <div className="flex justify-center -mt-6">
-        <div className="bg-green-800 rounded-full p-4 border-2 border-gray-200">
-          <button
-            type="button"
-            onClick={openModal}
-            className="text-white font-semibold"
-          >
-            Join
-          </button>
-        </div>
+      {/* Background Pattern */}
+      <div className="absolute top-0 right-0 w-32 h-32 opacity-5 transform rotate-12 translate-x-8 -translate-y-8">
+        <FaTrophy className="w-full h-full" style={{ color: "#415C41" }} />
       </div>
 
-      <div className="px-4 pb-4 pt-2 text-center">
-        <span className="text-sm text-white bg-green-400 rounded-full px-2 py-0.5 font-medium cursor-pointer">
-          {data.status}
-        </span>
-
-        <h2 className="text-xl font-semibold mt-1">{data.title}</h2>
-        <p className="text-sm text-gray-500">{data.subtitle}</p>
-
-        <div className="mt-3 flex items-center justify-center text-sm text-gray-600">
-          <FaMapMarkerAlt className="mr-1 text-black" />
-          <span>
-            {data.location} {data.distance}
-          </span>
-        </div>
-
-        <div className="mt-1 flex items-center justify-center gap-2 text-sm text-gray-600">
-          <FaUsers />
-          <span>{joinedTeamsCount}</span>
-        </div>
-
-        <div className="mt-1 flex items-center justify-center gap-2 text-sm text-gray-600">
-          <FaCalendarAlt />
-          <span>
-            {moment(data.dateFrom).format("MMM D, YYYY")} -{" "}
-            {moment(data.dateTo).format("MMM D, YYYY")}
-          </span>
-        </div>
-
-        <div className="mt-3 flex justify-between text-sm font-medium">
-          <div className="flex items-center gap-1">
-            <FaTicketAlt />
-            <span>{data.entryFee}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <FaTrophy />
-            <span>{data.prizePool}</span>
-          </div>
-        </div>
-      </div>
-      {showModal && (
-        <AddTeamModal
-          tournamentId={data._id}
-          onTeamJoined={handleTeamJoined}
-          onClose={closeModal}
+      {/* Tournament Image */}
+      <div className="relative w-full h-32 mb-5">
+        <Image
+          src={data.image}
+          alt="Tournament image"
+          fill
+          className="object-cover rounded-t-3xl"
         />
-      )}
+      </div>
+
+      <div className="p-5">
+        {/* Header Section */}
+        <div className="flex items-center mb-2 relative z-10">
+          <div className="flex items-center gap-3">
+            <div>
+              <p className="text-xs text-gray-500 font-medium">
+                <span className="font-bold">{data.sport.toUpperCase()}</span>{" "}
+                Tournament
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Entry Fee Section */}
+        <div className="mb-4">
+          <div className="flex items-baseline gap-2">
+            <span
+              className="text-2xl font-extrabold"
+              style={{ color: "#415C41" }}
+            >
+              ₹{data.entryFee}
+            </span>
+            <span className="text-sm font-medium text-gray-500">/entry</span>
+          </div>
+        </div>
+
+        {/* Tournament Title */}
+        <h3 className="text-xl font-bold text-gray-900 mb-2 leading-tight">
+          {data.title}
+        </h3>
+        {/* <p className="text-sm text-gray-600 mb-4">{data.subtitle}</p> */}
+
+        {/* Divider */}
+        <div className="my-5 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+
+        {/* Location & Date */}
+        <div className="space-y-3 mb-5">
+          <div className="flex items-center text-sm text-gray-700 gap-3">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: "#998869" }}
+            >
+              <FaMapMarkerAlt className="text-white text-xs" />
+            </div>
+            <div>
+              <span className="font-semibold truncate block">
+                {data.turf.name}
+              </span>
+              <span className="text-xs text-gray-500">
+                {data.turf.city},{data.turf.location}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center text-sm text-gray-700 gap-3">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: "#00423D" }}
+            >
+              <FaCalendarAlt className="text-white text-xs" />
+            </div>
+            <div>
+              <span className="font-semibold truncate block">
+                {moment(data.dateFrom).format("MMM D")} -{" "}
+                {moment(data.dateTo).format("MMM D, YYYY")}
+              </span>
+              <span className="text-xs text-gray-500">Tournament Duration</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section with Prize Pool Only */}
+        <div
+          className="rounded-2xl p-4 border-2"
+          style={{
+            backgroundColor: "#f8f9fa",
+            borderColor: "#998869",
+          }}
+        >
+          {/* Prize Pool */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FaTrophy className="text-yellow-500 text-sm" />
+              <span className="text-sm font-medium text-gray-600">
+                Prize Pool
+              </span>
+            </div>
+            <span className="text-lg font-bold" style={{ color: "#415C41" }}>
+              ₹{data.prizePool}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

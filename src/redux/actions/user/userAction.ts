@@ -7,6 +7,7 @@ export interface User {
   email: string;
   picture?: string;
   role: string;
+  phone:string;
   preferredLocation: string;
 }
 
@@ -97,3 +98,6 @@ export const currentUser = createAsyncThunk<
     return rejectWithValue(axiosErrorManager(error));
   }
 });
+
+
+
