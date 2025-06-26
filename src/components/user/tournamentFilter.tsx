@@ -1,64 +1,35 @@
 "use client";
-
-import React, { useEffect, useState, useRef } from "react";
-import debounce from "lodash.debounce";
-import { useRouter } from "next/navigation";
-import VenueCard from "@/components/user/venue/venueCard";
+import React, { useEffect, useRef, useState } from "react";
+import { FaFilter, FaPlus, FaSearch, FaChevronDown } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import { fetchAllVenues } from "@/redux/actions/user/venueAction";
-import { FaChevronDown, FaFilter, FaSearch } from "react-icons/fa";
+import { fetchAllMatches } from "@/redux/actions/user/hostActions";
+import debounce from "lodash.debounce";
+import TournamentModal from "./tournament/tournamentModal";
 
-export type Turf = {
-  _id: string;
-  name: string;
-  city: string;
-  area: string;
-  turfType: string;
-  size: string;
-  hourlyRate: number;
-  images: string[];
-  bookedSlot: {
-    date: string;
-    slots: { start: string; end: string }[];
-  }[];
-  availability: {
-    days: string[];
-    startTime: string;
-    endTime: string;
-    timeSlots: string[] | false;
-  };
-};
-
-const sportTypes = [
-  "football",
-  "cricket",
-  "multi-sport",
-  "swimming",
-  "basketball",
-  "badminton",
-  "tennis",
-  "volleyball",
-  "hockey",
-];
-const TurfList = () => {
-  const dispatch = useAppDispatch();
+const TournamentFilter = () => {
   const [selectedSport, setSelectedSport] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { venues, loading } = useAppSelector((state) => state.userVeune);
+  const [search, setSearch] = useState<string>("");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.user);
+
+  const handleOpen = () => {
+    setIsOpen(false);
+  };
 
   useEffect(() => {
     dispatch(
-      fetchAllVenues({
+      fetchAllMatches({
         page: 1,
         limit: 12,
         search: searchTerm,
-        type: selectedSport,
+        sport: selectedSport,
+        location: user?.preferredLocation || "",
       })
     );
-  }, [dispatch, searchTerm, selectedSport]);
+  }, [dispatch, searchTerm, selectedSport, user]);
 
   const debouncedSearch = useRef(
     debounce((val: string) => {
@@ -67,20 +38,27 @@ const TurfList = () => {
   ).current;
 
   useEffect(() => {
-    debouncedSearch(searchInput);
+    debouncedSearch(search);
     return () => {
       debouncedSearch.cancel();
     };
-  }, [searchInput, debouncedSearch]);
+  }, [debouncedSearch, search]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
-  };
-
+  const sportTypes = [
+    "football",
+    "cricket",
+    "multi-sport",
+    "swimming",
+    "basketball",
+    "badminton",
+    "tennis",
+    "volleyball",
+    "hockey",
+  ];
   return (
-    <div className="max-w-8xl mx-auto pt-16">
-      <div className="flex flex-col justify-between mb-8 gap-5 p-6 bg-white">
-        <div className="flex justify-between w-full">
+    <div className="bg-white shadow-sm p-6 mb-8">
+      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between flex-1">
           <div className="relative flex-1 max-w-md">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <FaSearch className="text-gray-400 text-sm" />
@@ -89,9 +67,10 @@ const TurfList = () => {
               type="text"
               placeholder="Search activities or locations"
               className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all duration-200"
-              onChange={handleSearchChange}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
+          {/* Sport Filter Dropdown */}
           <div className="flex space-x-5">
             <div className="relative">
               <button
@@ -141,48 +120,37 @@ const TurfList = () => {
                 </div>
               )}
             </div>
-          </div>
+          </div>{" "}
         </div>
-        {selectedSport !== "" && (
-          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
-            <span
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-white"
-              style={{ backgroundColor: "#98916D" }}
-            >
-              {selectedSport}
-              <button
-                onClick={() => setSelectedSport("")}
-                className="hover:bg-white hover:bg-opacity-20 rounded-full w-4 h-4 flex items-center justify-center transition-colors duration-200 text-xs"
-              >
-                ×
-              </button>
-            </span>
-          </div>
-        )}
+
+        <button
+          className="ml-4 flex items-center gap-3 px-6 py-3 rounded-lg font-semibold text-white shadow-sm bg-[#415C41]/90"
+          onClick={() => setIsOpen(true)}
+        >
+          <FaPlus className="text-sm" />
+          <span>Create a Tournament</span>
+        </button>
       </div>
 
-      {loading ? (
-        <div className="text-center py-10 text-xl text-[#00524a] font-semibold">
-          Loading turfs...
-        </div>
-      ) : venues.length === 0 ? (
-        <p className="text-center text-[#7a7455] col-span-full italic">
-          No turfs found matching your criteria.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
-          {venues.map((turf) => (
-            <div
-              key={turf._id}
-              onClick={() => router.push(`facilities/${turf._id}/viewdetails/`)}
+      {selectedSport !== "" && (
+        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
+          <span
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-white"
+            style={{ backgroundColor: "#98916D" }}
+          >
+            {selectedSport}
+            <button
+              onClick={() => setSelectedSport("")}
+              className="hover:bg-white hover:bg-opacity-20 rounded-full w-4 h-4 flex items-center justify-center transition-colors duration-200 text-xs"
             >
-              <VenueCard turf={turf} />
-            </div>
-          ))}
+              ×
+            </button>
+          </span>
         </div>
       )}
+      <TournamentModal isOpen={isOpen} onClose={handleOpen} />
     </div>
   );
 };
 
-export default TurfList;
+export default TournamentFilter;

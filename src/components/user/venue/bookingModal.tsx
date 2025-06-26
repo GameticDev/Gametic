@@ -10,6 +10,7 @@ import type {
   RazorpayOptions,
 } from "@/types/razorpay";
 import { bookVenue, fetchVenueById } from "@/redux/actions/user/venueAction";
+import { toast } from "sonner";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -279,7 +280,7 @@ const BookingModal = ({ isOpen, onClose, venue }: BookingModalProps) => {
 
   const validateForm = (): boolean => {
     if (!formData.date || !formData.timeSlot) {
-      alert("Please select both date and time slot");
+      toast("Please select both date and time slot");
       return false;
     }
     return true;
@@ -291,7 +292,7 @@ const BookingModal = ({ isOpen, onClose, venue }: BookingModalProps) => {
     }
 
     if (!window.Razorpay) {
-      alert("Payment gateway is not loaded. Please try again.");
+      toast("Payment gateway is not loaded. Please try again.");
       return;
     }
 
@@ -328,7 +329,7 @@ const BookingModal = ({ isOpen, onClose, venue }: BookingModalProps) => {
 
             await dispatch(fetchVenueById({ turfId: venue._id })).unwrap(); // Fetch updated venue data
 
-            alert(
+            toast(
               "Payment successful! Your venue has been booked successfully."
             );
             console.log(response);
@@ -345,7 +346,7 @@ const BookingModal = ({ isOpen, onClose, venue }: BookingModalProps) => {
             setIsProcessingPayment(false);
           } catch (error) {
             console.error("Error during booking process:", error);
-            alert("Booking failed. Please try again.");
+            toast("Booking failed. Please try again.");
             setIsProcessingPayment(false);
           }
         },
@@ -358,7 +359,7 @@ const BookingModal = ({ isOpen, onClose, venue }: BookingModalProps) => {
 
       const razorpay = new window.Razorpay(options);
       razorpay.on("payment.failed", (response: { error: RazorpayError }) => {
-        alert(
+        toast(
           `Payment failed: ${response.error.description}. Please try again.`
         );
         setIsProcessingPayment(false);
@@ -366,7 +367,7 @@ const BookingModal = ({ isOpen, onClose, venue }: BookingModalProps) => {
       razorpay.open();
     } catch (error) {
       console.error("Error during payment process:", error);
-      alert("Failed to initiate payment. Please try again.");
+      toast("Failed to initiate payment. Please try again.");
       setIsProcessingPayment(false);
     }
   };

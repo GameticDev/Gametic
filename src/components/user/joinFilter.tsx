@@ -1,35 +1,62 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaFilter, FaPlus, FaSearch, FaChevronDown } from "react-icons/fa";
 import HostModal from "./join/hostModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { fetchAllMatches } from "@/redux/actions/user/hostActions";
+import debounce from "lodash.debounce";
 
 const JoinFilter = () => {
-  const [selectedSport, setSelectedSport] = useState("All Sports");
+  const [selectedSport, setSelectedSport] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useAppDispatch();
   const { matches } = useAppSelector((state) => state.host);
-
+  const { user } = useAppSelector((state) => state.user);
+console.log(matches)
   const handleOpen = () => {
     setIsOpen(false);
   };
 
   useEffect(() => {
-    dispatch(fetchAllMatches({ page: 1, limit: 12, search: search }));
-  }, [dispatch, search]);
+    console.log(user)
+    dispatch(
+      fetchAllMatches({
+        page: 1,
+        limit: 12,
+        search: searchTerm,
+        sport: selectedSport,
+        location: user?.preferredLocation || "",
+      })
+    );
+  }, [dispatch, searchTerm, selectedSport, user]);
   console.log(matches);
 
+  const debouncedSearch = useRef(
+    debounce((val: string) => {
+      setSearchTerm(val);
+    }, 500)
+  ).current;
+
+  useEffect(() => {
+    debouncedSearch(search);
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch, search]);
+
   const sportTypes = [
-    "All Sports",
-    "Football 5s",
-    "Cricket",
-    "Badminton",
-    "Basketball",
-    "Volleyball",
-    "Tennis",
+    "football",
+    "cricket",
+    "multi-sport",
+    "swimming",
+    "basketball",
+    "badminton",
+    "tennis",
+    "volleyball",
+    "hockey",
   ];
 
   return (
@@ -58,7 +85,9 @@ const JoinFilter = () => {
               >
                 <div className="flex items-center gap-2">
                   <FaFilter className="text-xs" />
-                  <span className="text-sm">{selectedSport}</span>
+                  <span className="text-sm">
+                    {selectedSport === "" ? "All Sports" : selectedSport}
+                  </span>
                 </div>
                 <FaChevronDown
                   className={`text-xs transition-transform duration-200 ${
@@ -97,19 +126,6 @@ const JoinFilter = () => {
                 </div>
               )}
             </div>
-
-            {/* Price Filter */}
-            <select
-              className="px-4 py-3 bg-gray-50 rounded-lg font-medium text-sm focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all duration-200 text-gray-700 min-w-[120px]"
-              // style={{
-              //   focusRingColor: '#415C41'
-              // }}
-            >
-              <option>All Prices</option>
-              <option>Under ₹150</option>
-              <option>₹150-₹200</option>
-              <option>Above ₹200</option>
-            </select>
           </div>{" "}
         </div>
 
@@ -124,7 +140,7 @@ const JoinFilter = () => {
       </div>
 
       {/* Active Filters - Only show if filters are applied */}
-      {selectedSport !== "All Sports" && (
+      {selectedSport !== "" && (
         <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
           <span
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-white"
@@ -132,7 +148,7 @@ const JoinFilter = () => {
           >
             {selectedSport}
             <button
-              onClick={() => setSelectedSport("All Sports")}
+              onClick={() => setSelectedSport("")}
               className="hover:bg-white hover:bg-opacity-20 rounded-full w-4 h-4 flex items-center justify-center transition-colors duration-200 text-xs"
             >
               ×

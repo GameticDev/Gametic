@@ -6,14 +6,14 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchAllVenues = createAsyncThunk<
   { allVenues: Venue[]; totalVenues: number; totalActiveVenues: number },
-  { page: number; limit: number; search: string },
+  { page: number; limit: number; search: string; type: string },
   { rejectValue: string }
 >(
   "venuesUser/fetchAllVenues",
-  async ({ page, limit, search }, { rejectWithValue }) => {
+  async ({ page, limit, search, type }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `/getAllVenues?page=${page}&limit=${limit}&search=${search}`
+        `/getAllVenues?page=${page}&limit=${limit}&search=${search}&type=${type}`
       );
       console.log(response.data);
       return {

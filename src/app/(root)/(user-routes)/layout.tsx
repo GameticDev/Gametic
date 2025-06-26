@@ -1,5 +1,6 @@
 import Navbar from "@/components/user/navbar";
 import React, { ReactNode } from "react";
+import { Toaster } from "@/components/ui/sonner";
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,6 +13,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Navbar />
       </div>
       <main className="">{children}</main>{" "}
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "#ffffff",
+            color: "#00423D",
+          },
+          className: "text-md",
+          duration: 2000,
+        }}
+        position="top-right"
+      />
     </div>
   );
 };
