@@ -10,7 +10,7 @@ import {
   User,
   Bell,
 } from "lucide-react";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hook";
 import { logout } from "@/redux/actions/authantication/authanticationAction";
 import { useRouter } from "next/navigation";
 import localFont from "next/font/local";
