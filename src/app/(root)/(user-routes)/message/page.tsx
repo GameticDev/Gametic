@@ -1,160 +1,120 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import axiosInstance from "@/utils/axiosInstance";
+import { Loader2 } from "lucide-react";
+// import Image from "next/image";
+import Chat from "@/components/chat/page";
 
-type Match = {
+interface Match {
   _id: string;
   title: string;
-};
+  lastUpdated?: string;
+}
 
 export default function JoinedMatchList() {
   const [matches, setMatches] = useState<Match[]>([]);
-
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [error, setError] = useState(false);
+  const [roomId, setRoomId] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
+
+  const fetchMatches = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await axiosInstance.get("/user");
+      setUserId(res.data.user.user._id);
+      const sorted = res.data.user.joinedOnlyMatches.sort(
+        (a: Match, b: Match) =>
+          new Date(b.lastUpdated ?? 0).getTime() -
+          new Date(a.lastUpdated ?? 0).getTime()
+      );
+      setMatches(sorted);
+    } catch (err) {
+      setError(true);
+      console.log(err);
+      
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchMatches = async () => {
-      try {
-        const res = await axiosInstance.get("/user");
-        setMatches(res.data.user.joinedOnlyMatches);
-      } catch (err: unknown) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchMatches();
   }, []);
 
-  if (loading) return <p className="text-center">Loading...</p>;
+  const handleChatClick = (id: string) => {
+    setRoomId(id);
+  };
 
   return (
-    <div className="max-w-xl p-6 mx-auto">
-      <h2 className="mb-4 text-2xl font-bold">Your Joined Matches</h2>
-      <ul className="space-y-2">
-        {matches?.length > 0 ? (
-          matches.map((match) => (
-            <li
-              key={match._id}
-              className="p-3 bg-blue-100 rounded cursor-pointer hover:bg-blue-200"
-             onClick={() => router.push(`/message/${match._id}`)}
+    <div className="flex w-full h-screen">
+      {/* Left Side - Match List */}
+      <div className="w-full md:w-1/3 lg:w-1/4 border-r border-[#998869]/30 px-4 py-6 overflow-y-auto bg-[#F7F6F0]">
+        <h2 className="text-xl font-bold text-[#00423D] mb-4 border-b border-[#998869] pb-2">
+          Your Matches
+        </h2>
 
-            >
-              {match.title}
-            </li>
-          ))
-        ) : (
-          <p>No joined matches found.</p>
+        {loading && (
+          <div className="flex justify-center items-center py-10 text-[#00423D]">
+            <Loader2 className="w-6 h-6 mr-2 animate-spin" />
+            Loading...
+          </div>
         )}
-      </ul>
+
+        {error && (
+          <div className="text-center text-red-600">
+            <p>Failed to load matches.</p>
+            <button
+              onClick={fetchMatches}
+              className="mt-3 px-4 py-2 bg-[#00423D] text-white rounded-lg hover:bg-[#003530] transition"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && (
+          <div className="space-y-3">
+            {matches.length > 0 ? (
+              matches.map((match) => (
+                <div
+                  key={match._id}
+                  onClick={() => handleChatClick(match._id)}
+                  className="flex items-center gap-3 bg-white/10 border border-[#998869]/30 rounded-xl p-3 shadow cursor-pointer hover:scale-[1.01] transition backdrop-blur hover:bg-[#998869]/10"
+                >
+                  <div className="w-10 h-10 overflow-hidden rounded-full">
+                    {/* <Image
+                      src="../../../../../public/profile.png"
+                      alt="avatar"
+                      width={40}
+                      height={40}
+                      className="object-cover rounded-full"
+                    /> */}
+                  </div>
+                  <h3 className="text-[#00423D] font-medium text-sm">
+                    {match.title}
+                  </h3>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-[#00423D]/60">No joined matches found.</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Right Side - Chat Area */}
+      <div className="flex-1 bg-[#00423D] text-white">
+        {roomId ? (
+          <Chat roomId={roomId} userId={userId} />
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-lg text-white/80">Select a match to view chat</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
-
-
-// "use client"; 
-
-// import { useEffect, useState } from "react";
-// import { io, Socket } from "socket.io-client";
-
-// let socket: Socket;
-
-// type ChatMessage = {
-//   _id: string;
-//   roomId: string;
-//   senderId: string;
-//   message: string;
-//   createdAt: string;
-// };
-
-// type Props = {
-//   roomId: string;
-//   userId: string;
-// };
-
-// export default function Chat({ roomId, userId }: Props) {
-//   const [message, setMessage] = useState("");
-//   const [messages, setMessages] = useState<ChatMessage[]>([]);
-
-//   useEffect(() => {
-//     // Initialize socket connection
-//     socket = io("http://localhost:5000", {
-//       query: { userId },
-//       transports: ["websocket"],
-//     });
-
-//     // Join the room
-//     socket.emit("joinRoom", roomId);
-
-//     // Listen for new messages
-//     socket.on("newMessage", (msg: ChatMessage) => {
-//       setMessages((prev) => [...prev, msg]);
-//     });
-
-//     // Listen for errors
-//     socket.on("errorMessage", (err: string) => {
-//       console.log(err , "hlooooo");
-      
-//       alert(err);
-//     });
-
-//     return () => {
-//       socket.disconnect();
-//     };
-//   }, [roomId, userId]);
-
-//   const handleSend = () => {
-//     if (!message.trim()) return;
-
-//     socket.emit("sendMessage", {
-//       roomId,
-//       senderId: userId,
-//       message,
-//     });
-
-//     setMessage("");
-//   };
-
-//   return (
-//     <div className="max-w-md p-4 mx-auto mt-10 bg-white border rounded shadow">
-//       <h2 className="mb-4 text-xl font-bold">Match Chat</h2>
-
-//       <div className="h-64 p-2 mb-3 overflow-y-auto border rounded bg-gray-50">
-//         {messages.map((msg) => (
-//           <div key={msg._id} className="mb-2">
-//             <p className="text-sm">
-//               <strong>{msg.senderId === userId ? "You" : msg.senderId}</strong>:
-//               {msg.message}
-//             </p>
-//             <span className="text-xs text-gray-500">
-//               {new Date(msg.createdAt).toLocaleTimeString()}
-//             </span>
-//           </div>
-//         ))}
-//       </div>
-
-//       <div className="flex gap-2">
-//         <input
-//           type="text"
-//           value={message}
-//           onChange={(e) => setMessage(e.target.value)}
-//           className="flex-1 px-3 py-1 border rounded"
-//           placeholder="Type your message..."
-//         />
-//         <button
-//           onClick={handleSend}
-//           className="px-4 py-1 text-white bg-blue-500 rounded"
-//         >
-//           Send
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-// components/chat/FloatingChat.tsx

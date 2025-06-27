@@ -118,7 +118,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
         // Show browser notification if permission granted
         if (Notification.permission === "granted") {
-          // eslint-disable-next-line no-new
+
           new Notification(data.title, {
             body: data.message,
             icon: "/favicon.ico",
@@ -190,8 +190,8 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
         className={`w-full h-16 ${className} bg-[#FEFFFA] relative z-30`}
         aria-label="Main navigation"
       >
-        <div className="w-full h-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-full">
+        <div className="w-full h-full px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto">
+          <div className="flex flex-wrap items-center justify-between h-full gap-y-2">
             {/* Logo */}
             <div className="flex items-center flex-shrink-0">
               <Link href="/" className="flex items-center" aria-label="Home">
@@ -285,9 +285,8 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                       <User className="h-5 w-5 text-[#00423d]" />
                     </div>
                     <ChevronDown
-                      className={`h-5 w-5 transition-transform duration-200 ${
-                        isProfileOpen ? "rotate-180" : ""
-                      }`}
+                      className={`h-5 w-5 transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -303,20 +302,12 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                         View Profile
                       </Link>
                       <Link
-                        href="/settings"
+                        href="/message"
                         className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200"
                         onClick={() => setIsProfileOpen(false)}
-                        aria-label="Settings"
+                        aria-label="Chat"
                       >
-                        Settings
-                      </Link>
-                      <Link
-                        href="/dashboard"
-                        className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200"
-                        onClick={() => setIsProfileOpen(false)}
-                        aria-label="Dashboard"
-                      >
-                        Dashboard
+                        Chat
                       </Link>
                       <hr className="my-1 border-[#415C41]" />
                       <button
@@ -349,8 +340,8 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
           {/* Mobile Navigation */}
           {isOpen && (
-            <div className="md:hidden">
-              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-[#415C41]">
+            <div className="fixed inset-0 bg-[#FEFFFA] z-40 md:hidden overflow-y-auto">
+              <div className="px-4 pt-20 pb-10 space-y-1 sm:px-6 border-t border-[#415C41]">
                 {/* Mobile Location Selector */}
                 <button
                   type="button"
@@ -388,7 +379,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 </button>
 
                 <Link
-                  href="/join"
+                  href="/home/join"
                   className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
                   onClick={() => setIsOpen(false)}
                   aria-label="Join"
@@ -398,7 +389,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 </Link>
 
                 <Link
-                  href="/venues"
+                  href="/home/facilities"
                   className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
                   onClick={() => setIsOpen(false)}
                   aria-label="Venues"
@@ -408,7 +399,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 </Link>
 
                 <Link
-                  href="/tournaments"
+                  href="/home/tournament"
                   className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
                   onClick={() => setIsOpen(false)}
                   aria-label="Tournaments"
@@ -432,7 +423,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
                   <div className="mt-1 space-y-1">
                     <Link
-                      href="/profile"
+                      href="/home/profile"
                       className="block px-3 py-2 text-base text-[#98916D] hover:text-[#998869] rounded-md transition-colors duration-200"
                       onClick={() => setIsOpen(false)}
                       aria-label="View Profile"
@@ -440,20 +431,12 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                       View Profile
                     </Link>
                     <Link
-                      href="/settings"
+                      href="/message"
                       className="block px-3 py-2 text-base text-[#98916D] hover:text-[#998869] rounded-md transition-colors duration-200"
                       onClick={() => setIsOpen(false)}
                       aria-label="Settings"
                     >
-                      Settings
-                    </Link>
-                    <Link
-                      href="/dashboard"
-                      className="block px-3 py-2 text-base text-[#98916D] hover:text-[#998869] rounded-md transition-colors duration-200"
-                      onClick={() => setIsOpen(false)}
-                      aria-label="Dashboard"
-                    >
-                      Dashboard
+                      Chat
                     </Link>
                     <button
                       type="button"

@@ -1,12 +1,9 @@
-
 import Image from "next/image";
-// import CircularText from "../reactbite/page";
 
 const HeroSection = () => {
-
   return (
-    <div className="w-full flex items-center justify-center min-h-[600px] lg:min-h-[700px] xl:min-h-[750px]">
-      <div className="absolute w-full h-full  pointer-events-none">
+    <div className="relative flex items-center justify-center w-full h-screen px-4 overflow-hidden">
+      <div className="absolute w-full h-full pointer-events-none">
         <Image
           src={
             "https://images.unsplash.com/photo-1466065665758-d473db752253?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -16,31 +13,20 @@ const HeroSection = () => {
           className="object-cover"
         />
       </div>
-      <div className="relative flex-1 max-w-4xl mx-auto">
-
-        <div className="flex flex-col justify-center items-center text-center mb-16 relative">
+      <div className="relative flex-1 max-w-6xl px-2 mx-auto sm:px-4">
+        <div className="relative flex flex-col items-center justify-center mb-16 text-center">
           <div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-[110px] font-bold tracking-wide mb-5">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-[110px] font-bold tracking-wide mb-5">
               <span className="bg-gradient-to-r from-gray-900 to-[#415C41] bg-clip-text text-transparent">
                 Find Your
               </span>
               <br />
               <span className="bg-gradient-to-r from-[#415C41] to-[#98916D] bg-clip-text text-transparent">
                 Game Partner
-                {/* {"Game Partner".split("").map((char, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-block transition-transform duration-50 hover:-translate-y-2 hover:scale-205 hover:animate-bounce"
-                  >
-                    {char}
-                  </span>
-                ))} */}
               </span>
-
-
             </h1>
 
-            <p className="text-base md:text-[17px] max-w-full md:max-w-[850px] text-gray-700 leading-relaxed mx-auto">
+            <p className="text-sm sm:text-base md:text-[17px] max-w-full md:max-w-[850px] text-gray-700 leading-relaxed mx-auto px-2">
               Connect with athletes in your area for{" "}
               <span className="font-semibold text-[#415C41]">
                 {"football, basketball, tennis".split("").map((char, idx) => (
@@ -55,12 +41,6 @@ const HeroSection = () => {
               and more. Join local tournaments, discover amazing venues, and build your
               sports community - all in one place.
             </p>
-
-            {/* <CircularText
-              text="WELCOME TO GAMETIC "
-              spinDuration={10}
-              onHover="slowDown" 
-            /> */}
           </div>
         </div>
       </div>
