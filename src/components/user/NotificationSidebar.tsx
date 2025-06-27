@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { X, Bell, Trophy, CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import socket from "@/app/socket/soket";
 import axiosInstance from "@/utils/axiosInstance";
 
@@ -31,6 +32,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const formatTimeAgo = useCallback((dateString: string): string => {
     const date = new Date(dateString);
@@ -145,37 +147,17 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
     }
   }, []);
 
-  const markAsRead = useCallback(async (notificationId: string) => {
-    setNotifications(prev => {
-      const updated = prev.map(notification =>
-        notification._id === notificationId
-          ? { ...notification, isRead: true }
-          : notification
-      );
-      // Update unread count in navbar
-      const unreadCount = updated.filter(n => !n.isRead).length;
-      onUnreadCountChange?.(unreadCount);
-      return updated;
-    });
-
-    try {
-      await axiosInstance.patch('/markRead', { notificationId });
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-      // Revert optimistic update on error
-      setNotifications(prev => {
-        const reverted = prev.map(notification =>
-          notification._id === notificationId
-            ? { ...notification, isRead: false }
-            : notification
-        );
-        // Update unread count in navbar
-        const unreadCount = reverted.filter(n => !n.isRead).length;
-        onUnreadCountChange?.(unreadCount);
-        return reverted;
-      });
+  const handleNotificationClick = useCallback((notification: Notification) => {
+    // Navigate based on notification type
+    if (notification.type === "tournament" && notification.tournamentId) {
+      router.push(`/home/tournament/${notification.tournamentId}`);
+      onClose(); // Close the sidebar after navigation
+    } else if (notification.type === "match" && notification.matchId) {
+      router.push(`/home/join/match/${notification.matchId}`);
+      onClose(); // Close the sidebar after navigation
     }
-  }, []);
+    // For booking and system notifications, no navigation happens
+  }, [router, onClose]);
 
   const markAllAsRead = useCallback(async () => {
     const originalNotifications = [...notifications];
@@ -196,7 +178,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
       const unreadCount = originalNotifications.filter(n => !n.isRead).length;
       onUnreadCountChange?.(unreadCount);
     }
-  }, [notifications]);
+  }, [notifications, onUnreadCountChange]);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
@@ -213,7 +195,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 bg-[#FEFFFA] shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 bg-[#FEFFFA] shadow-2xl transform transition-transform duration-300 ease-in-out z-100 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -278,10 +260,15 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                   className={`p-4 hover:bg-white transition-colors duration-200 cursor-pointer ${
                     !notification.isRead ? "bg-[#F0EFEB]" : ""
                   }`}
-                  onClick={() => markAsRead(notification._id)}
+                  onClick={() => handleNotificationClick(notification)}
                   role="button"
                   tabIndex={0}
-                  aria-label={`Mark notification ${notification.title} as read`}
+                  aria-label={`View ${notification.title}`}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleNotificationClick(notification);
+                    }
+                  }}
                 >
                   <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0 mt-1">
@@ -312,24 +299,14 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
 
         {/* Footer Actions */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-[#FEFFFA] border-t border-[#415C41]">
-          <div className="flex space-x-2">
-            <button
-              type="button"
-              onClick={markAllAsRead}
-              disabled={loading || unreadCount === 0}
-              className="flex-1 px-4 py-2 text-sm font-medium text-[#00423d] bg-transparent border border-[#00423d] rounded-md hover:bg-[#00423d] hover:text-[#FEFFFA] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Mark All Read
-            </button>
-            <button
-              type="button"
-              onClick={fetchNotifications}
-              disabled={loading}
-              className="flex-1 px-4 py-2 text-sm font-medium text-[#FEFFFA] bg-[#00423d] rounded-md hover:bg-[#003832] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Refreshing..." : "Refresh"}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={markAllAsRead}
+            disabled={loading || unreadCount === 0}
+            className="w-full px-4 py-2 text-sm font-medium text-[#FEFFFA] bg-[#00423d] rounded-md hover:bg-[#003832] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Mark All Read
+          </button>
         </div>
       </div>
     </>

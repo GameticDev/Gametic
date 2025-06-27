@@ -5,21 +5,35 @@ import { useAppSelector } from "@/redux/hook";
 import Link from "next/link";
 
 export default function Home() {
-  const { matches } = useAppSelector((state) => state.host);
-  
+  const { matches, loading } = useAppSelector((state) => state.host);
+
   return (
     <div className="min-h-screen bg-gray-100 mt-16">
       <JoinFilter />
-      
-      {matches && matches.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-6">
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#415C41]"></div>
+            <p className="mt-4 text-gray-600">Loading matches...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Matches Grid */}
+      {!loading && matches && matches.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
           {matches.map((card, index) => (
-            <Link key={index} href={`/home/join/match/${card._id}`}>
+            <Link key={card._id || index} href={`/home/join/match/${card._id}`}>
               <ActivityCard {...card} />
             </Link>
           ))}
         </div>
-      ) : (
+      )}
+
+      {/* No Matches Found */}
+      {!loading && (!matches || matches.length === 0) && (
         <div className="flex flex-col items-center justify-center py-20 px-6">
           <div className="text-center">
             <div className="mb-4">

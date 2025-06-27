@@ -13,6 +13,8 @@ interface FetchMatchesArgs {
 
 interface FetchMatchesResponse {
   matches: Match[];
+  totalMatches: number;
+  totalPages: number;
 }
 interface HostMatch {
   title: string;
@@ -37,7 +39,7 @@ export const fetchAllMatches = createAsyncThunk<
         `/all-matches?page=${page}&limit=${limit}&search=${search}&sport=${sport}&location=${location}`
       );
       const matches: Match[] = data.matches;
-      return { matches };
+      return { matches, totalMatches: data.total, totalPages: data.totalPages };
     } catch (error) {
       return rejectWithValue(axiosErrorManager(error));
     }

@@ -48,6 +48,8 @@ export interface Match {
 
 interface HostState {
   matches: Match[];
+  totalPages: number;
+  totalMatches: number;
   match: Match | null;
   joinMatch: Match | null;
   venues: Turf[];
@@ -57,6 +59,8 @@ interface HostState {
 const INITIAL_STATE: HostState = {
   matches: [],
   venues: [],
+  totalPages: 0,
+  totalMatches: 0,
   joinMatch: null,
   match: null,
   loading: false,
@@ -75,6 +79,8 @@ const hostSlice = createSlice({
       .addCase(fetchAllMatches.fulfilled, (state, action) => {
         state.loading = false;
         state.matches = action.payload.matches;
+        state.totalPages = action.payload.totalPages;
+        state.totalMatches = action.payload.totalMatches;
       })
       .addCase(fetchAllMatches.rejected, (state, action) => {
         state.loading = false;

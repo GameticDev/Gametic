@@ -222,7 +222,7 @@ const JoinBar = ({
   }, [user, isUserJoined, joinedPlayers, maxPlayers, handlePayment]);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t border-gray-100 z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t border-gray-100 z-20">
       <div className="max-w-8xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">

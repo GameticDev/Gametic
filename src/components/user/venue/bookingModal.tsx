@@ -11,6 +11,7 @@ import type {
 } from "@/types/razorpay";
 import { bookVenue, fetchVenueById } from "@/redux/actions/user/venueAction";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -62,6 +63,7 @@ interface OrderData {
 
 const BookingModal = ({ isOpen, onClose, venue }: BookingModalProps) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [formData, setFormData] = useState<BookingFormData>({
     date: "",
@@ -325,13 +327,14 @@ const BookingModal = ({ isOpen, onClose, venue }: BookingModalProps) => {
                 startTime: formData.startTime,
                 endTime: formData.endTime,
               })
-            ).unwrap(); // Unwrap to handle the resolved promise or throw an error
+            ).unwrap(); 
 
-            await dispatch(fetchVenueById({ turfId: venue._id })).unwrap(); // Fetch updated venue data
+            await dispatch(fetchVenueById({ turfId: venue._id })).unwrap(); 
 
             toast(
               "Payment successful! Your venue has been booked successfully."
             );
+            router.push('/home/profile')
             console.log(response);
 
             // Reset form

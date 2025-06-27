@@ -8,6 +8,7 @@ import { createSlice } from "@reduxjs/toolkit";
 interface TournamentState {
   tournament: TournamentDetail | null;
   tournaments: TournamentDetail[];
+  totalTournaments: number;
   loading: boolean;
   error: string | null;
 }
@@ -15,6 +16,7 @@ interface TournamentState {
 const INITIAL_STATE: TournamentState = {
   tournament: null,
   tournaments: [],
+  totalTournaments: 0,
   loading: false,
   error: null,
 };
@@ -42,8 +44,9 @@ const tournamentSlice = createSlice({
       })
       .addCase(fetchAllTournaments.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload)
+        console.log(action.payload);
         state.tournaments = action.payload.tournaments;
+        state.totalTournaments = action.payload.totalTournaments;
         state.error = null;
       })
       .addCase(fetchAllTournaments.rejected, (state, action) => {

@@ -7,7 +7,7 @@ export interface User {
   email: string;
   picture?: string;
   role: string;
-  phone:string;
+  phone: string;
   preferredLocation: string;
 }
 
@@ -26,7 +26,7 @@ export interface Match {
     username: string;
     email: string;
   }[];
-  turfId: string;
+  turfId: { name: string };
   date: string;
   startTime: string;
   endTime: string;
@@ -98,6 +98,3 @@ export const currentUser = createAsyncThunk<
     return rejectWithValue(axiosErrorManager(error));
   }
 });
-
-
-

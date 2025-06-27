@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaLocationDot, FaRupeeSign, FaCalendarCheck } from "react-icons/fa6";
 import { IoFootball, IoTimeSharp } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
@@ -9,19 +8,92 @@ import { BiTrophy } from "react-icons/bi";
 import { BsCalendar2Event } from "react-icons/bs";
 import Image from "next/image";
 import { Edit } from "lucide-react";
-import { useAppSelector } from "@/redux/hook";
-import EditProfileModal from "@/components/user/editProfileModal"; 
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import EditProfileModal from "@/components/user/editProfileModal";
+import TicketModal from "@/components/user/ticketModal";
+import { currentUser } from "@/redux/actions/user/userAction";
+
+interface BookingData {
+  _id: string;
+  turf: {
+    name: string;
+    location?: string;
+  };
+  date: string | Date;
+  startTime: string;
+  endTime: string;
+  amount: number;
+  status?: string;
+}
+
+interface MatchData {
+  _id: string;
+  title: string;
+  turfId: {
+    name: string;
+    location?: string;
+  };
+  date: string | Date;
+  maxPlayers: number;
+  joinedPlayers:  {
+    _id: string;
+    username: string;
+    email: string;
+  }[];
+  hostId?: {
+    username: string;
+  };
+  description?: string;
+}
+
+const formatDate = (dateInput: unknown): string => {
+  console.log("formatDate input:", { dateInput, type: typeof dateInput });
+
+  if (!dateInput) {
+    console.warn("Invalid date input: null or undefined");
+    return "N/A";
+  }
+
+  const date =
+    typeof dateInput === "string"
+      ? new Date(dateInput)
+      : dateInput instanceof Date
+      ? dateInput
+      : null;
+
+  if (!(date instanceof Date) || isNaN(date.getTime())) {
+    console.warn("Invalid date format:", dateInput);
+    return "N/A";
+  }
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
 function ProfilePage() {
+  const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState("bookings");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [selectedTicketData, setSelectedTicketData] = useState<BookingData | MatchData | null>(null);
+  const [ticketType, setTicketType] = useState<"booking" | "hosted" | "joined">("booking");
+
   const { user, bookings, hostedMatches, joinedOnlyMatches } = useAppSelector(
     (state) => state.user
   );
 
-  // Handle profile update callback
+  useEffect(() => {
+    dispatch(currentUser());
+  }, [dispatch]);
 
+  const handleViewTicket = (data: BookingData | MatchData, type: "booking" | "hosted" | "joined") => {
+    setSelectedTicketData(data);
+    setTicketType(type);
+    setIsTicketModalOpen(true);
+  };
 
   const renderBookings = () => (
     <div className="space-y-3">
@@ -30,7 +102,7 @@ function ProfilePage() {
           <p>no booking found</p>
         </>
       ) : (
-        bookings.map((booking) => (
+        bookings.map((booking: BookingData) => (
           <div key={booking._id} className="bg-white rounded-lg shadow-sm p-4">
             <div className="flex justify-between items-center">
               <div className="flex-1">
@@ -46,7 +118,7 @@ function ProfilePage() {
                 >
                   <div className="flex items-center gap-1">
                     <CiCalendarDate className="text-green-700" />
-                    <span>{booking.date.toString()}</span>
+                    <span>{formatDate(booking.date)}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <IoTimeSharp className="text-green-700" />
@@ -60,9 +132,12 @@ function ProfilePage() {
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
-                  Cancel
+              <div className="text-right flex gap-2">
+                <button 
+                  onClick={() => handleViewTicket(booking, "booking")}
+                  className="px-4 py-2 bg-[#00423D] text-white text-sm font-medium rounded-lg transition-all hover:opacity-90"
+                >
+                  View
                 </button>
               </div>
             </div>
@@ -79,7 +154,7 @@ function ProfilePage() {
           <p>no hosted matches</p>
         </>
       ) : (
-        hostedMatches.map((match) => (
+        hostedMatches.map((match: MatchData) => (
           <div key={match._id} className="bg-white rounded-lg shadow-sm p-4">
             <div className="flex justify-between items-center">
               <div className="flex-1">
@@ -95,11 +170,11 @@ function ProfilePage() {
                 >
                   <div className="flex items-center gap-1">
                     <IoFootball className="text-green-700" />
-                    <span>{match.turfId}</span>
+                    <span>{match.turfId.name}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <CiCalendarDate className="text-green-700" />
-                    <span>{match.date}</span>
+                    <span>{formatDate(match.date)}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <MdSportsScore className="text-green-700" />
@@ -109,9 +184,12 @@ function ProfilePage() {
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
-                  Cancel
+              <div className="text-right flex gap-2">
+                <button 
+                  onClick={() => handleViewTicket(match, "hosted")}
+                  className="px-4 py-2 bg-[#00423D] text-white text-sm font-medium rounded-lg transition-all hover:opacity-90"
+                >
+                  View
                 </button>
               </div>
             </div>
@@ -128,7 +206,7 @@ function ProfilePage() {
           <p>no joined matches</p>
         </>
       ) : (
-        joinedOnlyMatches.map((match) => (
+        joinedOnlyMatches.map((match: MatchData) => (
           <div key={match._id} className="bg-white rounded-lg shadow-sm p-4">
             <div className="flex justify-between items-center">
               <div className="flex-1">
@@ -144,11 +222,11 @@ function ProfilePage() {
                 >
                   <div className="flex items-center gap-1">
                     <IoFootball className="text-green-700" />
-                    <span>{match.turfId}</span>
+                    <span>{match.turfId.name}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <CiCalendarDate className="text-green-700" />
-                    <span>{match.date}</span>
+                    <span>{formatDate(match.date)}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <MdSportsScore className="text-green-700" />
@@ -158,9 +236,12 @@ function ProfilePage() {
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <button className="px-4 py-2 bg-[#998869] text-white text-sm font-medium rounded-lg transition-all">
-                  Cancel
+              <div className="text-right flex gap-2">
+                <button 
+                  onClick={() => handleViewTicket(match, "joined")}
+                  className="px-4 py-2 bg-[#00423D] text-white text-sm font-medium rounded-lg transition-all hover:opacity-90"
+                >
+                  View
                 </button>
               </div>
             </div>
@@ -352,6 +433,14 @@ function ProfilePage() {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         user={user}
+      />
+
+      {/* Ticket Modal */}
+      <TicketModal
+        isOpen={isTicketModalOpen}
+        onClose={() => setIsTicketModalOpen(false)}
+        data={selectedTicketData}
+        type={ticketType}
       />
     </div>
   );

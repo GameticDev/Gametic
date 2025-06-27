@@ -62,7 +62,7 @@ export const fetchTournamentById = createAsyncThunk<
 });
 
 export const fetchAllTournaments = createAsyncThunk<
-  { tournaments: TournamentDetail[] },
+  { tournaments: TournamentDetail[]; totalTournaments: number },
   FetchTournamentArgs,
   { rejectValue: string }
 >(
@@ -72,7 +72,10 @@ export const fetchAllTournaments = createAsyncThunk<
       const { data } = await axiosInstance.get(
         `/getAllTournament?page=${page}&limit=${limit}&search=${search}&sport=${sport}&location=${location}`
       );
-      return { tournaments: data.data.tournaments };
+      return {
+        tournaments: data.data.tournaments,
+        totalTournaments: data.data.total,
+      };
     } catch (error) {
       return rejectWithValue(axiosErrorManager(error));
     }
