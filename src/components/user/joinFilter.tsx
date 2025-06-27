@@ -116,6 +116,15 @@ const JoinFilter = () => {
     "tennis",
     "volleyball",
     "hockey",
+    "football",
+    "cricket",
+    "multi-sport",
+    "swimming",
+    "basketball",
+    "badminton",
+    "tennis",
+    "volleyball",
+    "hockey",
   ];
 
   return (

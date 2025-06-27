@@ -204,6 +204,7 @@ function ProfilePage() {
       {joinedOnlyMatches === null || joinedOnlyMatches.length <= 0 ? (
         <>
           <p>no joined matches</p>
+          <p>no joined matches</p>
         </>
       ) : (
         joinedOnlyMatches.map((match: MatchData) => (
@@ -296,6 +297,7 @@ function ProfilePage() {
                 <div className="flex items-center gap-2">
                   <MdPhone className="text-green-700" />
                   <span>+91 {user?.phone || "00000 00000"}</span>
+                  <span>+91 {user?.phone || "00000 00000"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FaLocationDot className="text-green-700" />
@@ -325,6 +327,7 @@ function ProfilePage() {
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
               {bookings?.length || 0}
+              {bookings?.length || 0}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>
               Total Bookings
@@ -337,6 +340,7 @@ function ProfilePage() {
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
               {joinedOnlyMatches?.length || 0}
+              {joinedOnlyMatches?.length || 0}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>
               Matches Played
@@ -348,6 +352,7 @@ function ProfilePage() {
               <BiTrophy className="text-3xl text-green-700" />
             </div>
             <h3 className="text-2xl font-bold" style={{ color: "#00423D" }}>
+              {hostedMatches?.length || 0}
               {hostedMatches?.length || 0}
             </h3>
             <p className="text-sm" style={{ color: "#415C41" }}>

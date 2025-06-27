@@ -98,3 +98,6 @@ export const currentUser = createAsyncThunk<
     return rejectWithValue(axiosErrorManager(error));
   }
 });
+
+
+

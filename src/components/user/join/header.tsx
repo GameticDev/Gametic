@@ -2,7 +2,6 @@ import {
   Calendar,
   Clock,
   MapPin,
-  Share2,
   Trophy,
   User,
   Users,
@@ -47,13 +46,6 @@ const JoinHeader = ({title,turf,userId,sports,date,maxPlayers,startTime,endTime}
             </div>
           </div>
         </div>
-        <button
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          style={{ color: "#415C41" }}
-        >
-          <Share2 className="w-4 h-4" />
-          <span>Share</span>
-        </button>
       </div>
 
       {/* Match Details */}

@@ -40,7 +40,6 @@ const sportTypes = [
   "volleyball",
   "hockey",
 ];
-
 const TurfList = () => {
   const dispatch = useAppDispatch();
   const [selectedSport, setSelectedSport] = useState("");

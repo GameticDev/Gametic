@@ -38,40 +38,34 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
     const date = new Date(dateString);
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
-    const diffInHours = diffInMs / (1000 * 60 * 60);
-    const diffInDays = diffInHours / 24;
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
 
-    if (diffInHours < 1) {
-      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-      return diffInMinutes <= 1 ? "Just now" : `${diffInMinutes} minutes ago`;
-    }
-    if (diffInHours < 24) {
-      return `${Math.floor(diffInHours)} hours ago`;
-    }
-    if (diffInDays < 7) {
-      return `${Math.floor(diffInDays)} days ago`;
-    }
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays} days ago`;
+
     return date.toLocaleDateString();
   }, []);
 
   const fetchNotifications = useCallback(async () => {
     if (!userId) return;
-
     try {
       setLoading(true);
       setError(null);
-
       const response = await axiosInstance.get("/allNotification");
-
       if (response.data?.notifications) {
-        setNotifications(response.data.notifications as Notification[]);
+        setNotifications(response.data.notifications);
       }
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errorMessage =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to fetch notifications";
-      console.error("Error fetching notifications:", err);
+        err?.response?.data?.message || "Failed to fetch notifications";
       setError(errorMessage);
+      console.error("Error fetching notifications:", err);
     } finally {
       setLoading(false);
     }
@@ -91,25 +85,16 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
       }
     }
 
-    const handleNewNotification = (data: {
-      _id?: string;
-      type?: string;
-      title: string;
-      message: string;
-      matchId?: string;
-      tournamentId?: string;
-    }) => {
-      console.log("New notification received:", data);
-
+    const handleNewNotification = (data: Notification) => {
       const newNotification: Notification = {
         _id: data._id || Date.now().toString(),
-        type: (data.type as Notification["type"]) || "system",
+        type: data.type || "system",
         title: data.title,
         message: data.message,
         createdAt: new Date().toISOString(),
         isRead: false,
         matchId: data.matchId,
-        tournamentId: data.tournamentId,
+        tournamentId: data.tournamentId
       };
 
       setNotifications((prev) => [newNotification, ...prev]);
@@ -117,7 +102,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
       if (Notification.permission === "granted") {
         new Notification(data.title, {
           body: data.message,
-          icon: "/favicon.ico",
+          icon: "/favicon.ico"
         });
       }
     };
@@ -138,44 +123,41 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
       case "booking":
         return <CalendarIcon className="h-5 w-5 text-[#00423d]" />;
       case "tournament":
-        return <Trophy className="h-5 w-5 text-[#00423d]" />;
       case "match":
         return <Trophy className="h-5 w-5 text-[#00423d]" />;
-      case "system":
       default:
         return <Bell className="h-5 w-5 text-[#00423d]" />;
     }
   }, []);
 
-  const handleNotificationClick = useCallback((notification: Notification) => {
-    // Navigate based on notification type
-    if (notification.type === "tournament" && notification.tournamentId) {
-      router.push(`/home/tournament/${notification.tournamentId}`);
-      onClose(); // Close the sidebar after navigation
-    } else if (notification.type === "match" && notification.matchId) {
-      router.push(`/home/join/match/${notification.matchId}`);
-      onClose(); // Close the sidebar after navigation
-    }
-    // For booking and system notifications, no navigation happens
-  }, [router, onClose]);
+  const handleNotificationClick = useCallback(
+    (notification: Notification) => {
+      if (notification.type === "tournament" && notification.tournamentId) {
+        router.push(`/home/tournament/${notification.tournamentId}`);
+        onClose();
+      } else if (notification.type === "match" && notification.matchId) {
+        router.push(`/home/join/match/${notification.matchId}`);
+        onClose();
+      }
+    },
+    [router, onClose]
+  );
 
   const markAllAsRead = useCallback(async () => {
     const originalNotifications = [...notifications];
-    setNotifications(prev => {
-      const updated = prev.map(notification => ({ ...notification, isRead: true }));
-      // Update unread count in navbar to 0
+
+    setNotifications((prev) => {
+      const updated = prev.map((n) => ({ ...n, isRead: true }));
       onUnreadCountChange?.(0);
       return updated;
     });
 
     try {
-      await axiosInstance.patch('/markAllRead');
-    } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-      // Revert optimistic update on error
+      await axiosInstance.patch("/markAllRead");
+    } catch (err) {
+      console.error("Failed to mark all as read:", err);
       setNotifications(originalNotifications);
-      // Update unread count in navbar
-      const unreadCount = originalNotifications.filter(n => !n.isRead).length;
+      const unreadCount = originalNotifications.filter((n) => !n.isRead).length;
       onUnreadCountChange?.(unreadCount);
     }
   }, [notifications, onUnreadCountChange]);
@@ -184,7 +166,6 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
 
   return (
     <>
-      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 transition-opacity duration-300"
@@ -193,9 +174,8 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         />
       )}
 
-      {/* Sidebar */}
       <div
-        className={`fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 bg-[#FEFFFA] shadow-2xl transform transition-transform duration-300 ease-in-out z-100 ${
+        className={`fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 bg-[#FEFFFA] shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -224,14 +204,12 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
           </button>
         </div>
 
-        {/* Notifications List */}
+        {/* Notifications */}
         <div className="overflow-y-auto h-[calc(100%-8rem)]">
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00423d]" />
-              <span className="ml-2 text-[#00423d]">
-                Loading notifications...
-              </span>
+              <span className="ml-2 text-[#00423d]">Loading notifications...</span>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center h-64 text-red-600 p-4">
@@ -280,7 +258,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                           {notification.title}
                         </h3>
                         {!notification.isRead && (
-                          <div className="w-2 h-2 bg-[#98916d] rounded-full flex-shrink-0 ml-2" />
+                          <div className="w-2 h-2 bg-[#98916d] rounded-full ml-2" />
                         )}
                       </div>
                       <p className="text-sm text-[#666] leading-relaxed mb-2">
@@ -297,7 +275,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
           )}
         </div>
 
-        {/* Footer Actions */}
+        {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-[#FEFFFA] border-t border-[#415C41]">
           <button
             type="button"
