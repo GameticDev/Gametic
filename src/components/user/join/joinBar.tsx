@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { User, Users, DollarSign, UserCheck } from "lucide-react";
+import { User, Users, DollarSign, UserCheck, MessageSquare } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "sonner"
@@ -9,6 +9,7 @@ import type {
   RazorpayOptions,
 } from "@/types/razorpay";
 import { fetchMatchById, joinGame } from "@/redux/actions/user/hostActions";
+import { useRouter } from "next/navigation";
 
 // API Response Types
 interface CreateOrderRequest {
@@ -203,6 +204,12 @@ const JoinBar = ({
     dispatch,
   ]);
 
+  const router = useRouter()
+
+  const handleChatClick = () => {
+    router.push(`/message/${matchId}`)
+  }
+
   const handleJoinClick = useCallback(() => {
     if (!user) {
       toast("Please login to join the match");
@@ -222,8 +229,8 @@ const JoinBar = ({
   }, [user, isUserJoined, joinedPlayers, maxPlayers, handlePayment]);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t border-gray-100 z-50">
-      <div className="max-w-8xl mx-auto px-4 py-4">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 shadow-2xl">
+      <div className="px-4 py-4 mx-auto max-w-8xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
@@ -238,7 +245,7 @@ const JoinBar = ({
                 <span className="text-sm text-gray-500">players</span>
               </div>
             </div>
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="items-center hidden gap-2 sm:flex">
               <DollarSign className="w-5 h-5 text-[#998869]" />
               <span
                 className="text-lg font-semibold"
@@ -249,26 +256,33 @@ const JoinBar = ({
               <span className="text-sm text-gray-500">per player</span>
             </div>
           </div>
+
           <div className="flex items-center gap-4">
-            <div className="hidden md:block text-right">
-              <p className="text-sm font-medium" style={{ color: "#00423D" }}>
+            {/* Match Title & Date */}
+            <div className="hidden text-right md:block">
+              <p className="text-sm font-medium text-[#00423D]">
                 {title}
               </p>
-              <p className="text-xs" style={{ color: "#998869" }}>
+              <p className="text-xs text-[#998869]">
                 {date}
               </p>
             </div>
+
+            {/* Join Match Button */}
             <button
               onClick={handleJoinClick}
-              className={`group relative overflow-hidden px-8 py-3 rounded-xl font-semibold text-white transition-all duration-300 ${
-                isUserJoined || joinedPlayers?.length === maxPlayers
+              type="button"
+              disabled={isUserJoined || joinedPlayers?.length === maxPlayers}
+              className={`group relative overflow-hidden px-8 py-3 rounded-xl font-semibold text-white transition-all duration-300
+      ${isUserJoined || joinedPlayers?.length === maxPlayers
                   ? "bg-[#998869] cursor-not-allowed"
                   : "bg-[#00423D] hover:scale-105 hover:shadow-lg active:scale-95 cursor-pointer"
-              }`}
-              disabled={isUserJoined}
-              type="button"
+                }`}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              {/* Gradient Shine */}
+              <div className="absolute inset-0 transition-transform duration-700 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full"></div>
+
+              {/* Button Content */}
               <div className="relative flex items-center gap-2">
                 {isUserJoined ? (
                   <>
@@ -285,9 +299,20 @@ const JoinBar = ({
                 )}
               </div>
             </button>
+
+            {/* Chat Button (only if joined) */}
+            {isUserJoined && (
+              <button
+                onClick={handleChatClick}
+                className="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300 flex items-center gap-2"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Chat</span>
+              </button>
+            )}
           </div>
         </div>
-        <div className="md:hidden mt-3 pt-3 border-t border-gray-100">
+        <div className="pt-3 mt-3 border-t border-gray-100 md:hidden">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">

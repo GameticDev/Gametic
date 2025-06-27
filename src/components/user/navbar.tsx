@@ -118,7 +118,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
         // Show browser notification if permission granted
         if (Notification.permission === "granted") {
-          // eslint-disable-next-line no-new
+
           new Notification(data.title, {
             body: data.message,
             icon: "/favicon.ico",
@@ -190,10 +190,10 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
         className={`w-full h-16 ${className} bg-[#FEFFFA] relative z-30`}
         aria-label="Main navigation"
       >
-        <div className="w-full h-full px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-full">
+        <div className="w-full h-full px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto">
+          <div className="flex flex-wrap items-center justify-between h-full gap-y-2">
             {/* Logo */}
-            <div className="flex-shrink-0 flex items-center">
+            <div className="flex items-center flex-shrink-0">
               <Link href="/" className="flex items-center" aria-label="Home">
                 <span
                   className={`text-xl font-bold text-[#00423d] tracking-wider uppercase ${racesport.className}`}
@@ -206,13 +206,13 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-8">
+              <div className="flex items-baseline ml-10 space-x-8">
                 <Link
                   href="/home/join"
                   className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
                   aria-label="Join"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="w-5 h-5" />
                   <span>Join</span>
                 </Link>
 
@@ -221,7 +221,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                   className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
                   aria-label="Venues"
                 >
-                  <MapPin className="h-5 w-5" />
+                  <MapPin className="w-5 h-5" />
                   <span>Venues</span>
                 </Link>
 
@@ -230,7 +230,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                   className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-lg font-medium transition-colors duration-200"
                   aria-label="Tournaments"
                 >
-                  <Calendar className="h-4 w-4" />
+                  <Calendar className="w-4 h-4" />
                   <span>Tournaments</span>
                 </Link>
               </div>
@@ -238,7 +238,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
             {/* Profile Section - Desktop */}
             <div className="hidden md:block">
-              <div className="ml-4 flex items-center md:ml-6">
+              <div className="flex items-center ml-4 md:ml-6">
                 {/* Location Selector */}
                 <button
                   type="button"
@@ -246,7 +246,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                   className="flex items-center space-x-1 text-[#00423d] hover:text-[#998869] px-4 py-3 rounded-md text-md font-medium transition-colors duration-200"
                   aria-label={`Select location: ${user?.preferredLocation || "Not set"}`}
                 >
-                  <MapPin className="h-5 w-5" />
+                  <MapPin className="w-5 h-5" />
                   <span className="max-w-32 truncate mt-[2px]">
                     {user?.preferredLocation || "Select Location"}
                   </span>
@@ -260,14 +260,14 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                   disabled={isLoadingCount}
                   aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
                 >
-                  <Bell className="h-5 w-5" />
+                  <Bell className="w-5 h-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                    <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full -top-1 -right-1 animate-pulse">
                       {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   )}
                   {isLoadingCount && (
-                    <span className="absolute -top-1 -right-1 bg-gray-400 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-gray-400 rounded-full -top-1 -right-1">
                       <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
                     </span>
                   )}
@@ -281,13 +281,12 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                     aria-label="Profile menu"
                     aria-expanded={isProfileOpen}
                   >
-                    <div className="h-9 w-9 flex items-center justify-center">
+                    <div className="flex items-center justify-center h-9 w-9">
                       <User className="h-5 w-5 text-[#00423d]" />
                     </div>
                     <ChevronDown
-                      className={`h-5 w-5 transition-transform duration-200 ${
-                        isProfileOpen ? "rotate-180" : ""
-                      }`}
+                      className={`h-5 w-5 transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -303,20 +302,12 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                         View Profile
                       </Link>
                       <Link
-                        href="/settings"
+                        href="/message"
                         className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200"
                         onClick={() => setIsProfileOpen(false)}
-                        aria-label="Settings"
+                        aria-label="Chat"
                       >
-                        Settings
-                      </Link>
-                      <Link
-                        href="/dashboard"
-                        className="block px-4 py-2 text-sm text-[#98916D] hover:text-[#998869] transition-colors duration-200"
-                        onClick={() => setIsProfileOpen(false)}
-                        aria-label="Dashboard"
-                      >
-                        Dashboard
+                        Chat
                       </Link>
                       <hr className="my-1 border-[#415C41]" />
                       <button
@@ -342,15 +333,15 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 aria-label={isOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isOpen}
               >
-                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
 
           {/* Mobile Navigation */}
           {isOpen && (
-            <div className="md:hidden">
-              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-[#415C41]">
+            <div className="fixed inset-0 bg-[#FEFFFA] z-40 md:hidden overflow-y-auto">
+              <div className="px-4 pt-20 pb-10 space-y-1 sm:px-6 border-t border-[#415C41]">
                 {/* Mobile Location Selector */}
                 <button
                   type="button"
@@ -358,11 +349,11 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                   className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200 w-full text-left"
                   aria-label={`Select location: ${user?.preferredLocation || "Not set"}`}
                 >
-                  <MapPin className="h-5 w-5" />
+                  <MapPin className="w-5 h-5" />
                   <span className="flex-1 truncate">
                     {user?.preferredLocation || "Select Location"}
                   </span>
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="w-4 h-4" />
                 </button>
 
                 {/* Mobile Notification Bell */}
@@ -373,47 +364,47 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                   disabled={isLoadingCount}
                   aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
                 >
-                  <Bell className="h-5 w-5" />
+                  <Bell className="w-5 h-5" />
                   <span>Notifications</span>
                   {unreadCount > 0 && (
-                    <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                    <span className="flex items-center justify-center w-5 h-5 ml-auto text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
                       {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   )}
                   {isLoadingCount && (
-                    <span className="ml-auto bg-gray-400 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="flex items-center justify-center w-5 h-5 ml-auto text-xs font-bold text-white bg-gray-400 rounded-full">
                       <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
                     </span>
                   )}
                 </button>
 
                 <Link
-                  href="/join"
+                  href="/home/join"
                   className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
                   onClick={() => setIsOpen(false)}
                   aria-label="Join"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="w-5 h-5" />
                   <span>Join</span>
                 </Link>
 
                 <Link
-                  href="/venues"
+                  href="/home/facilities"
                   className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
                   onClick={() => setIsOpen(false)}
                   aria-label="Venues"
                 >
-                  <MapPin className="h-5 w-5" />
+                  <MapPin className="w-5 h-5" />
                   <span>Venues</span>
                 </Link>
 
                 <Link
-                  href="/tournaments"
+                  href="/home/tournament"
                   className="flex items-center space-x-2 text-[#98916D] hover:text-[#998869] px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200"
                   onClick={() => setIsOpen(false)}
                   aria-label="Tournaments"
                 >
-                  <Calendar className="h-5 w-5" />
+                  <Calendar className="w-5 h-5" />
                   <span>Tournaments</span>
                 </Link>
 
@@ -432,7 +423,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
                   <div className="mt-1 space-y-1">
                     <Link
-                      href="/profile"
+                      href="/home/profile"
                       className="block px-3 py-2 text-base text-[#98916D] hover:text-[#998869] rounded-md transition-colors duration-200"
                       onClick={() => setIsOpen(false)}
                       aria-label="View Profile"
@@ -440,20 +431,12 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                       View Profile
                     </Link>
                     <Link
-                      href="/settings"
+                      href="/message"
                       className="block px-3 py-2 text-base text-[#98916D] hover:text-[#998869] rounded-md transition-colors duration-200"
                       onClick={() => setIsOpen(false)}
                       aria-label="Settings"
                     >
-                      Settings
-                    </Link>
-                    <Link
-                      href="/dashboard"
-                      className="block px-3 py-2 text-base text-[#98916D] hover:text-[#998869] rounded-md transition-colors duration-200"
-                      onClick={() => setIsOpen(false)}
-                      aria-label="Dashboard"
-                    >
-                      Dashboard
+                      Chat
                     </Link>
                     <button
                       type="button"
