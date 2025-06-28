@@ -4,8 +4,7 @@ const URL = "http://localhost:5000";
 
 export const socket: Socket = io(URL, {
   withCredentials: true,
-  autoConnect: false, // Don't auto-connect, we'll do it manually with userId
-});
+  autoConnect: false, 
 
 // Connection event handlers
 socket.on("connect", () => {
